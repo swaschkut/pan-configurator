@@ -41,139 +41,223 @@ $supportedActions['display'] = Array(
         $object = $context->object;
 
 
-        //get sessions
+        //get sessions count
         $apiArgs = Array();
         $apiArgs['type'] = 'op';
-        $apiArgs['cmd'] = '<show><session><all></all></session></show>';
+        $apiArgs['cmd'] = '<show><session><info></info></session></show>';
+        //get <num-active>0</num-active> for actual session count
 
-        $output = $context->connector->getSession($apiArgs);
 
-        if( !empty($output) )
+//Todo: move to PanAPIConnector: call function something like session info, bring search into array
+        $ret = $context->connector->sendRequest($apiArgs);
+
+
+        $cursor = DH::findXPathSingleEntryOrDie('/response', $ret);
+        $cursor = DH::findFirstElement('result', $cursor);
+
+        if( $cursor === FALSE )
         {
-            $session_array = Array();
-            foreach( $output as $session )
+            $cursor = DH::findFirstElement('report', DH::findXPathSingleEntryOrDie('/response', $ret));
+            if( $cursor === FALSE )
+                derr("unsupported API answer");
+
+            $report = DH::findFirstElement('result', $cursor);
+            if( $report === FALSE )
+                derr("unsupported API answer");
+
+        }
+
+        $session_info_array = array();
+        $session_info_array['num-active'] = DH::findFirstElement('num-active', $cursor)->textContent;
+        print "actual session count: ".$session_info_array['num-active']."\n";
+
+
+
+        //<show><session><all><filter></filter></all></session></show>
+        /*
+            application Application name
+            count count number of sessions only
+            destination destination IP address
+            destination-port Destination port
+            destination-user Destination user
+            egress-interface egress interface
+            from From zone
+            gtp-imei full gtp imei
+            gtp-imsi full gtp imsi
+            hw-interface hardware interface
+            ingress-interface ingress interface
+            min-kb minimum KB of byte count
+            nat If session is NAT
+            nat-rule NAT rule name
+            pbf-rule Policy-Based-Forwarding rule name
+            protocol IP protocol value
+            qos-class QoS class
+            qos-node-id QoS node-id value
+            qos-rule QoS rule name
+            rematch rematch sessions
+            rule Security rule name
+            source source IP address
+            source-port Source port
+            source-user Source user
+            ssl-decrypt session is decrypted
+            state flow state
+            to To zone
+            tunnel-decap session is outer tunnel with inspection enabled
+            tunnel-inspected session is inside tunnel
+            type flow type
+            vsys-name
+
+         */
+
+        //<show><session><all><start-at></start-at></all></session></show>
+
+        $get_session_array[] = 1;
+
+        if( intval( $session_info_array['num-active'] ) > 2000 )
+        {
+            if( end( $get_session_array ) == 1 )
+                $get_session_array[] = end( $get_session_array )+2000;
+            else
+                $get_session_array[] = end( $get_session_array )+1000;
+        }
+
+        foreach( $get_session_array as $session_start )
+        {
+            //get sessions
+            $apiArgs = Array();
+            $apiArgs['type'] = 'op';
+            $apiArgs['cmd'] = '<show><session><all><start-at>'.$session_start.'</start-at></all></session></show>';
+
+            $output = $context->connector->getSession($apiArgs);
+
+            if( !empty($output) )
             {
-                if( !empty($filter_array) )
+                $session_array = Array();
+                foreach( $output as $session )
                 {
-                    foreach( $filter_array as $id => $filter )
+                    if( !empty($filter_array) )
                     {
-                        foreach( $filter as $content )
+                        foreach( $filter_array as $id => $filter )
                         {
-                            if( $session[$id] == $content )
+                            foreach( $filter as $content )
                             {
-                                if( !isset($session_array[$session['idx']]) )
-                                    $session_array[$session['idx']] = $session;
+                                if( $session[$id] == $content )
+                                {
+                                    if( !isset($session_array[$session['idx']]) )
+                                        $session_array[$session['idx']] = $session;
+                                }
                             }
                         }
                     }
-                }
-                else
-                {
-                    if( !isset($session_array[$session['idx']]) )
-                        $session_array[$session['idx']] = $session;
+                    else
+                    {
+                        if( !isset($session_array[$session['idx']]) )
+                            $session_array[$session['idx']] = $session;
+                    }
                 }
             }
-        }
 
 
-        if( !empty($session_array) )
-        {
-            ksort( $session_array );
-            $vsys_count=array();
-            print "\n\n##########################################\n";
-
-
-            foreach( $session_array as $session )
+            if( !empty($session_array) )
             {
-                $padding = 0;
-                $padding = str_pad('', $padding);
+                ksort( $session_array );
+                $vsys_count=array();
+                print "\n\n##########################################\n";
 
-                #print_r($session);
-                print $padding . "*Session ID '{$session['idx']}' -  VSYS  '{$session['vsys-idx']}'\n";
-                #print $padding." VSYS  '{$session['vsys-idx']}'\n";
-                if( !isset($vsys_count[$session['vsys-idx']]) )
+
+                foreach( $session_array as $session )
                 {
-                    $vsys_count[$session['vsys-idx']] = array();
-                    $vsys_count[$session['vsys-idx']]['count'] = 1;
-                    $vsys_count[$session['vsys-idx']]['name'] = $session['vsys'];
+                    $padding = 0;
+                    $padding = str_pad('', $padding);
+
+                    #print_r($session);
+                    print $padding . "*Session ID '{$session['idx']}' -  VSYS  '{$session['vsys-idx']}'\n";
+                    #print $padding." VSYS  '{$session['vsys-idx']}'\n";
+                    if( !isset($vsys_count[$session['vsys-idx']]) )
+                    {
+                        $vsys_count[$session['vsys-idx']] = array();
+                        $vsys_count[$session['vsys-idx']]['count'] = 1;
+                        $vsys_count[$session['vsys-idx']]['name'] = $session['vsys'];
+                    }
+
+                    else
+                        $vsys_count[$session['vsys-idx']]['count']++;
+
+                    if( isset($session['security-rule']) )
+                        print $padding . " -Rule named '{$session['security-rule']}'\n";
+                    else
+                        print $padding . " -Rule named ---------\n";
+                    print $padding . "  ingress: " . $session['ingress'];
+                    if( isset($session['egress']) )
+                        print "  |  egress:  " . $session['egress'] . "\n";
+
+                    print $padding . "  From: " . $session['from'] . "  |  To:  " . $session['to'] . "\n";
+                    print $padding . "  Source: " . $session['source'] . "\n";
+                    print $padding . "  Destination: " . $session['dst'] . "\n";
+                    print $padding . "  Service:  " . $session['dport'] . "    proto: " . $session['proto'] . "    App:  " . $session['application'] . "\n";
+                    #print $padding."  NAT:  ".$session['nat'];
+                    if( $session['srcnat'] == 'True' )
+                    {
+                        print $padding . "    srcNAT IP:  " . $session['xsource'] . "\n";
+                        print $padding . "    sportNAT:  " . $session['xsport'] . "";
+                        print $padding . "    dportNAT:  " . $session['xdport'] . "\n";
+                    }
+
+                    if( $session['dstnat'] == 'True' )
+                    {
+                        print $padding . "    dstNAT IP:  " . $session['xdst'] . "\n";
+                        print $padding . "    sportNAT:  " . $session['xsport'] . "";
+                        print $padding . "    dportNAT:  " . $session['xdport'] . "\n";
+                    }
+
+
+                    /*
+                            <application>dns</application>
+                            <ingress>ethernet1/3.120</ingress>
+                            <egress>ethernet1/4</egress>
+                            <vsys-idx>1</vsys-idx>
+                            <xsource>83.125.63.171</xsource>
+                            <srcnat>True</srcnat>
+                            <sport>32855</sport>
+                            <security-rule>trust.untrust.dns</security-rule>
+                            <from>guest_wlan</from>
+                            <proto>17</proto>
+                            <dst>8.8.8.8</dst>
+                            <to>untrust</to>
+                        <state>ACTIVE</state>
+                            <xdst>8.8.8.8</xdst>
+                            <nat>True</nat>
+                        <type>FLOW</type>
+                        <start-time>Tue Nov 8 14:44:02 2016</start-time>
+                        <proxy>False</proxy>
+                        <decrypt-mirror>False</decrypt-mirror>
+                            <idx>17868</idx>
+                        <total-byte-count>13508</total-byte-count>
+                            <dstnat>False</dstnat>
+                            <vsys>vsys1</vsys>
+                            <xsport>3042</xsport>
+                            <xdport>53</xdport>
+                        <flags>NS</flags>
+                            <source>192.168.120.254</source>
+                            <dport>53</dport>
+                     */
+
+                    print "\n\n";
                 }
 
-                else
-                    $vsys_count[$session['vsys-idx']]['count']++;
-
-                if( isset($session['security-rule']) )
-                    print $padding . " -Rule named '{$session['security-rule']}'\n";
-                else
-                    print $padding . " -Rule named ---------\n";
-                print $padding . "  ingress: " . $session['ingress'];
-                if( isset($session['egress']) )
-                    print "  |  egress:  " . $session['egress'] . "\n";
-
-                print $padding . "  From: " . $session['from'] . "  |  To:  " . $session['to'] . "\n";
-                print $padding . "  Source: " . $session['source'] . "\n";
-                print $padding . "  Destination: " . $session['dst'] . "\n";
-                print $padding . "  Service:  " . $session['dport'] . "    proto: " . $session['proto'] . "    App:  " . $session['application'] . "\n";
-                #print $padding."  NAT:  ".$session['nat'];
-                if( $session['srcnat'] == 'True' )
-                {
-                    print $padding . "    srcNAT IP:  " . $session['xsource'] . "\n";
-                    print $padding . "    sportNAT:  " . $session['xsport'] . "";
-                    print $padding . "    dportNAT:  " . $session['xdport'] . "\n";
-                }
-
-                if( $session['dstnat'] == 'True' )
-                {
-                    print $padding . "    dstNAT IP:  " . $session['xdst'] . "\n";
-                    print $padding . "    sportNAT:  " . $session['xsport'] . "";
-                    print $padding . "    dportNAT:  " . $session['xdport'] . "\n";
-                }
+                print "\n filtered session : " . count($session_array) . " of " . count($output) . "\n";
 
 
-                /*
-                        <application>dns</application>
-                        <ingress>ethernet1/3.120</ingress>
-                        <egress>ethernet1/4</egress>
-                        <vsys-idx>1</vsys-idx>
-                        <xsource>83.125.63.171</xsource>
-                        <srcnat>True</srcnat>
-                        <sport>32855</sport>
-                        <security-rule>trust.untrust.dns</security-rule>
-                        <from>guest_wlan</from>
-                        <proto>17</proto>
-                        <dst>8.8.8.8</dst>
-                        <to>untrust</to>
-                    <state>ACTIVE</state>
-                        <xdst>8.8.8.8</xdst>
-                        <nat>True</nat>
-                    <type>FLOW</type>
-                    <start-time>Tue Nov 8 14:44:02 2016</start-time>
-                    <proxy>False</proxy>
-                    <decrypt-mirror>False</decrypt-mirror>
-                        <idx>17868</idx>
-                    <total-byte-count>13508</total-byte-count>
-                        <dstnat>False</dstnat>
-                        <vsys>vsys1</vsys>
-                        <xsport>3042</xsport>
-                        <xdport>53</xdport>
-                    <flags>NS</flags>
-                        <source>192.168.120.254</source>
-                        <dport>53</dport>
-                 */
 
-                print "\n\n";
+                print "##########################################\n\n\n";
+
             }
-
-            print "\n filtered session : " . count($session_array) . " of " . count($output) . "\n";
-
-
-
-            print "##########################################\n\n\n";
-
+            else
+            {
+                print "\n\n##########################################\n\n\n";
+            }
         }
-        else
-        {
-            print "\n\n##########################################\n\n\n";
-        }
+
 
 
         if( isset(PH::$args['stats']) )

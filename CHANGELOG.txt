@@ -6,10 +6,11 @@ CHANGELOG
 * introduce class-VirtualWire
 * introduce class-TemplateStack
 * update predefined.xml to 8043-4857
+* introduce util session-browser and system-log
 
 utils:
 address-edit: improvement for actions=decommisssion - extend interface (ethernet/vlan/loopback/tunnel) with add/removeIPv4address
-
+session-browser - extend support to output all session, also if session count > 2000
 
 bugfix:
 - fix class-IpsecTunnel | related to proxy-id if <protocol> is not available

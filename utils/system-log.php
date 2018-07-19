@@ -190,7 +190,7 @@ if( isset(PH::$args['filter']) )
     #print "|".strpos( $query, 'receive_time' )."|\n";
     if( strpos( $query, 'receive_time' ) == false )
     {
-        print " - No 'receive_time' provided so using default =(receive_time geq '" . $time . "')\n";
+        print " - No 'receive_time' provided so using default 'filter=(receive_time geq \"" . $time . "\")'\n";
         $query .= 'and ( receive_time geq \'' . $time . '\' )';
     }
 }
