@@ -76,10 +76,10 @@ $supportedActions['display'] = Array(
         }
 
 
-        ksort( $session_array );
-        $vsys_count=array();
         if( !empty($session_array) )
         {
+            ksort( $session_array );
+            $vsys_count=array();
             print "\n\n##########################################\n";
 
 
