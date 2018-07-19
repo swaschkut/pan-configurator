@@ -1,7 +1,6 @@
 <?php
 /*
- * Copyright (c) 2014-2015 Palo Alto Networks, Inc. <info@paloaltonetworks.com>
- * Author: Christophe Painchaud <cpainchaud _AT_ paloaltonetworks.com>
+ * Copyright (c) 2014-2017 Christophe Painchaud <shellescape _AT_ gmail.com>
  *
  * Permission to use, copy, modify, and distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -24,6 +23,9 @@ class LoopbackInterface
     use ReferencableObject;
 
     protected $_ipv4Addresses = Array();
+
+    /** @var string */
+    public $type = 'loopback';
 
     function __construct($name, $owner)
     {
@@ -65,4 +67,38 @@ class LoopbackInterface
         return $this->_ipv4Addresses;
     }
 
+    /**
+     * return true if change was successful false if not (duplicate rulename?)
+     * @return bool
+     * @param string $name new name for the rule
+     */
+    public function setName($name)
+    {
+        if( $this->name == $name )
+            return true;
+
+        $this->name = $name;
+
+        $this->xmlroot->setAttribute('name', $name);
+
+        return true;
+
+    }
+
+    /**
+     * @return string
+     */
+    public function &getXPath()
+    {
+        $str = $this->owner->getLoopbackIfStoreXPath()."/entry[@name='".$this->name."']";
+
+        return $str;
+    }
+
+    static public $templatexml = '<entry name="**temporarynamechangeme**">
+<adjust-tcp-mss>
+  <enable>no</enable>
+</adjust-tcp-mss>
+<comment></comment>
+</entry>';
 }

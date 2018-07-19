@@ -1,8 +1,7 @@
 <?php
 
 /*
- * Copyright (c) 2014-2015 Palo Alto Networks, Inc. <info@paloaltonetworks.com>
- * Author: Christophe Painchaud <cpainchaud _AT_ paloaltonetworks.com>
+ * Copyright (c) 2014-2017 Christophe Painchaud <shellescape _AT_ gmail.com>
  *
  * Permission to use, copy, modify, and distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -232,7 +231,7 @@ class Rule
         $node = DH::findFirstElement('target', $this->xmlroot);
         if( $node !== false )
         {
-            $deviceNode = DH::findFirstElement('device', $node);
+            $deviceNode = DH::findFirstElement('devices', $node);
             if( $deviceNode !== false )
                 $node->removeChild($deviceNode);
         }
@@ -685,6 +684,11 @@ class Rule
     }
 
     public function isCaptivePortalRule()
+    {
+        return false;
+    }
+
+    public function isAuthenticationRule()
     {
         return false;
     }

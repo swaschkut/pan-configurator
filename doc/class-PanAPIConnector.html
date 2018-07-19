@@ -7,7 +7,7 @@
 	<title>Class PanAPIConnector | PAN-Configurator</title>
 
 	<script type="text/javascript" src="resources/combined.js?772778653"></script>
-	<script type="text/javascript" src="elementlist.js?2180725909"></script>
+	<script type="text/javascript" src="elementlist.js?4105871058"></script>
 	<link rel="stylesheet" type="text/css" media="all" href="resources/style.css?3505392360" />
 
 </head>
@@ -350,7 +350,7 @@ $pan-&gt;API_load_from_candidate();</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_findOrCreateConnectorFromHost">#</a>
-		<code><b>findOrCreateConnectorFromHost</b>( <span>string <var>$host</var></span>, <span>string <var>$apiKey</var> = <span class="php-keyword1">null</span></span>, <span>boolean <var>$promptForKey</var> = <span class="php-keyword1">TRUE</span></span>, <span>boolean <var>$checkConnectivity</var> = <span class="php-keyword1">TRUE</span></span> )</code>
+		<code><b>findOrCreateConnectorFromHost</b>( <span>string <var>$host</var></span>, <span>string <var>$apiKey</var> = <span class="php-keyword1">null</span></span>, <span>boolean <var>$promptForKey</var> = <span class="php-keyword1">TRUE</span></span>, <span>boolean <var>$checkConnectivity</var> = <span class="php-keyword1">TRUE</span></span>, <span>boolean <var>$hiddenPW</var> = <span class="php-keyword1">FALSE</span></span> )</code>
 
 		<div class="description short">
 			
@@ -370,6 +370,8 @@ $pan-&gt;API_load_from_candidate();</p>
 					<dd><code>boolean</code><br>$promptForKey</dd>
 					<dt><var>$checkConnectivity</var></dt>
 					<dd><code>boolean</code><br>$checkConnectivity</dd>
+					<dt><var>$hiddenPW</var></dt>
+					<dd><code>boolean</code><br>$hiddenPW</dd>
 				</dl></div>
 
 				<h4>Returns</h4>
@@ -623,6 +625,50 @@ $pan-&gt;API_load_from_candidate();</p>
 		</div>
 		</div></td>
 	</tr>
+	<tr data-order="userIDLogout" id="_userIDLogout">
+
+		<td class="attributes"><code>
+			 public 
+			mixed
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_userIDLogout">#</a>
+		<code><b>userIDLogout</b>( <span>string|string[] <var>$ips</var></span>, <span>string|string[] <var>$users</var></span>, <span>string <var>$vsys</var> = <span class="php-quote">'vsys1'</span></span>, <span>integer <var>$timeout</var> = <span class="php-num">3600</span></span> )</code>
+
+		<div class="description short">
+			
+		</div>
+
+		<div class="description detailed hidden">
+			
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$ips</var></dt>
+					<dd><code>string|string[]</code><br>$ips</dd>
+					<dt><var>$users</var></dt>
+					<dd><code>string|string[]</code><br>$users</dd>
+					<dt><var>$vsys</var></dt>
+					<dd><code>string</code><br>$vsys</dd>
+					<dt><var>$timeout</var></dt>
+					<dd><code>integer</code><br>$timeout</dd>
+				</dl></div>
+
+				<h4>Returns</h4>
+				<div class="list">
+					<code>mixed</code><br />
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
 	<tr data-order="register_tagIPsWithTags" id="_register_tagIPsWithTags">
 
 		<td class="attributes"><code>
@@ -802,7 +848,7 @@ Array('tag7') )<br />
 
 		<td class="attributes"><code>
 			 public 
-			
+			string
 			&amp;
 			</code>
 		</td>
@@ -819,7 +865,16 @@ Array('tag7') )<br />
 			
 
 
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$category</var></dt>
+					<dd><code>mixed</code><br>$category</dd>
+				</dl></div>
 
+				<h4>Returns</h4>
+				<div class="list">
+					<code>string</code><br />
+				</div>
 
 
 
@@ -1635,6 +1690,28 @@ childNodes to generate xml</dd>
 			</div>
 		</div></td>
 	</tr>
+	<tr data-order="savedConnectors" id="$savedConnectors">
+		<td class="attributes"><code>
+			public static 
+			<code><a href="class-PanAPIConnector.html">PanAPIConnector</a>[]</code>
+		</code></td>
+
+		<td class="name">
+<var>$savedConnectors</var>		</td>
+		<td class="value"><code><span class="php-keyword1">Array</span>()</code></td>
+		<td class="description"><div>
+			<a href="#$savedConnectors" class="anchor">#</a>
+
+			<div class="description short">
+				
+			</div>
+
+			<div class="description detailed hidden">
+				
+
+			</div>
+		</div></td>
+	</tr>
 	<tr data-order="info_deviceType" id="$info_deviceType">
 		<td class="attributes"><code>
 			public  
@@ -1767,6 +1844,58 @@ release is ignore. ie: 7.1.4 -&gt; 71 , 5.0.6 -&gt; 50</p>
 			</div>
 		</div></td>
 	</tr>
+	<tr data-order="info_hostname" id="$info_hostname">
+		<td class="attributes"><code>
+			public  
+			null|string
+		</code></td>
+
+		<td class="name">
+<var>$info_hostname</var>		</td>
+		<td class="value"><code><span class="php-keyword1">null</span></code></td>
+		<td class="description"><div>
+			<a href="#$info_hostname" class="anchor">#</a>
+
+			<div class="description short">
+				
+<p>$info_hostname device hostname. ie: "PA-200"</p>
+
+			</div>
+
+			<div class="description detailed hidden">
+				
+<p>$info_hostname device hostname. ie: "PA-200"</p>
+
+
+			</div>
+		</div></td>
+	</tr>
+	<tr data-order="info_mgmtip" id="$info_mgmtip">
+		<td class="attributes"><code>
+			public  
+			null|string
+		</code></td>
+
+		<td class="name">
+<var>$info_mgmtip</var>		</td>
+		<td class="value"><code><span class="php-keyword1">null</span></code></td>
+		<td class="description"><div>
+			<a href="#$info_mgmtip" class="anchor">#</a>
+
+			<div class="description short">
+				
+<p>$info_mgmtip product mgmt interface IP. ie: "192.168.0.1"</p>
+
+			</div>
+
+			<div class="description detailed hidden">
+				
+<p>$info_mgmtip product mgmt interface IP. ie: "192.168.0.1"</p>
+
+
+			</div>
+		</div></td>
+	</tr>
 	<tr data-order="info_model" id="$info_model">
 		<td class="attributes"><code>
 			public  
@@ -1817,6 +1946,138 @@ unknown|m100|m500|pa200|pa500|pa2020|PA2050|PA3020|PA3050|PA3060|PA4020|PA4060|P
 				
 <p>$info_vmlicense can be unknown|VM-100|VM-200|VM-300|VM-1000</p>
 
+
+			</div>
+		</div></td>
+	</tr>
+	<tr data-order="info_vmuuid" id="$info_vmuuid">
+		<td class="attributes"><code>
+			public  
+			mixed
+		</code></td>
+
+		<td class="name">
+<var>$info_vmuuid</var>		</td>
+		<td class="value"><code><span class="php-keyword1">null</span></code></td>
+		<td class="description"><div>
+			<a href="#$info_vmuuid" class="anchor">#</a>
+
+			<div class="description short">
+				
+			</div>
+
+			<div class="description detailed hidden">
+				
+
+			</div>
+		</div></td>
+	</tr>
+	<tr data-order="info_vmcpuid" id="$info_vmcpuid">
+		<td class="attributes"><code>
+			public  
+			mixed
+		</code></td>
+
+		<td class="name">
+<var>$info_vmcpuid</var>		</td>
+		<td class="value"><code><span class="php-keyword1">null</span></code></td>
+		<td class="description"><div>
+			<a href="#$info_vmcpuid" class="anchor">#</a>
+
+			<div class="description short">
+				
+			</div>
+
+			<div class="description detailed hidden">
+				
+
+			</div>
+		</div></td>
+	</tr>
+	<tr data-order="info_app_version" id="$info_app_version">
+		<td class="attributes"><code>
+			public  
+			mixed
+		</code></td>
+
+		<td class="name">
+<var>$info_app_version</var>		</td>
+		<td class="value"><code><span class="php-keyword1">null</span></code></td>
+		<td class="description"><div>
+			<a href="#$info_app_version" class="anchor">#</a>
+
+			<div class="description short">
+				
+			</div>
+
+			<div class="description detailed hidden">
+				
+
+			</div>
+		</div></td>
+	</tr>
+	<tr data-order="info_av_version" id="$info_av_version">
+		<td class="attributes"><code>
+			public  
+			mixed
+		</code></td>
+
+		<td class="name">
+<var>$info_av_version</var>		</td>
+		<td class="value"><code><span class="php-keyword1">null</span></code></td>
+		<td class="description"><div>
+			<a href="#$info_av_version" class="anchor">#</a>
+
+			<div class="description short">
+				
+			</div>
+
+			<div class="description detailed hidden">
+				
+
+			</div>
+		</div></td>
+	</tr>
+	<tr data-order="info_wildfire_version" id="$info_wildfire_version">
+		<td class="attributes"><code>
+			public  
+			mixed
+		</code></td>
+
+		<td class="name">
+<var>$info_wildfire_version</var>		</td>
+		<td class="value"><code><span class="php-keyword1">null</span></code></td>
+		<td class="description"><div>
+			<a href="#$info_wildfire_version" class="anchor">#</a>
+
+			<div class="description short">
+				
+			</div>
+
+			<div class="description detailed hidden">
+				
+
+			</div>
+		</div></td>
+	</tr>
+	<tr data-order="info_threat_version" id="$info_threat_version">
+		<td class="attributes"><code>
+			public  
+			mixed
+		</code></td>
+
+		<td class="name">
+<var>$info_threat_version</var>		</td>
+		<td class="value"><code><span class="php-keyword1">null</span></code></td>
+		<td class="description"><div>
+			<a href="#$info_threat_version" class="anchor">#</a>
+
+			<div class="description short">
+				
+			</div>
+
+			<div class="description detailed hidden">
+				
 
 			</div>
 		</div></td>

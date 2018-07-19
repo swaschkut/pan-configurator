@@ -1,8 +1,7 @@
 <?php
 
 /*
- * Copyright (c) 2014-2015 Palo Alto Networks, Inc. <info@paloaltonetworks.com>
- * Author: Christophe Painchaud <cpainchaud _AT_ paloaltonetworks.com>
+ * Copyright (c) 2014-2017 Christophe Painchaud <shellescape _AT_ gmail.com>
  *
  * Permission to use, copy, modify, and distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -68,10 +67,23 @@ class PanAPIConnector
     public $info_multiVSYS = null;
     /** @var null|string $info_serial product serial number. ie: "00C734556" */
     public $info_serial = null;
+    /** @var null|string $info_hostname device hostname. ie: "PA-200" */
+    public $info_hostname = null;
+    /** @var null|string $info_mgmtip product mgmt interface IP. ie: "192.168.0.1" */
+    public $info_mgmtip = null;
+    /** @var null|string $info_uptime device uptime. ie: "57 days, 16:02:48" */
+    public $info_uptime = null;
     /** @var string $info_model can be unknown|m100|m500|pa200|pa500|pa2020|PA2050|PA3020|PA3050|PA3060|PA4020|PA4060|PA..... */
     public $info_model = 'unknown';
     /** @var string $info_vmlicense can be unknown|VM-100|VM-200|VM-300|VM-1000 */
     public $info_vmlicense = null;
+    public $info_vmuuid = null;
+    public $info_vmcpuid = null;
+
+    public $info_app_version = null;
+    public $info_av_version = null;
+    public $info_wildfire_version = null;
+    public $info_threat_version = null;
 
     private $_curl_handle = null;
     private $_curl_count = 0;
@@ -89,7 +101,16 @@ class PanAPIConnector
             $this->info_PANOS_version_int = null;
             $this->info_multiVSYS = null;
             $this->info_serial = null;
+            $this->info_hostname = null;
+            $this->info_uptime = null;
+            $this->info_model = null;
             $this->info_vmlicense = null;
+            $this->info_vmuuid = null;
+            $this->info_vmcpuid = null;
+            $this->info_app_version = null;
+            $this->info_av_version = null;
+            $this->info_wildfire_version = null;
+            $this->info_threat_version = null;
         }
 
         if( $this->info_serial !== null )
@@ -117,6 +138,21 @@ class PanAPIConnector
             derr("cannot find <serial>:\n" . DH::dom_to_xml($orig, 0, TRUE, 4));
         $this->info_serial = $serial->textContent;
 
+        $hostname = DH::findFirstElement('hostname', $res);
+        if( $hostname === FALSE )
+            derr("cannot find <hostname>:\n" . DH::dom_to_xml($orig, 0, TRUE, 4));
+        $this->info_hostname = $hostname->textContent;
+
+        $mgmtip = DH::findFirstElement('ip-address', $res);
+        if( $mgmtip === FALSE )
+            derr("cannot find <ip-address>:\n" . DH::dom_to_xml($orig, 0, TRUE, 4));
+        $this->info_mgmtip = $mgmtip->textContent;
+
+        $uptime = DH::findFirstElement('uptime', $res);
+        if( $uptime === FALSE )
+            derr("cannot find <uptime>:\n" . DH::dom_to_xml($orig, 0, TRUE, 4));
+        $this->info_uptime = $uptime->textContent;
+
         $model = DH::findFirstElement('model', $res);
         if( $model === FALSE )
             derr('cannot find <model>', $orig);
@@ -130,15 +166,45 @@ class PanAPIConnector
             if( $vmlicense === FALSE )
                 derr('cannot find <vm-license>', $orig);
             $this->info_vmlicense = $vmlicense->nodeValue;
+
+            $vmuuid = DH::findFirstElement('vm-uuid', $res);
+            if( $vmuuid === FALSE )
+                derr('cannot find <vm-uuid>', $orig);
+            $this->info_vmuuid = $vmuuid->nodeValue;
+
+            $vmcpuid = DH::findFirstElement('vm-cpuid', $res);
+            if( $vmcpuid === FALSE )
+                derr('cannot find <vm-cpuid>', $orig);
+            $this->info_vmcpuid = $vmcpuid->nodeValue;
         }
 
-        if( $model == 'panorama' || $model == 'm-100' || $model == 'm-500' )
+        if( $model == 'panorama' || $model == 'm-100' || $model == 'm-500' || $model == 'm-200' || $model == 'm-600' )
         {
             $this->info_deviceType = 'panorama';
         }
         else
         {
             $this->info_deviceType = 'panos';
+
+            $app_version = DH::findFirstElement('app-version', $res);
+            if( $app_version === FALSE )
+                derr("cannot find <app-version>:\n" . DH::dom_to_xml($orig, 0, TRUE, 4));
+            $this->info_app_version = $app_version->textContent;
+
+            $av_version = DH::findFirstElement('av-version', $res);
+            if( $av_version === FALSE )
+                derr("cannot find <av-version>:\n" . DH::dom_to_xml($orig, 0, TRUE, 4));
+            $this->info_av_version = $av_version->textContent;
+
+            $wildfire_version = DH::findFirstElement('wildfire-version', $res);
+            if( $wildfire_version === FALSE )
+                derr("cannot find <wildfire-version>:\n" . DH::dom_to_xml($orig, 0, TRUE, 4));
+            $this->info_wildfire_version = $wildfire_version->textContent;
+
+            $threat_version = DH::findFirstElement('threat-version', $res);
+            if( $threat_version === FALSE )
+                derr("cannot find <threat-version>:\n" . DH::dom_to_xml($orig, 0, TRUE, 4));
+            $this->info_threat_version = $threat_version->textContent;
         }
 
         $vex = explode('.', $this->info_PANOS_version);
@@ -248,9 +314,10 @@ class PanAPIConnector
      * @param string $apiKey
      * @param bool $promptForKey
      * @param bool $checkConnectivity
+     * @param bool $hiddenPW
      * @return PanAPIConnector
      */
-    static public function findOrCreateConnectorFromHost($host, $apiKey = null, $promptForKey = TRUE, $checkConnectivity = TRUE)
+    static public function findOrCreateConnectorFromHost($host, $apiKey = null, $promptForKey = TRUE, $checkConnectivity = TRUE, $hiddenPW = FALSE)
     {
         self::loadConnectorsFromUserHome();
 
@@ -321,9 +388,52 @@ class PanAPIConnector
             if( strlen($apiKey) < 19 )
             {
                 $user = $apiKey;
-                print "* you input user '$user' , please enter password now: ";
-                $line = fgets($handle);
-                $password = trim($line);
+                $pw_prompt = "* you input user ".$user." , please enter password now: ";
+                if( $hiddenPW )
+                {
+                    if( strtoupper(substr(PHP_OS, 0, 3)) === 'WIN' )
+                    {
+                        $pwd = shell_exec( 'powershell.exe -Command "$Password=Read-Host -assecurestring '.$pw_prompt.' ; $PlainPassword = [System.Runtime.InteropServices.Marshal]::PtrToStringAuto([System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($Password)) ; echo $PlainPassword;"');
+                        $pwd = explode("\n", $pwd);
+                        $password = $pwd[0];
+                    }
+                    else
+                    {
+                        print $pw_prompt;
+                        $oldStyle = shell_exec( 'stty -g' );
+                        shell_exec( 'stty -icanon -echo min 1 time 0' );
+
+                        $password = '';
+                        while( TRUE )
+                        {
+                            $char = fgetc( STDIN );
+
+                            if( $char === "\n" )
+                                break;
+                            elseif( ord( $char ) === 127 )
+                            {
+                                if( strlen( $password ) > 0 )
+                                {
+                                    fwrite( STDOUT, "\x08 \x08") ;
+                                    $password = substr( $password, 0, -1 );
+                                }
+                            }
+                            else
+                            {
+                                fwrite( STDOUT, "*" );
+                                $password .= $char;
+                            }
+                        }
+                        shell_exec( 'stty ' . $oldStyle );
+                    }
+                }
+                else
+                {
+                    print $pw_prompt;
+                    $line = fgets($handle);
+                    $password = trim($line);
+                }
+                print "\n";
 
                 print "* Now generating an API key from '$host'...";
                 $con = new PanAPIConnector($host, '', 'panos', null, $port);
@@ -406,12 +516,13 @@ class PanAPIConnector
             {
                 if( $serial === null )
                     derr('panos-via-panorama type requires a serial number');
-                $this->serial = $serial;
             }
+            $this->serial = $serial;
         }
         elseif( $type == 'panorama' )
         {
             $this->isPANOS = 0;
+            $this->serial = null;
         }
         else
             derr('unsupported type: ' . $type);
@@ -480,6 +591,54 @@ class PanAPIConnector
             $cmd .= '<entry name="' . $users[$usersIndex[$i]] . '" ip="' . $ips[$ipsIndex[$i]] . '" timeout="' . $timeout . '"></entry>';;
         }
         $cmd .= '</login></payload></uid-message>';
+
+        $params = Array();
+        $params['type'] = 'user-id';
+        $params['action'] = 'set';
+        $params['vsys'] = $vsys;
+        $params['cmd'] = &$cmd;
+
+        return $this->sendRequest($params, TRUE);
+
+    }
+
+    /**
+     * @param string|string[] $ips
+     * @param string|string[] $users
+     * @param string $vsys
+     * @param int $timeout
+     * @return mixed
+     */
+    public function userIDLogout($ips, $users, $vsys = 'vsys1', $timeout = 3600)
+    {
+        if( is_string($ips) && is_string($users) )
+        {
+            $ips = Array($ips);
+            $users = Array($users);
+        }
+        elseif( is_string($ips) )
+        {
+            derr('single IP provided but several users');
+        }
+        elseif( is_string($ips) )
+        {
+            derr('single user provided but several IPs');
+        }
+        elseif( count($ips) != count($users) )
+        {
+            derr('IPs and Users are not same numbers');
+        }
+
+        $ipsIndex = array_keys($ips);
+        $usersIndex = array_keys($users);
+
+        $cmd = '<uid-message><version>1.0</version><type>update</type><payload><logout>';
+
+        for( $i = 0; $i < count($ips); $i++ )
+        {
+            $cmd .= '<entry name="' . $users[$usersIndex[$i]] . '" ip="' . $ips[$ipsIndex[$i]] . '" timeout="' . $timeout . '"></entry>';;
+        }
+        $cmd .= '</logout></payload></uid-message>';
 
         $params = Array();
         $params['type'] = 'user-id';
@@ -618,6 +777,23 @@ class PanAPIConnector
         return $ip_array;
     }
 
+    private function _createOrRenewCurl()
+    {
+        if( (PHP_MAJOR_VERSION <= 5 && PHP_MINOR_VERSION < 5) || $this->_curl_handle === null || $this->_curl_count > 100 )
+        {
+            if( $this->_curl_handle !== null )
+                curl_close($this->_curl_handle);
+
+            $this->_curl_handle = curl_init();
+            $this->_curl_count = 0;
+        }
+        else
+        {
+            curl_reset($this->_curl_handle);
+            $this->_curl_count++;
+        }
+    }
+
 
     /**
      * @param string $parameters
@@ -634,16 +810,7 @@ class PanAPIConnector
         if( is_array($parameters) )
             $sendThroughPost = TRUE;
 
-        if( $this->_curl_handle === null || $this->_curl_count > 100 )
-        {
-            $this->_curl_handle = curl_init();
-            $this->_curl_count = 0;
-        }
-        else
-        {
-            curl_reset($this->_curl_handle);
-            $this->_curl_count++;
-        }
+        $this->_createOrRenewCurl();
 
         curl_setopt($this->_curl_handle, CURLOPT_RETURNTRANSFER, TRUE);
         curl_setopt($this->_curl_handle, CURLOPT_SSL_VERIFYPEER, FALSE);
@@ -715,7 +882,8 @@ class PanAPIConnector
                 . $filecontent . "\r\n"
                 . "----ABC1234--\r\n";
 
-            //print "content length = ".strlen($content)."\n";
+            #print "content length = ".strlen($encodedContent)."\n";
+            #print "content  = ".$encodedContent."\n";
             curl_setopt($this->_curl_handle, CURLOPT_HTTPHEADER, Array('Content-Type: multipart/form-data; boundary=--ABC1234'));
             curl_setopt($this->_curl_handle, CURLOPT_POST, TRUE);
             curl_setopt($this->_curl_handle, CURLOPT_POSTFIELDS, $encodedContent);
@@ -741,18 +909,15 @@ class PanAPIConnector
 
         $httpReplyContent = curl_exec($this->_curl_handle);
         if( $httpReplyContent === false )
-        {
             derr('Could not retrieve URL: ' . $finalUrl . ' because of the following error: ' . curl_error($this->_curl_handle));
-        }
 
         $curlHttpStatusCode = curl_getinfo($this->_curl_handle, CURLINFO_HTTP_CODE);
+
         if( $curlHttpStatusCode != 200 )
-        {
-            derr("HTTP API returned (code : {$curlHttpStatusCode}); " . curl_exec($this->_curl_handle));
-        }
+            derr("HTTP API returned (code : {$curlHttpStatusCode}); " . $httpReplyContent);
 
         $xmlDoc = new DOMDocument();
-        if( !$xmlDoc->loadXML($httpReplyContent, LIBXML_PARSEHUGE) )
+        if( !$xmlDoc->loadXML($httpReplyContent, LIBXML_PARSEHUGE|4194304) )
             derr('Invalid xml input :' . $httpReplyContent);
 
         $firstElement = DH::firstChildElement($xmlDoc);
@@ -762,111 +927,87 @@ class PanAPIConnector
         $statusAttr = DH::findAttribute('status', $firstElement);
 
         if( $statusAttr === FALSE )
-        {
             derr('XML response has no "status" field: ' . DH::dom_to_xml($firstElement));
-        }
 
         if( $statusAttr != 'success' )
-        {
-            //var_dump($statusAttr);
             derr('API reported a failure: "' . $statusAttr . "\" with the following addition infos: " . $firstElement->nodeValue);
-        }
 
         if( $filecontent !== null )
-        {
             return $xmlDoc;
-        }
+
         if( !$checkResultTag )
-        {
             return $xmlDoc;
-        }
 
         //$cursor = &searchForName('name', 'result', $xmlarr['children']);
         $cursor = DH::findFirstElement('result', $firstElement);
 
         if( $cursor === FALSE )
-        {
             derr('XML API response has no <result> field', $xmlDoc);
-        }
 
         DH::makeElementAsRoot($cursor, $xmlDoc);
         return $xmlDoc;
     }
 
-    public function &sendExportRequest($category)
+    /**
+     * @param $category
+     * @return string
+     */
+    public function & sendExportRequest($category)
     {
-        $sendThroughPost = FALSE;
+        $this->_createOrRenewCurl();
+
+        curl_setopt($this->_curl_handle, CURLOPT_RETURNTRANSFER, TRUE);
+        curl_setopt($this->_curl_handle, CURLOPT_SSL_VERIFYPEER, FALSE);
+        curl_setopt($this->_curl_handle, CURLOPT_SSL_VERIFYHOST, FALSE);
+        if( defined('CURL_SSLVERSION_TLSv1') ) // for older versions of PHP/openssl bundle
+            curl_setopt($this->_curl_handle, CURLOPT_SSLVERSION, CURL_SSLVERSION_TLSv1);
 
         $host = $this->apihost;
         if( $this->port != 443 )
             $host .= ':' . $this->port;
 
         if( isset($this->serial) && $this->serial !== null )
-        {
             $finalUrl = 'https://' . $host . '/api/';
-            if( !$sendThroughPost )
-                $finalUrl .= '?key=' . $this->apikey . '&target=' . $this->serial;
-        }
         else
-        {
             $finalUrl = 'https://' . $host . '/api/';
-            if( !$sendThroughPost )
-                $finalUrl .= '?key=' . $this->apikey;
-        }
 
-        if( !$sendThroughPost )
+        curl_setopt($this->_curl_handle, CURLOPT_URL, $finalUrl);
+
+
+        if( isset($this->serial) && $this->serial !== null )
         {
-            $finalUrl .= '&type=export&category=' . $category;
+            $parameters['target'] = $this->serial;
         }
+        $parameters['key'] = $this->apikey;
+        $parameters['category'] = $category;
+        $parameters['type'] = 'export';
+        $properParams = http_build_query($parameters);
 
 
-        $c = new mycurl($finalUrl, FALSE);
-
-
-        if( $sendThroughPost )
-        {
-            if( isset($this->serial) && $this->serial !== null )
-            {
-                $parameters['target'] = $this->serial;
-            }
-            $parameters['key'] = $this->apikey;
-            $parameters['category'] = $category;
-            $parameters['type'] = 'export';
-            $properParams = http_build_query($parameters);
-            $c->setPost($properParams);
-        }
+        curl_setopt($this->_curl_handle, CURLOPT_POSTFIELDS, $properParams);
 
         if( $this->showApiCalls )
         {
-            if( $sendThroughPost )
+            $paramURl = '?';
+            foreach( $parameters as $paramIndex => &$param )
             {
-                $paramURl = '?';
-                foreach( $parameters as $paramIndex => &$param )
-                {
-                    $paramURl .= '&' . $paramIndex . '=' . str_replace('#', '%23', $param);
-                }
-
-                print("API call through POST: \"" . $finalUrl . '?' . $paramURl . "\"\r\n");
+                $paramURl .= '&' . $paramIndex . '=' . str_replace('#', '%23', $param);
             }
-            else
-                print("API call: \"" . $finalUrl . "\"\r\n");
+
+            print("API call through POST: \"" . $finalUrl . '?' . $paramURl . "\"\r\n");
         }
 
 
-        if( !$c->createCurl() )
-        {
-            derr('Could not retrieve URL: ' . $finalUrl . ' because of the following error: ' . $c->last_error);
-        }
+        $httpReplyContent = curl_exec($this->_curl_handle);
+        if( $httpReplyContent === false )
+            derr('Could not retrieve URL: ' . $finalUrl . ' because of the following error: ' . curl_error($this->_curl_handle));
+
+        $curlHttpStatusCode = curl_getinfo($this->_curl_handle, CURLINFO_HTTP_CODE);
+        if( $curlHttpStatusCode != 200 )
+            derr("HTTP Status returned (code : {$curlHttpStatusCode}); " . $httpReplyContent);
 
 
-        if( $c->getHttpStatus() != 200 )
-        {
-            derr('HTTP API ret: ' . $c->__tostring());
-        }
-
-        $string = $c->__tostring();
-
-        return $string;
+        return $httpReplyContent;
     }
 
 
@@ -1187,7 +1328,7 @@ class PanAPIConnector
     public function getCandidateConfigAlt()
     {
         $doc = new DOMDocument();
-        $doc->loadXML($this->sendExportRequest('configuration'), LIBXML_PARSEHUGE);
+        $doc->loadXML($this->sendExportRequest('configuration'), LIBXML_PARSEHUGE|4194304);
         return $doc;
     }
 
@@ -1381,7 +1522,7 @@ class PanAPIConnector
         $req = "type=op&cmd=<show><jobs><id>$jobID</id></jobs></show>";
         $ret = $this->sendRequest($req);
 
-
+        //TODO: 20180305 not working
         $found = &searchForName('name', 'result', $ret);
 
         if( $found === null )
@@ -1411,7 +1552,7 @@ class PanAPIConnector
         $ret = $this->sendRequest($request);
 
         //var_dump($ret);
-
+        //TODO: 20180305 not working
         $found = &searchForName('name', 'result', $ret);
 
         if( $found === null )
@@ -1478,6 +1619,10 @@ class PanAPIConnector
                 $fw['hostname'] = $entryNode->getAttribute('name');
 
             $fw['serial'] = $entryNode->getAttribute('name');
+
+            $modelNode = DH::findFirstElement('model', $entryNode);
+            if( $modelNode !== false )
+                $fw['model'] = $modelNode->textContent;
 
             $firewalls[$fw['serial']] = $fw;
         }

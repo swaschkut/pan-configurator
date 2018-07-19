@@ -1,8 +1,7 @@
 <?php
 
 /*
- * Copyright (c) 2014-2015 Palo Alto Networks, Inc. <info@paloaltonetworks.com>
- * Author: Christophe Painchaud <cpainchaud _AT_ paloaltonetworks.com>
+ * Copyright (c) 2014-2017 Christophe Painchaud <shellescape _AT_ gmail.com>
  *
  * Permission to use, copy, modify, and distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -201,7 +200,7 @@ class ServiceRuleContainer extends ObjRuleContainer
             if( $lower == 'any' )
             {
                 if( count($this->o) != 0 )
-                    mwarning('rule has a bad combination of services');
+                    mwarning('rule has a bad combination of services', $xml);
 
                 $this->o = Array();
                 continue;
@@ -209,7 +208,7 @@ class ServiceRuleContainer extends ObjRuleContainer
             else if($lower == 'application-default')
             {
                 if( count($this->o) != 0 )
-                    mwarning('rule has a bad combination of services');
+                    mwarning('rule has a bad combination of services', $xml);
 
                 $this->o = Array();
                 $this->appDef = true;
@@ -426,6 +425,23 @@ class ServiceRuleContainer extends ObjRuleContainer
         return false;
     }
 
+    /**
+     * @param string $objectName
+     * @return bool
+     */
+    public function hasNamedObjectRecursive( $objectName)
+    {
+        foreach( $this->o as $o )
+        {
+            if( $o->name() === $objectName )
+                return true;
+            if( $o->isGroup() )
+                if( $o->hasNamedObjectRecursive($objectName) ) return true;
+        }
+
+        return false;
+    }
+
 
     /**
      * To determine if a store has all the Service from another store, it will expand ServiceGroups instead of looking for them directly. Very useful when looking to compare similar rules.
@@ -580,6 +596,60 @@ class ServiceRuleContainer extends ObjRuleContainer
 
     }
 
+    /**
+     * @param string $value
+     * @param array $objects
+     * @param bool $check_recursive
+     * @return bool
+     */
+    function hasValue( $value, $check_recursive = false )
+    {
+        $objects = $this->o;
+        foreach( $objects as $object )
+        {
+            if( !$check_recursive )
+                if( $object->isGroup() )
+                    continue;
+
+            if( !$object->isGroup() )
+                if( $value == $object->getDestPort() )
+                    return true;
+
+            $port_mapping = $object->dstPortMapping();
+            $port_mapping_text = $port_mapping->mappingToText();
+
+            if( strpos( $port_mapping_text, " " ) !== false )
+                $port_mapping_array = explode( " ", $port_mapping_text );
+            else
+                $port_mapping_array[0] = $port_mapping_text;
+
+            foreach( $port_mapping_array as $port_mapping_text )
+            {
+                $text_replace = array( 'tcp/', 'udp/' );
+                $port_mapping_text = str_replace( $text_replace, "", $port_mapping_text );
+
+                if( strpos( $port_mapping_text, "-" ) !== false )
+                {
+                    $port_mapping_range = explode( "-", $port_mapping_text );
+                    if( intval( $port_mapping_range[0] ) <= intval($value) && intval( $port_mapping_range[1] ) >= intval($value) )
+                        return true;
+                }
+                elseif( strpos( $port_mapping_text, ",") !== false )
+                {
+                    $port_mapping_list = explode( ",", $port_mapping_text );
+                    foreach( $port_mapping_list as $list_object)
+                    {
+                        if( $value == $list_object )
+                            return true;
+                    }
+                }
+                elseif( $value == $port_mapping_text )
+                    return true;
+            }
+        }
+
+        return false;
+    }
 }
 
 

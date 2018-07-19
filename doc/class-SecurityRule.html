@@ -7,7 +7,7 @@
 	<title>Class SecurityRule | PAN-Configurator</title>
 
 	<script type="text/javascript" src="resources/combined.js?772778653"></script>
-	<script type="text/javascript" src="elementlist.js?2180725909"></script>
+	<script type="text/javascript" src="elementlist.js?4105871058"></script>
 	<link rel="stylesheet" type="text/css" media="all" href="resources/style.css?3505392360" />
 
 </head>
@@ -380,6 +380,35 @@
 		<td class="name"><div>
 		<a class="anchor" href="#_API_setType">#</a>
 		<code><b>API_setType</b>( <span>mixed <var>$type</var></span> )</code>
+
+		<div class="description short">
+			
+		</div>
+
+		<div class="description detailed hidden">
+			
+
+
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="extract_category_from_domxml" id="_extract_category_from_domxml">
+
+		<td class="attributes"><code>
+			 protected 
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_extract_category_from_domxml">#</a>
+		<code><b>extract_category_from_domxml</b>( )</code>
 
 		<div class="description short">
 			
@@ -811,6 +840,35 @@
 		</div>
 		</div></td>
 	</tr>
+	<tr data-order="setSecProf_Wildfire" id="_setSecProf_Wildfire">
+
+		<td class="attributes"><code>
+			 public 
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_setSecProf_Wildfire">#</a>
+		<code><b>setSecProf_Wildfire</b>( <span>mixed <var>$newAVprof</var></span> )</code>
+
+		<div class="description short">
+			
+		</div>
+
+		<div class="description detailed hidden">
+			
+
+
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
 	<tr data-order="rewriteSecProfXML" id="_rewriteSecProfXML">
 
 		<td class="attributes"><code>
@@ -833,6 +891,102 @@
 
 
 
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="urlCategories" id="_urlCategories">
+
+		<td class="attributes"><code>
+			 public 
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_urlCategories">#</a>
+		<code><b>urlCategories</b>( )</code>
+
+		<div class="description short">
+			
+		</div>
+
+		<div class="description detailed hidden">
+			
+
+
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="urlCategoryIsAny" id="_urlCategoryIsAny">
+
+		<td class="attributes"><code>
+			 public 
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_urlCategoryIsAny">#</a>
+		<code><b>urlCategoryIsAny</b>( )</code>
+
+		<div class="description short">
+			
+		</div>
+
+		<div class="description detailed hidden">
+			
+
+
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="urlCategoriesHas" id="_urlCategoriesHas">
+
+		<td class="attributes"><code>
+			 public 
+			boolean
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_urlCategoriesHas">#</a>
+		<code><b>urlCategoriesHas</b>( <span>string <var>$category</var></span> )</code>
+
+		<div class="description short">
+			
+		</div>
+
+		<div class="description detailed hidden">
+			
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$category</var></dt>
+					<dd><code>string</code><br>$category</dd>
+				</dl></div>
+
+				<h4>Returns</h4>
+				<div class="list">
+					<code>boolean</code><br>return TRUE if this rule is using the category defined in $category<br />
+				</div>
 
 
 
@@ -1476,6 +1630,39 @@
 		</div>
 		</div></td>
 	</tr>
+	<tr data-order="isDSRIEnabled" id="_isDSRIEnabled">
+
+		<td class="attributes"><code>
+			 public 
+			boolean
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_isDSRIEnabled">#</a>
+		<code><b>isDSRIEnabled</b>( )</code>
+
+		<div class="description short">
+			
+		</div>
+
+		<div class="description detailed hidden">
+			
+
+
+
+				<h4>Returns</h4>
+				<div class="list">
+					<code>boolean</code><br />
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
 	<tr data-order="display" id="_display">
 
 		<td class="attributes"><code>
@@ -1628,7 +1815,36 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_API_getServiceStats">#</a>
-		<code><b>API_getServiceStats</b>( <span>mixed <var>$timePeriod</var></span>, <span>mixed <var>$specificApps</var> = <span class="php-keyword1">null</span></span> )</code>
+		<code><b>API_getServiceStats</b>( <span>mixed <var>$timePeriod</var> = <span class="php-quote">'last-30-days'</span></span>, <span>mixed <var>$fastMode</var> = <span class="php-keyword1">true</span></span>, <span>mixed <var>$limit</var> = <span class="php-num">50</span></span>, <span>mixed <var>$specificApps</var> = <span class="php-keyword1">null</span></span> )</code>
+
+		<div class="description short">
+			
+		</div>
+
+		<div class="description detailed hidden">
+			
+
+
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="API_getAddressStats" id="_API_getAddressStats">
+
+		<td class="attributes"><code>
+			 public 
+			
+			&amp;
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_API_getAddressStats">#</a>
+		<code><b>API_getAddressStats</b>( <span>mixed <var>$timePeriod</var> = <span class="php-quote">'last-30-days'</span></span>, <span>mixed <var>$srcORdst</var> = <span class="php-quote">'src'</span></span>, <span>mixed <var>$fastMode</var> = <span class="php-keyword1">true</span></span>, <span>mixed <var>$limit</var> = <span class="php-num">50</span></span>, <span>mixed <var>$excludedAddresses</var> = <span class="php-keyword1">Array</span>()</span> )</code>
 
 		<div class="description short">
 			
@@ -1766,6 +1982,123 @@
 		</div>
 		</div></td>
 	</tr>
+	<tr data-order="rewriteSDsri_XML" id="_rewriteSDsri_XML">
+
+		<td class="attributes"><code>
+			 protected 
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_rewriteSDsri_XML">#</a>
+		<code><b>rewriteSDsri_XML</b>( )</code>
+
+		<div class="description short">
+			
+<p>For developer use only</p>
+
+		</div>
+
+		<div class="description detailed hidden">
+			
+<p>For developer use only</p>
+
+
+
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="setDsri" id="_setDsri">
+
+		<td class="attributes"><code>
+			 public 
+			boolean
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_setDsri">#</a>
+		<code><b>setDsri</b>( <span>boolean <var>$dsri</var></span> )</code>
+
+		<div class="description short">
+			
+<p>disable rule if $disabled = true, enable it if not</p>
+
+		</div>
+
+		<div class="description detailed hidden">
+			
+<p>disable rule if $disabled = true, enable it if not</p>
+
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$dsri</var></dt>
+					<dd><code>boolean</code><br>$disabled</dd>
+				</dl></div>
+
+				<h4>Returns</h4>
+				<div class="list">
+					<code>boolean</code><br>true if value has changed<br />
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="API_setDsri" id="_API_setDsri">
+
+		<td class="attributes"><code>
+			 public 
+			boolean
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_API_setDsri">#</a>
+		<code><b>API_setDsri</b>( <span>boolean <var>$dsri</var></span> )</code>
+
+		<div class="description short">
+			
+<p>disable rule if $dsri = true, enable it if not</p>
+
+		</div>
+
+		<div class="description detailed hidden">
+			
+<p>disable rule if $dsri = true, enable it if not</p>
+
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$dsri</var></dt>
+					<dd><code>boolean</code><br>$dsri</dd>
+				</dl></div>
+
+				<h4>Returns</h4>
+				<div class="list">
+					<code>boolean</code><br>true if value has changed<br />
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
 	</table>
 
 	<table class="summary inherited">
@@ -1849,6 +2182,7 @@
 	<tr>
 		<td><code>
 			<a href="class-PathableName.html#__PANC_shortName"><b>_PANC_shortName()</b></a>, 
+			<a href="class-PathableName.html#_getLocationString"><b>getLocationString()</b></a>, 
 			<a href="class-PathableName.html#_toString"><b>toString()</b></a>
 		</code></td>
 	</tr>
@@ -2177,6 +2511,72 @@
 			</div>
 		</div></td>
 	</tr>
+	<tr data-order="categoryroot" id="$categoryroot">
+		<td class="attributes"><code>
+			protected  
+			null|<code><a href="class-DOMElement.html">DOMElement</a></code>
+		</code></td>
+
+		<td class="name">
+<var>$categoryroot</var>		</td>
+		<td class="value"><code><span class="php-keyword1">null</span></code></td>
+		<td class="description"><div>
+			<a href="#$categoryroot" class="anchor">#</a>
+
+			<div class="description short">
+				
+			</div>
+
+			<div class="description detailed hidden">
+				
+
+			</div>
+		</div></td>
+	</tr>
+	<tr data-order="_urlCategories" id="$_urlCategories">
+		<td class="attributes"><code>
+			protected  
+			string[]
+		</code></td>
+
+		<td class="name">
+<var>$_urlCategories</var>		</td>
+		<td class="value"><code><span class="php-keyword1">Array</span>()</code></td>
+		<td class="description"><div>
+			<a href="#$_urlCategories" class="anchor">#</a>
+
+			<div class="description short">
+				
+			</div>
+
+			<div class="description detailed hidden">
+				
+
+			</div>
+		</div></td>
+	</tr>
+	<tr data-order="dsri" id="$dsri">
+		<td class="attributes"><code>
+			protected  
+			boolean
+		</code></td>
+
+		<td class="name">
+<var>$dsri</var>		</td>
+		<td class="value"><code><span class="php-keyword1">false</span></code></td>
+		<td class="description"><div>
+			<a href="#$dsri" class="anchor">#</a>
+
+			<div class="description short">
+				
+			</div>
+
+			<div class="description detailed hidden">
+				
+
+			</div>
+		</div></td>
+	</tr>
 	<tr data-order="secproftype" id="$secproftype">
 		<td class="attributes"><code>
 			protected  
@@ -2201,7 +2601,7 @@
 	</tr>
 	<tr data-order="secprofroot" id="$secprofroot">
 		<td class="attributes"><code>
-			protected  
+			public  
 			null|string[]|<code><a href="class-DOMElement.html">DOMElement</a></code>
 		</code></td>
 

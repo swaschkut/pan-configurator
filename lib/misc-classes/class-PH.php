@@ -1,8 +1,7 @@
 <?php
 
 /*
- * Copyright (c) 2014-2015 Palo Alto Networks, Inc. <info@paloaltonetworks.com>
- * Author: Christophe Painchaud <cpainchaud _AT_ paloaltonetworks.com>
+ * Copyright (c) 2014-2017 Christophe Painchaud <shellescape _AT_ gmail.com>
  *
  * Permission to use, copy, modify, and distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -33,11 +32,34 @@ class PH
 
     public static $outputFormattingEnabled = true;
 
+    public static $enableXmlDuplicatesDeletion = false;
+
+    /** @var bool set to true if you want to ignore invalid address objects but print a warning instead */
+    public static $ignoreInvalidAddressObjects = false;
+
     public static $basedir;
 
     private static $library_version_major = 1;
     private static $library_version_sub = 5;
-    private static $library_version_bugfix = 11;
+    private static $library_version_bugfix = 14;
+
+    public static $softwareupdate_key = "658d787f293e631196dac9fb29490f1cc1bb3827";
+    public static $softwareupdate_user_encrypt = "NmPyrGw7WYXdu5cdgm2x7HEkDf4LTHob7M/JNNhS+3CIfV5DkV7Tne8xersHIRafbXV3vzgIRECsG06Hs+O80g==";
+    public static $softwareupdate_pw_encrypt = "wbCEjb8jaYH36HHvB2PmLMNyaz27MvHgM+Bn64wnofCjrV/4G+25AkoqG+q41Cvigc9uUxBTbOUtW2EhQOPYjA==";
+
+
+    static public function decrypt( $ciphertext, $key )
+    {
+        $c = base64_decode($ciphertext);
+        $ivlen = openssl_cipher_iv_length($cipher="AES-128-CBC");
+        $iv = substr($c, 0, $ivlen);
+        $hmac = substr($c, $ivlen, $sha2len=32);
+        $ciphertext_raw = substr($c, $ivlen+$sha2len);
+        $ciphertext_2 = openssl_decrypt($ciphertext_raw, $cipher, $key, $options=OPENSSL_RAW_DATA, $iv);
+        $calcmac = hash_hmac('sha256', $ciphertext_raw, $key, $as_binary=true);
+
+        return array($ciphertext_2,$calcmac);
+    }
 
     static public function frameworkVersion()
     {
@@ -82,6 +104,46 @@ class PH
         }
 
         return $frameWorkValue > $localValue;
+    }
+
+    /**
+     * @param string $versionString ie: '1.2.3' or '1.5'
+     * @return bool
+     */
+    static public function frameworkVersion_isGreaterOrEqualThan($versionString)
+    {
+        $numbers = explode('.',$versionString);
+
+        if( count($numbers) < 2 || count($numbers) > 3)
+            derr("'{$versionString}' is not a valid version syntax ( 'X.Y' or 'X.Y.Z' is accepted)");
+
+        if( !is_numeric($numbers[0]) )
+            derr("'{$numbers[0]}' is not a valid integer");
+
+        if( !is_numeric($numbers[1]) )
+            derr("'{$numbers[1]}' is not a valid integer");
+
+        if( count($numbers) == 3 && !is_numeric($numbers[2]) )
+            derr("'{$numbers[2]}' is not a valid integer");
+
+
+        if( self::$library_version_major > intval($numbers[0]) )
+            return true;
+
+        $frameWorkValue = self::$library_version_major * 1000 * 1000;
+        $localValue = intval($numbers[0]) * 1000 * 1000;
+
+        $frameWorkValue += self::$library_version_sub * 1000;
+        $localValue += intval($numbers[1]) * 1000;
+
+        $frameWorkValue += self::$library_version_bugfix;
+
+        if( count($numbers) == 3 )
+        {
+            $localValue += intval($numbers[2]);
+        }
+
+        return $frameWorkValue >= $localValue;
     }
 
 
@@ -168,6 +230,7 @@ class PH
                     $host = $fileExplode[0];
                 }
                 $connector = PanAPIConnector::findOrCreateConnectorFromHost($host);
+                $connector->setType($connector->info_deviceType);
             }
             else
             {
@@ -274,6 +337,80 @@ class PH
         return $msg;
     }
 
+    static public function &underlineText($msg)
+    {
+        $term = getenv('TERM');
+
+        if( $term === false || strpos($term, 'xterm') === false || ! PH::$outputFormattingEnabled )
+        {
+            //if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN')
+            //    $msg = "\027[1;37m".$msg."\027[37m";
+        }
+        else
+            $msg = "\033[4m".$msg."\033[0m";
+
+        return $msg;
+    }
+
+    static public function &italicText($msg)
+    {
+        $term = getenv('TERM');
+
+        if( $term === false || strpos($term, 'xterm') === false || ! PH::$outputFormattingEnabled )
+        {
+            //if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN')
+            //    $msg = "\027[1;37m".$msg."\027[37m";
+        }
+        else
+            $msg = "\033[3m".$msg."\033[0m";
+
+        return $msg;
+    }
+
+    static public function &strikethroughText($msg)
+    {
+        $term = getenv('TERM');
+
+        if( $term === false || strpos($term, 'xterm') === false || ! PH::$outputFormattingEnabled )
+        {
+            //if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN')
+            //    $msg = "\027[1;37m".$msg."\027[37m";
+        }
+        else
+            $msg = "\033[9m".$msg."\033[0m";
+
+        return $msg;
+    }
+
+    static public function &coloredText($msg, $foreground_color='red', $background_color='grey')
+    {
+        $term = getenv('TERM');
+
+        $color_array = array(   "black" => "\033[30m",
+                                "red" => "\033[31m",
+                                "green" => "\033[32m",
+                                "yellow" => "\033[33m",
+                                "blue" => "\033[34m",
+                                "magenta" => "\033[35m",
+                                "cyan" => "\033[36m",
+                                "white" => "\033[37m",
+                                "grey" => "\033[47m"
+                            );
+
+        if( $term === false || strpos($term, 'xterm') === false || ! PH::$outputFormattingEnabled )
+        {
+            //if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN')
+            //    $msg = "\027[1;37m".$msg."\027[37m";
+        }
+        else
+            $msg = $color_array[$foreground_color].$color_array[$background_color].$msg."\033[0m";
+
+        return $msg;
+    }
+
+
+
+
     /**
      * @param $panConfObject
      * @return PANConf|PanoramaConf
@@ -343,7 +480,7 @@ class PH
 
     /**
      * @param PathableName $panConfObject
-     * @return PANConf|PanoramaConf|DeviceGroup|VirtualSystem
+     * @return string
      * @throws Exception
      */
     public static function getLocationString($panConfObject)
@@ -395,11 +532,26 @@ class PH
 
 }
 
-foreach( $argv as $argIndex => &$arg )
+foreach( $argv as $argIndex => $arg )
 {
+    $arg = strtolower($arg);
     if( $arg == 'shadow-disableoutputformatting')
     {
         PH::disableOutputFormatting();
+        unset($argv[$argIndex]);
+        $argc--;
+        continue;
+    }
+    elseif( $arg == 'shadow-enablexmlduplicatesdeletion' )
+    {
+        PH::$enableXmlDuplicatesDeletion = true;
+        unset($argv[$argIndex]);
+        $argc--;
+        continue;
+    }
+    elseif( $arg == 'shadow-ignoreinvalidaddressobjects' )
+    {
+        PH::$ignoreInvalidAddressObjects = true;
         unset($argv[$argIndex]);
         $argc--;
         continue;

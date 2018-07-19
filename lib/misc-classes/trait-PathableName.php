@@ -1,7 +1,6 @@
 <?php
 /*
- * Copyright (c) 2014-2015 Palo Alto Networks, Inc. <info@paloaltonetworks.com>
- * Author: Christophe Painchaud <cpainchaud _AT_ paloaltonetworks.com>
+ * Copyright (c) 2014-2017 Christophe Painchaud <shellescape _AT_ gmail.com>
  *
  * Permission to use, copy, modify, and distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -74,5 +73,11 @@ trait PathableName
         }
 
         return $str;
+    }
+
+    public function getLocationString()
+    {
+        $obj = PH::findLocationObjectOrDie($this);
+        return PH::getLocationString($obj);
     }
 }

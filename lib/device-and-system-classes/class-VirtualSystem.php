@@ -1,7 +1,6 @@
 <?php
 /*
- * Copyright (c) 2014-2015 Palo Alto Networks, Inc. <info@paloaltonetworks.com>
- * Author: Christophe Painchaud <cpainchaud _AT_ paloaltonetworks.com>
+ * Copyright (c) 2014-2017 Christophe Painchaud <shellescape _AT_ gmail.com>
  *
  * Permission to use, copy, modify, and distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -64,6 +63,9 @@ class VirtualSystem
     public $captivePortalRules;
 
     /** @var RuleStore */
+    public $authenticationRules;
+
+    /** @var RuleStore */
     public $pbfRules;
 
     /** @var RuleStore */
@@ -107,7 +109,7 @@ class VirtualSystem
 		
 		$this->addressStore = new AddressStore($this);
 		$this->addressStore->name = 'addresses';
-		
+
 		$this->securityRules = new RuleStore($this, 'SecurityRule');
 		$this->securityRules->name = 'Security';
 
@@ -122,6 +124,9 @@ class VirtualSystem
 
         $this->captivePortalRules = new RuleStore($this, 'CaptivePortalRule');
         $this->captivePortalRules->name = 'CaptivePortal';
+
+        $this->authenticationRules = new RuleStore($this, 'AuthenticationRule');
+        $this->authenticationRules->name = 'Authentication';
 
         $this->pbfRules = new RuleStore($this, 'PbfRule');
         $this->pbfRules->name = 'PBF';
@@ -217,7 +222,57 @@ class VirtualSystem
             $this->serviceStore->load_servicegroups_from_domxml($tmp);
             //print "VSYS '".$this->name."' service groups loaded\n" ;
             // End of <service-group> extraction
+
+            //
+            // Extract application
+            //
+            $tmp = DH::findFirstElementOrCreate('application', $xml);
+            $this->appStore->load_application_custom_from_domxml($tmp);
+            // End of address extraction
+
+            //
+            // Extract application filter
+            //
+            $tmp = DH::findFirstElementOrCreate('application-filter', $xml);
+            $this->appStore->load_application_filter_from_domxml($tmp);
+            // End of application filter groups extraction
+
+            //
+            // Extract application groups
+            //
+            $tmp = DH::findFirstElementOrCreate('application-group', $xml);
+            $this->appStore->load_application_group_from_domxml($tmp);
+            // End of application groups groups extraction
+
         }
+
+        //
+        // add reference to address object, if interface IP-address is using this object
+        //
+        foreach( $this->importedInterfaces->interfaces() as $interface )
+        {
+            if( $interface->isEthernetType() && $interface->type() == "layer3" )
+                $interfaces = $interface->getLayer3IPv4Addresses();
+            elseif( $interface->isVlanType() || $interface->isLoopbackType() || $interface->isTunnelType() )
+                $interfaces = $interface->getIPv4Addresses();
+            else
+                $interfaces = array();
+
+
+            foreach( $interfaces as $layer3IPv4Address )
+            {
+                if( strpos($layer3IPv4Address, "/") === FALSE )
+                {
+                    $object = $this->addressStore->find($layer3IPv4Address);
+                    if( is_object($object) )
+                        $object->addReference($interface);
+                    else
+                        mwarning("interface configured objectname: " . $layer3IPv4Address . " not found.\n", $interface);
+                }
+            }
+        }
+        //Todo: addressobject reference missing for: IKE gateway / GP Portal / GP Gateway (where GP is not implemented at all)
+
 
         //
         // Extract Zone objects

@@ -1,7 +1,6 @@
 <?php
 /*
- * Copyright (c) 2014-2015 Palo Alto Networks, Inc. <info@paloaltonetworks.com>
- * Author: Christophe Painchaud <cpainchaud _AT_ paloaltonetworks.com>
+ * Copyright (c) 2014-2017 Christophe Painchaud <shellescape _AT_ gmail.com>
  *
  * Permission to use, copy, modify, and distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -84,6 +83,7 @@ class cidr
         {
             self::$_cidr2maskInt= Array();
             self::$_cidr2maskInt[0] = 0;
+            self::$_cidr2maskInt[32] = 4294967295;
             for($i=1; $i<=31; $i++)
                 self::$_cidr2maskInt[$i] = self::$_cidr2maskInt[$i-1] + pow(2, 32-$i);
         }

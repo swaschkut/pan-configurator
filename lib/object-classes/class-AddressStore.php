@@ -1,8 +1,7 @@
 <?php
 
 /*
- * Copyright (c) 2014-2015 Palo Alto Networks, Inc. <info@paloaltonetworks.com>
- * Author: Christophe Painchaud <cpainchaud _AT_ paloaltonetworks.com>
+ * Copyright (c) 2014-2017 Christophe Painchaud <shellescape _AT_ gmail.com>
  *
  * Permission to use, copy, modify, and distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -109,26 +108,38 @@ class AddressStore
 	public function load_addresses_from_domxml($xml)
 	{
         $this->addressRoot = $xml;
+
+        $duplicatesRemoval = Array();
 		
 		foreach( $this->addressRoot->childNodes as $node )
 		{
-			if( $node->nodeType != 1 ) continue;
+            /** @var DOMElement $node */
+            if( $node->nodeType != XML_ELEMENT_NODE ) continue;
 
 			$ns = new Address('',$this);
-			$ns->load_from_domxml($node);
-			//print $this->toString()." : new service '".$ns->name()."' created\n";
+			$loadedOK = $ns->load_from_domxml($node);
+
+			if( !$loadedOK )
+			    continue;
 
 			$objectName = $ns->name();
 
             if( isset($this->_all[$objectName]) )
             {
-                mwarning("an object with name '{$objectName}' already exists in this store, please investigate your xml file", $node);
+                if( PH::$enableXmlDuplicatesDeletion )
+                    $duplicatesRemoval[] = $node;
+                mwarning("an object with name '{$objectName}' already exists in this store, please investigate your xml file as this will be ignored and could eventually be lost.", $node);
                 continue;
             }
 
 			$this->_addressObjects[$objectName] = $ns;
 			$this->_all[$objectName] = $ns;
 		}
+
+		foreach( $duplicatesRemoval as $node )
+        {
+            $node->parentNode->removeChild($node);
+        }
 	}
 
 
@@ -143,9 +154,10 @@ class AddressStore
     /**
      * Returns an Array with all Address , AddressGroups, TmpAddress objects in this store
      * @param $withFilter string|null
+     * @param bool $sortByDependencies
      * @return Address[]|AddressGroup[]
      */
-	public function all($withFilter=null)
+	public function all($withFilter=null, $sortByDependencies=false)
 	{
 		$query = null;
 
@@ -165,13 +177,29 @@ class AddressStore
 			return $res;
 		}
 
-		return $this->_all;
+		if( !$sortByDependencies )
+    		return $this->_all;
+
+		$result = Array();
+
+		foreach($this->_tmpAddresses as $object)
+		    $result[] = $object;
+
+		foreach($this->_addressObjects as $object)
+		    $result[] = $object;
+
+        foreach($this->addressGroups(true) as $object)
+            $result[] = $object;
+
+        return $result;
 	}
 
 
 	public function load_addressgroups_from_domxml($xml)
 	{
 		$this->addressGroupRoot = $xml;
+
+        $duplicatesRemoval = Array();
 
         foreach( $xml->childNodes as $node )
         {
@@ -193,6 +221,8 @@ class AddressStore
 
             if( isset($this->_all[$name]) )
             {
+                if( PH::$enableXmlDuplicatesDeletion )
+                    $duplicatesRemoval[] = $node;
                 mwarning("an object with name '{$name}' already exists in this store, please investigate your xml file", $node);
                 continue;
             }
@@ -200,6 +230,11 @@ class AddressStore
             $this->_addressGroups[$name] = $ns;
             $this->_all[$name] = $ns;
 
+        }
+
+        foreach( $duplicatesRemoval as $node )
+        {
+            $node->parentNode->removeChild($node);
         }
 		
 		foreach( $xml->childNodes as $node )
@@ -682,12 +717,66 @@ class AddressStore
 	
 	/**
 	* Returns an Array with all AddressGroup in this store.
-	 * @return AddressGroup[]
+	 * @var bool $sortByDependencies
+     * @return AddressGroup[]
 	*
 	*/
-	public function addressGroups()
+	public function addressGroups($sortByDependencies = false)
 	{
-		return $this->_addressGroups;
+	    if( !$sortByDependencies )
+	        return $this->_addressGroups;
+
+	    $result = Array();
+
+	    $sortingArray = Array();
+
+        foreach( $this->_addressGroups as $group )
+        {
+            if( $group->isDynamic() )
+            {
+                $result[] = $group;
+                continue;
+            }
+
+            $sortingArray[$group->name()] = Array();
+
+            $subGroups = $group->expand(true);
+
+            foreach( $subGroups as $subGroup )
+            {
+                if( !$subGroup->isGroup() || $subGroup->isDynamic() )
+                    continue;
+                if( $subGroup->owner !== $this )
+                    continue;
+
+                $sortingArray[$group->name()][$subGroup->name()] = true;
+            }
+        }
+
+        $loopCount = 0;
+        while( count($sortingArray) > 0 )
+        {
+            foreach($sortingArray as $groupName => &$groupDependencies )
+            {
+                if( count($groupDependencies) == 0 )
+                {
+                    $result[] = $this->_addressGroups[$groupName];
+                    unset($sortingArray[$groupName]);
+
+                    foreach( $sortingArray as &$tmpGroupDeps )
+                    {
+                        if( isset($tmpGroupDeps[$groupName]) )
+                            unset($tmpGroupDeps[$groupName]);
+                    }
+                }
+            }
+
+            $loopCount++;
+            if( $loopCount > 40 )
+                derr("cannot determine groups dependencies after 40 loops iterations: is there too many nested groups?");
+        }
+
+        return $result;
 	}
 	
 	/**

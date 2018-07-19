@@ -1,8 +1,7 @@
 <?php
 
 /*
- * Copyright (c) 2014-2015 Palo Alto Networks, Inc. <info@paloaltonetworks.com>
- * Author: Christophe Painchaud <cpainchaud _AT_ paloaltonetworks.com>
+ * Copyright (c) 2014-2017 Christophe Painchaud <shellescape _AT_ gmail.com>
  *
  * Permission to use, copy, modify, and distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -26,10 +25,10 @@ require_once("lib/panconfigurator.php");
 
 function display_usage_and_exit($shortMessage = false)
 {
-    print PH::boldText("USAGE: ")."php ".basename(__FILE__)." in=file.xml|api://... out=file.xml|api://... [more arguments]".
-        "actions=action1:arg1 ['filter=(type is.group) or (name contains datacenter-)']\n";
-    print "php ".basename(__FILE__)." help          : more help messages\n";
+    print PH::boldText("USAGE: ")."php ".basename(__FILE__)." in=file.xml|api://... out=file.xml|api://... [more arguments]\n";
+
     print PH::boldText("\nExamples:\n");
+    print " - php ".basename(__FILE__)." help          : more help messages\n";
     print " - php ".basename(__FILE__)." in=api://192.169.50.10/running-config out=local.xml'\n";
     print " - php ".basename(__FILE__)." in=local.xml out=api://192.169.50.10 preserveMgmtsystem injectUserAdmin2\n";
     print " - php ".basename(__FILE__)." in=local.xml out=api://192.169.50.10 toXpath=/config/shared/address\n";
@@ -83,7 +82,7 @@ $supportedArguments['fromxpath'] = Array('niceName' => 'fromXpath', 'shortHelp' 
 $supportedArguments['toxpath'] = Array('niceName' => 'toXpath', 'shortHelp' => 'inject xml directly in some parts of the candidate config');
 $supportedArguments['loadafterupload'] = Array('niceName' => 'loadAfterUpload', 'shortHelp' => 'load configuration after upload happened');
 $supportedArguments['help'] = Array('niceName' => 'help', 'shortHelp' => 'this message');
-$supportedArguments['apitimeout'] = Array('niceName' => 'apiTimeout', 'shortHelp' => 'in case API takes too long time to anwer, increase this value (default=60)');
+$supportedArguments['apitimeout'] = Array('niceName' => 'apiTimeout', 'shortHelp' => 'in case API takes too long time to answer, increase this value (default=60)');
 $supportedArguments['preservemgmtconfig'] = Array('niceName' => 'preserveMgmtConfig', 'shortHelp' => "tries to preserve most of management settings like IP address, admins and passwords etc. note it's not a smart feature and may break your config a bit and requires manual fix in GUI before you can actually commit");
 $supportedArguments['preservemgmtusers'] = Array('niceName' => 'preserveMgmtUsers', 'shortHelp' => "preserve administrators so they are not overwritten and you don't loose access after a commit");
 $supportedArguments['preservemgmtsystem'] = Array('niceName' => 'preserveMgmtSystem', 'shortHelp' => 'preserves what is in /config/devices/entry/deviceconfig/system');

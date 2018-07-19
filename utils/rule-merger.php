@@ -1,7 +1,6 @@
 <?php
 /*
- * Copyright (c) 2014-2015 Palo Alto Networks, Inc. <info@paloaltonetworks.com>
- * Author: Christophe Painchaud <cpainchaud _AT_ paloaltonetworks.com>
+ * Copyright (c) 2014-2017 Christophe Painchaud <shellescape _AT_ gmail.com>
  *
  * Permission to use, copy, modify, and distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -68,7 +67,7 @@ function display_error_usage_exit($msg)
 print "\n";
 
 $debugAPI = false;
-
+$configOutput = null;
 
 
 $supportedArguments = Array();
@@ -83,6 +82,7 @@ $supportedArguments[] = Array('niceName' => 'mergeDenyRules', 'shortHelp' => 'de
 $supportedArguments[] = Array('niceName' => 'stopMergingIfDenySeen', 'shortHelp' => 'deny rules wont be merged', 'argDesc' => '[yes|no|true|false]');
 $supportedArguments[] = Array('niceName' => 'mergeAdjacentOnly', 'shortHelp' => 'merge only rules that are adjacent to each other', 'argDesc' => '[yes|no|true|false]');
 $supportedArguments[] = Array('niceName' => 'filter', 'shortHelp' => 'filter rules that can be converted');
+$supportedArguments['debugapi'] = Array('niceName' => 'DebugAPI', 'shortHelp' => 'prints API calls when they happen');
 $tmpArray = Array();
 foreach($supportedArguments as &$arg)
 {
@@ -136,11 +136,10 @@ $configInput = PH::$args['in'];
 if( !is_string($configInput) || strlen($configInput) < 1 )
     display_error_usage_exit('"in" argument is not a valid string');
 
-if( ! isset(PH::$args['out']) )
-    display_error_usage_exit('"out" is missing from arguments');
-$configOutput = PH::$args['out'];
-if( !is_string($configOutput) || strlen($configOutput) < 1 )
-    display_error_usage_exit('"out" argument is not a valid string');
+if( isset(PH::$args['debugapi'])  )
+{
+    $debugAPI = true;
+}
 
 //
 // What kind of config input do we have.
@@ -180,9 +179,19 @@ elseif ( $configInput['type'] == 'api'  )
     if($debugAPI)
         $configInput['connector']->setShowApiCalls(true);
     $xmlDoc = $configInput['connector']->getCandidateConfig();
+
+
+
+    if( ! isset(PH::$args['out']) )
+        display_error_usage_exit('"out" is missing from arguments. output file to save config after changes, API is not supported.');
+    $configOutput = PH::$args['out'];
+    if( !is_string($configOutput) || strlen($configOutput) < 1 )
+        display_error_usage_exit('"out" argument is not a valid string');
+
 }
 else
     derr('not supported yet');
+
 
 //
 // Determine if PANOS or Panorama
@@ -404,14 +413,14 @@ function updateRuleHash($rule, $method)
     }
 
     /*          'matchFromToSrcDstApp'  => 1 ,
-                                'matchFromToSrcDstSvc'  => 2 ,
-                                'matchFromToSrcSvcApp'  => 3 ,
-                                'matchFromToDstSvcApp'  => 4 ,
-                                'matchFromSrcDstSvcApp' => 5 ,
-                                'matchToSrcDstSvcApp'   => 6 ,
-                                'matchToDstSvcApp'   => 7 ,
-                                'matchFromSrcSvcApp' => 8 ,
-                                identical' => 9 ,
+                'matchFromToSrcDstSvc'  => 2 ,
+                'matchFromToSrcSvcApp'  => 3 ,
+                'matchFromToDstSvcApp'  => 4 ,
+                'matchFromSrcDstSvcApp' => 5 ,
+                'matchToSrcDstSvcApp'   => 6 ,
+                'matchToDstSvcApp'   => 7 ,
+                'matchFromSrcSvcApp' => 8 ,
+                identical' => 9 ,
     */
 
     if( $method == 1)
@@ -432,11 +441,11 @@ function updateRuleHash($rule, $method)
             $rule->services->getFastHashComp() . $rule->apps->getFastHashComp(), true);
     elseif( $method == 5)
         $rule->mergeHash = md5('action:'.$rule->action().'.*/' . $rule->from->getFastHashComp() .
-            $rule->destination->getFastHashComp() . $rule->destination->getFastHashComp() .
+            $rule->source->getFastHashComp() . $rule->destination->getFastHashComp() .
             $rule->services->getFastHashComp() . $rule->apps->getFastHashComp(), true);
     elseif( $method == 6)
         $rule->mergeHash = md5('action:'.$rule->action().'.*/' . $rule->to->getFastHashComp() .
-            $rule->destination->getFastHashComp() . $rule->destination->getFastHashComp() .
+            $rule->source->getFastHashComp() . $rule->destination->getFastHashComp() .
             $rule->services->getFastHashComp() . $rule->apps->getFastHashComp(), true);
     elseif( $method == 7)
         $rule->mergeHash = md5('action:'.$rule->action().'.*/' . $rule->to->getFastHashComp() .
@@ -444,7 +453,7 @@ function updateRuleHash($rule, $method)
             $rule->services->getFastHashComp() . $rule->apps->getFastHashComp(), true);
     elseif( $method == 8)
         $rule->mergeHash = md5('action:'.$rule->action().'.*/' . $rule->from->getFastHashComp() .
-            $rule->destination->getFastHashComp() .
+            $rule->source->getFastHashComp() .
             $rule->services->getFastHashComp() . $rule->apps->getFastHashComp(), true);
     elseif( $method == 9)
         $rule->mergeHash = md5('action:'.$rule->action().'.*/' . $rule->from->getFastHashComp() . $rule->to->getFastHashComp() .
@@ -465,6 +474,9 @@ function updateRuleHash($rule, $method)
  */
 function mergeRules( $rule, $ruleToMerge, $method )
 {
+    global $configInput;
+    global $configOutput;
+    global $hashTable;
 
     /*          'matchFromToSrcDstApp'  => 1 ,
                                 'matchFromToSrcDstSvc'  => 2 ,
@@ -478,7 +490,7 @@ function mergeRules( $rule, $ruleToMerge, $method )
 
     */
 
-    global $hashTable;
+
 
     if( $method == 1)
     {
@@ -523,7 +535,10 @@ function mergeRules( $rule, $ruleToMerge, $method )
 
     // clean this rule from hash table
     unset($hashTable[$ruleToMerge->mergeHash][$rule->serial]);
-    $ruleToMerge->owner->remove($ruleToMerge);
+    if ( $configInput['type'] == 'api' && $configOutput == null )
+        $ruleToMerge->owner->API_remove( $ruleToMerge );
+    else
+        $ruleToMerge->owner->remove($ruleToMerge);
     $ruleToMerge->alreadyMerged = true;
 
     //updateRuleHash($rule, $method);
@@ -723,11 +738,16 @@ foreach( $rulesToProcess as $index => $rule )
 
     print "    - Rule after merge:\n";
     $rule->display(5);
+
+    if ( $configInput['type'] == 'api' && $configOutput == null )
+        $rule->API_sync();
     unset($hashTable[$rule->mergeHash][$rule->serial]);
 
 }
 
 print "\n*** MERGING DONE : {$mergedRulesCount} rules merged over ".count($rulesToProcess)." in total (".(count($rulesToProcess)-$mergedRulesCount)." remaining) ***\n";
+print "\nStats after merging :\n";
+$processedLocation->display_statistics();
 
 // save our work !!!
 if( $configOutput !== null )
@@ -736,6 +756,7 @@ if( $configOutput !== null )
     $pan->save_to_file($configOutput, false);
     print "OK!\n";
 }
+
 
 
 

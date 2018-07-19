@@ -1,7 +1,6 @@
 <?php
 /*
- * Copyright (c) 2014-2015 Palo Alto Networks, Inc. <info@paloaltonetworks.com>
- * Author: Christophe Painchaud <cpainchaud _AT_ paloaltonetworks.com>
+ * Copyright (c) 2014-2017 Christophe Painchaud <shellescape _AT_ gmail.com>
  *
  * Permission to use, copy, modify, and distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -102,12 +101,20 @@ class VirtualRouter
      * @param $orderByNarrowest bool
      * @return array
      */
-    public function getIPtoZoneRouteMapping($contextVSYS, $orderByNarrowest=true )
+    public function getIPtoZoneRouteMapping($contextVSYS, $orderByNarrowest=true, $loopFilter = null )
     {
         $ipv4 = Array();
         $ipv6 = Array();
 
         $ipv4sort = Array();
+
+        if( $loopFilter === null )
+        {
+            $loopFilter = Array();
+        }
+
+        $loopFilter[$this->name()][$contextVSYS->name()] = true;
+
 
         foreach( $this->attachedInterfaces->interfaces() as $if )
         {
@@ -124,12 +131,17 @@ class VirtualRouter
 
                 foreach( $ipAddresses as $interfaceIP )
                 {
+                    $address_object = $contextVSYS->addressStore->find( $interfaceIP );
+                    if( $address_object != null )
+                        $interfaceIP = $address_object->value();
+
                     $ipv4Mapping = cidr::stringToStartEnd($interfaceIP);
                     $record = Array('network' => $interfaceIP, 'start' => $ipv4Mapping['start'], 'end' => $ipv4Mapping['end'], 'zone' => $findZone->name(), 'origin' => 'connected', 'priority' => 1);
                     $ipv4sort[$record['end'] - $record['start']][$record['start']][] = &$record;
                     unset($record);
                 }
             }
+            //Todo: extend this to $if->isVlanType() / $if->isTunnelType()
             elseif( $if->isLoopbackType() )
             {
                 $findZone = $contextVSYS->zoneStore->findZoneMatchingInterfaceName($if->name());
@@ -140,6 +152,12 @@ class VirtualRouter
 
                 foreach( $ipAddresses as $interfaceIP )
                 {
+                    if( strpos( $interfaceIP, "/" ) === false )
+                    {
+                        $object = $contextVSYS->addressStore->find( $interfaceIP );
+                        $interfaceIP = $object->value();
+                    }
+
                     $ipv4Mapping = cidr::stringToStartEnd($interfaceIP);
                     $record = Array('network' => $interfaceIP, 'start' => $ipv4Mapping['start'], 'end' => $ipv4Mapping['end'], 'zone' => $findZone->name(), 'origin' => 'connected', 'priority' => 1);
                     $ipv4sort[$record['end'] - $record['start']][$record['start']][] = &$record;
@@ -241,6 +259,7 @@ class VirtualRouter
                 }
                 if( $findZone === null )
                 {
+                    //Todo: check for some template config this is triggered
                     mwarning("route {$route->name()}/{$route->destination()} ignored because no matching interface was found for nexthop={$nexthopIP}");
                     continue;
                 }
@@ -249,9 +268,55 @@ class VirtualRouter
                 $ipv4sort[ $record['end']-$record['start'] ][$record['start']][] = &$record;
                 unset($record);
             }
+            else if( $route->nexthopType() == 'next-vr' )
+            {
+
+                $nextVR = $route->nexthopVR();
+                if( $nextVR === null  )
+                {
+                    mwarning("route {$route->name()}/{$route->destination()} ignored because nextVR is blank or invalid '", $route->xmlroot);
+                    continue;
+                }
+                $nextvrObject = $this->owner->findVirtualRouter($nextVR);
+                if( $nextvrObject === null  )
+                {
+                    mwarning("route {$route->name()}/{$route->destination()} ignored because nextVR '{$nextVR}' was not found");
+                    continue;
+                }
+
+                // prevent routes looping
+                if( isset($loopFilter[$nextVR]) && isset($loopFilter[$nextVR][$contextVSYS->name()]) )
+                    continue;
+
+                $obj = $nextvrObject->getIPtoZoneRouteMapping($contextVSYS, $orderByNarrowest, $loopFilter);
+                $currentRouteRemains = IP4Map::mapFromText($route->destination());
+
+                foreach( $obj['ipv4'] as &$v4recordFromOtherVr )
+                {
+                    $intersection = $currentRouteRemains->intersection( IP4Map::mapFromText( long2ip($v4recordFromOtherVr['start']).'-'.long2ip($v4recordFromOtherVr['end'])) );
+                    $foundMatches = $currentRouteRemains->substractSingleIP4Entry($v4recordFromOtherVr);
+                    if( $intersection->count() > 0 )
+                    {
+                        foreach( $intersection->getMapArray() as $mapEntry )
+                        {
+                            $record = Array( 'network' => long2ip($mapEntry['start']).'-'.long2ip($mapEntry['end']),
+                                                'start' => $mapEntry['start'],
+                                                'end' => $mapEntry['end'],
+                                                'zone' => $v4recordFromOtherVr['zone'],
+                                                'origin' => 'static',
+                                                'priority' => 2 );
+                            $ipv4sort[ $record['end']-$record['start'] ][$record['start']][] = &$record;
+                            unset($record);
+                        }
+                    }
+
+                    if( $currentRouteRemains->count() == 0 )
+                        break;
+                }
+            }
             else
             {
-                mwarning("route {$route->name()}/{$route->destination()} ignored because of unknown type '{$nextHopType}'");
+                mwarning("route {$route->name()}/{$route->destination()} ignored because of unknown type '{$route->nexthopType()}'");
                 continue;
             }
         }

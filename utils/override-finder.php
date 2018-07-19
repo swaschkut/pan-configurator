@@ -50,13 +50,14 @@ function display_usage_and_exit($shortMessage = false)
         print "\n\n";
     }
 
+    print "\n";
     exit(1);
 }
 
 function display_error_usage_exit($msg)
 {
     fwrite(STDERR, PH::boldText("\n**ERROR** ").$msg."\n\n");
-    display_usage_and_exit(true);
+    display_usage_and_exit(false);
 }
 
 
@@ -67,7 +68,7 @@ $supportedArguments = Array();
 $supportedArguments['in'] = Array('niceName' => 'in', 'shortHelp' => 'input file or api. ie: in=config.xml  or in=api://192.168.1.1 or in=api://0018CAEC3@panorama.company.com', 'argDesc' => '[filename]|[api://IP]|[api://serial@IP]');
 $supportedArguments['cycleconnectedfirewalls'] = Array('niceName' => 'cycleConnectedFirewalls', 'shortHelp' => 'a listing of all devices connected to Panorama will be collected through API then each firewall will be queried for overrides' );
 $supportedArguments['debugapi'] = Array('niceName' => 'DebugAPI', 'shortHelp' => 'prints API calls when they happen');
-
+$supportedArguments['help'] = Array('niceName' => 'help', 'shortHelp' => 'this message');
 
 PH::processCliArgs();
 
@@ -176,8 +177,7 @@ function diffNodes(DOMElement $template, DOMElement $candidate, $padding)
                     print $padding."* ".DH::elementToPanXPath($candidate)."\n";
                 }
                 else
-                    derr("unsupported case where template is defining an object but it's not found in candidate config", $templateNode);
-            }
+                    print $padding."* ".DH::elementToPanXPath($templateNode)." (defined in template but missing in Firewall config)\n";}
             else
                 diffNodes($templateNode, $candidateNode, $padding);
         }
@@ -194,6 +194,7 @@ function diffNodes(DOMElement $template, DOMElement $candidate, $padding)
         foreach( $manualCheckXpathList as $excludeXPath )
         {
             $xpathResults = DH::findXPath('/config/template' . $excludeXPath, $template->ownerDocument);
+            #$xpathResults = DH::findXPath( $excludeXPath, $template);
 
             foreach( $xpathResults as $searchNode )
             {
@@ -239,33 +240,41 @@ function checkFirewallOverride($apiConnector, $padding)
     try
     {
         $candidateDoc = $apiConnector->sendSimpleRequest($request);
+
+        print "OK!\n";
+
+        print $padding." - Looking for root /config xpath...";
+        $configRoot = DH::findXPathSingleEntryOrDie('/response/result/config', $candidateDoc);
+        print "OK!\n";
+
+        DH::makeElementAsRoot($configRoot, $candidateDoc);
+
+        print $padding." - Looking for root /config/template/config xpath...";
+        $templateRoot = DH::findXPathSingleEntry('template/config', $configRoot);
+
+        print "OK!\n";
+
+        if( $templateRoot === FALSE )
+        {
+            echo $padding." - SKIPPED because no template applied!\n";
+        }
+        else
+        {
+            print "\n";
+
+            print $padding . " ** Looking for overrides **\n";
+
+            diffNodes($templateRoot, $configRoot, $padding);
+        }
     }
     catch(Exception $e)
     {
         PH::disableExceptionSupport();
-        print $padding." ***** API Error occured : ".$e->getMessage()."\n\n";
+        print $padding." ***** an error occured : ".$e->getMessage()."\n\n";
         return;
     }
+
     PH::disableExceptionSupport();
-
-    print "OK!\n";
-
-
-    print $padding." - Looking for root /config xpath...";
-    $configRoot = DH::findXPathSingleEntryOrDie('/response/result/config', $candidateDoc);
-    print "OK!\n";
-
-    DH::makeElementAsRoot($configRoot, $candidateDoc);
-
-    print $padding." - Looking for root /config/template/config xpath...";
-    $templateRoot = DH::findXPathSingleEntryOrDie('template/config', $configRoot);
-    print "OK!\n";
-
-    print "\n";
-
-    print $padding." ** Looking for overrides **\n";
-
-    diffNodes($templateRoot, $configRoot, $padding);
 }
 
 if($cycleConnectedFirewalls)

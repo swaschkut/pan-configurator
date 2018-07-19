@@ -1,7 +1,6 @@
 <?php
 /*
- * Copyright (c) 2014-2015 Palo Alto Networks, Inc. <info@paloaltonetworks.com>
- * Author: Christophe Painchaud <cpainchaud _AT_ paloaltonetworks.com>
+ * Copyright (c) 2014-2017 Christophe Painchaud <shellescape _AT_ gmail.com>
  *
  * Permission to use, copy, modify, and distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -20,7 +19,7 @@
 /**
  * Class InterfaceContainer
  * @property VirtualSystem|Zone|VirtualRouter|PbfRule|DosRule $owner
- * @property EthernetInterface[]|AggregateEthernetInterface[]|LoopbackInterface[]|IPsecTunnel[] $o
+ * @property EthernetInterface[]|AggregateEthernetInterface[]|LoopbackInterface[]|TunnelInterface[],IPsecTunnel[] $o
  */
 class InterfaceContainer extends ObjRuleContainer
 {
@@ -57,7 +56,7 @@ class InterfaceContainer extends ObjRuleContainer
     }
 
     /**
-     * @return EthernetInterface[]|AggregateEthernetInterface[]|LoopbackInterface[]|IPsecTunnel[]
+     * @return EthernetInterface[]|AggregateEthernetInterface[]|LoopbackInterface[]|TunnelInterface[]|IPsecTunnel[]
      */
     public function interfaces()
     {
@@ -100,4 +99,25 @@ class InterfaceContainer extends ObjRuleContainer
         return true;
     }
 
+
+    /**
+     * @param EthernetInterface|AggregateEthernetInterface|LoopbackInterface|IPsecTunnel $if
+     * @return bool
+     */
+    public function API_addInterface($if)
+    {
+        //TODO: check how to implement
+        if( $this->addInterface( $if ) )
+        {
+            $con = findConnectorOrDie($this);
+
+            $xpath = $this->owner->getXPath().'/import/network/interface';
+            $importRoot = DH::findFirstElementOrDie('import', $this->owner->xmlroot);
+            $networkRoot = DH::findFirstElementOrDie('network', $importRoot);
+            $importIfRoot = DH::findFirstElementOrDie('interface', $networkRoot);
+            $con->sendEditRequest($xpath, DH::dom_to_xml($importIfRoot, -1, false) );
+        }
+
+        return true;
+    }
 }

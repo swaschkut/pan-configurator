@@ -1,8 +1,7 @@
 <?php
 
 /*
- * Copyright (c) 2014-2015 Palo Alto Networks, Inc. <info@paloaltonetworks.com>
- * Author: Christophe Painchaud <cpainchaud _AT_ paloaltonetworks.com>
+ * Copyright (c) 2014-2017 Christophe Painchaud <shellescape _AT_ gmail.com>
  *
  * Permission to use, copy, modify, and distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -166,16 +165,21 @@ class AddressRuleContainer extends ObjRuleContainer
 
     public function API_sync()
     {
+        $con = findConnectorOrDie($this);
+
         if( $this->name == 'snathosts' )
         {
-            $xpath = DH::elementToPanXPath($this->xmlroot);
+            $xpath = $this->owner->getXPath().'/source-translation';
+            $sourceNatRoot = DH::findFirstElementOrDie('source-translation', $this->owner->xmlroot);
+            $con->sendEditRequest($xpath, DH::dom_to_xml($sourceNatRoot, -1, false) );
         }
         else
         {
             $xpath = &$this->getXPath();
+            $con->sendEditRequest($xpath, $this->getXmlText_inline());
         }
-        $con = findConnectorOrDie($this);
-        $con->sendEditRequest($xpath, $this->getXmlText_inline());
+
+
     }
 
     public function setAny()
@@ -279,7 +283,7 @@ class AddressRuleContainer extends ObjRuleContainer
     /**
      * return 0 if not match, 1 if this object is fully included in $network, 2 if this object is partially matched by $ref.
      * Always return 0 (not match) if this is object = ANY
-     * @param string $network ie: 192.168.0.2/24, 192.168.0.2,192.168.0.2-192.168.0.4
+     * @param string|IP4Map $network ie: 192.168.0.2/24, 192.168.0.2,192.168.0.2-192.168.0.4
      * @return int
      */
     public function  includedInIP4Network($network)
@@ -573,6 +577,9 @@ class AddressRuleContainer extends ObjRuleContainer
      */
     public function getIP4Mapping()
     {
+        if( $this->isAny() )
+            return IP4Map::mapFromText('0.0.0.0/0');
+
         $mapObject = new IP4Map();
 
         foreach( $this->o as $member )

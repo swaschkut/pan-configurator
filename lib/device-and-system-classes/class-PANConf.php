@@ -1,7 +1,6 @@
 <?php
 /*
- * Copyright (c) 2014-2015 Palo Alto Networks, Inc. <info@paloaltonetworks.com>
- * Author: Christophe Painchaud <cpainchaud _AT_ paloaltonetworks.com>
+ * Copyright (c) 2014-2017 Christophe Painchaud <shellescape _AT_ gmail.com>
  *
  * Permission to use, copy, modify, and distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -220,6 +219,28 @@ class PANConf
             $tmp = DH::findFirstElementOrCreate('service-group', $this->sharedroot);
             $this->serviceStore->load_servicegroups_from_domxml($tmp);
             // End of address groups extraction
+
+            //
+            // Extract application
+            //
+            $tmp = DH::findFirstElementOrCreate('application', $this->sharedroot);
+            $this->appStore->load_application_custom_from_domxml($tmp);
+            // End of address extraction
+
+            //
+            // Extract application filter
+            //
+            $tmp = DH::findFirstElementOrCreate('application-filter', $this->sharedroot);
+            $this->appStore->load_application_filter_from_domxml($tmp);
+            // End of application filter groups extraction
+
+            //
+            // Extract application groups
+            //
+            $tmp = DH::findFirstElementOrCreate('application-group', $this->sharedroot);
+            $this->appStore->load_application_group_from_domxml($tmp);
+            // End of address groups extraction
+
         }
 
 		//
@@ -379,6 +400,7 @@ class PANConf
 		$numDecryptRules = 0;
         $numAppOverrideRules = 0;
         $numCaptivePortalRules = 0;
+        $numAuthenticationRules = 0;
         $numDosRules = 0;
 
 
@@ -410,6 +432,7 @@ class PANConf
 			$numDecryptRules += $vsys->decryptionRules->count();
             $numAppOverrideRules += $vsys->appOverrideRules->count();
             $numCaptivePortalRules += $vsys->captivePortalRules->count();
+            $numAuthenticationRules += $vsys->authenticationRules->count();
             $numDosRules += $vsys->dosRules->count();
 
 			$gnservices += $vsys->serviceStore->countServices();
@@ -438,11 +461,13 @@ class PANConf
 
         print "- ".$numPbfRules." Pbf Rules\n";
 
-		print "- ".$numDecryptRules." Deryption Rules\n";
+		print "- ".$numDecryptRules." Decryption Rules\n";
 
         print "- ".$numAppOverrideRules." AppOverride Rules\n";
 
         print "- ".$numCaptivePortalRules." CaptivePortal Rules\n";
+
+        print "- ".$numAuthenticationRules." Authentication Rules\n";
 
         print "- ".$numDosRules." Dos Rules\n";
 

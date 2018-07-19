@@ -1,7 +1,6 @@
 <?php
 /*
- * Copyright (c) 2014-2015 Palo Alto Networks, Inc. <info@paloaltonetworks.com>
- * Author: Christophe Painchaud <cpainchaud _AT_ paloaltonetworks.com>
+ * Copyright (c) 2014-2017 Christophe Painchaud <shellescape _AT_ gmail.com>
  *
  * Permission to use, copy, modify, and distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -28,12 +27,18 @@ class SecurityRule extends RuleWithUserID
 
 	protected $logSetting = false;
 
+	/** @var null|DOMElement  */
+    protected $categoryroot = null;
+
+    /** @var string[]  */
+	protected $_urlCategories = Array();
+
     protected $dsri = false;
 
 	protected $secproftype = 'none';
 
     /** @var null|string[]|DOMElement */
-	protected $secprofroot = null;
+	public $secprofroot = null;
 	protected $secprofgroup = null;
 	protected $secprofProfiles = Array();
 
@@ -229,6 +234,21 @@ class SecurityRule extends RuleWithUserID
         // End of <rule-type>
 
         $this->userID_loadUsersFromXml();
+
+
+        //
+        // Begin <category> extraction
+        //
+
+        /*     <category> <member>adult</member></category>      */
+
+        $this->categoryroot = DH::findFirstElement('category', $xml);
+        if( $this->categoryroot === false )
+            $this->categoryroot = null;
+        else
+            $this->extract_category_from_domxml();
+
+        // End of <category>
 	}
 
 
@@ -278,6 +298,35 @@ class SecurityRule extends RuleWithUserID
         return $ret;
     }
 
+
+    protected function extract_category_from_domxml()
+    {
+        $xml = $this->categoryroot;
+
+        foreach( $xml->childNodes as $url_category )
+        {
+            if( $url_category->nodeType != XML_ELEMENT_NODE ) continue;
+
+            $value = $url_category->textContent;
+            if( strlen($value) < 1 )
+            {
+                mwarning('This rule has empty URL Category, please check your configuration file (corrupted?):', $url_category);
+                continue;
+            }
+            $this->_urlCategories[$value] = $value;
+        }
+
+        if( isset($this->_urlCategories['any']) )
+        {
+            if( count($this->_urlCategories) != 1 )
+                mwarning('This security rule has URL category = ANY but it also have categories defined. '.
+                    'Please check your configuration file (corrupted?). *ANY* will be assumed by this framework', $xml);
+            $this->_urlCategories = Array();
+        }
+
+    }
+
+
 	/**
 	*
 	* @ignore
@@ -311,7 +360,7 @@ class SecurityRule extends RuleWithUserID
 				//print "Group name: ".$this->secprofgroup."\n";
 			}
 		}
-		else if( $profilesRoot !== FALSE )
+		elseif( $profilesRoot !== FALSE )
 		{
 			//print "Found SecProf <profiles> tag\n";
 			$this->secproftype = 'profile';
@@ -343,16 +392,17 @@ class SecurityRule extends RuleWithUserID
         if( $this->secproftype == 'none' )
             return true;
 
-        if( $this->secproftype == 'group' )
+        if( $this->secproftype == 'group' && $this->secprofgroup !== null )
             return false;
 
-        if( !is_array($this->secprofProfiles) )
-            return true;
+        if( $this->secproftype == 'profile')
+        {
+            if( is_array($this->secprofProfiles) && count($this->secprofProfiles) > 0 )
+                return false;
 
-        if( count($this->secprofProfiles) < 1 )
-            return true;
+        }
 
-        return false;
+        return true;
 
     }
 
@@ -445,6 +495,8 @@ class SecurityRule extends RuleWithUserID
 		$this->secprofProfiles['virus'] = $newAVprof;
 
 		$this->rewriteSecProfXML();
+
+		return true;
 	}
 
 	public function setSecProf_Vuln( $newAVprof )
@@ -454,6 +506,8 @@ class SecurityRule extends RuleWithUserID
 		$this->secprofProfiles['vulnerability'] = $newAVprof;
 
 		$this->rewriteSecProfXML();
+
+		return true;
 	}
 
 	public function setSecProf_URL( $newAVprof )
@@ -463,6 +517,8 @@ class SecurityRule extends RuleWithUserID
 		$this->secprofProfiles['url-filtering'] = $newAVprof;
 
 		$this->rewriteSecProfXML();
+
+		return true;
 	}
 
 	public function setSecProf_DataFilt( $newAVprof )
@@ -472,6 +528,8 @@ class SecurityRule extends RuleWithUserID
 		$this->secprofProfiles['data-filtering'] = $newAVprof;
 
 		$this->rewriteSecProfXML();
+
+		return true;
 	}
 
 	public function setSecProf_FileBlock( $newAVprof )
@@ -481,6 +539,8 @@ class SecurityRule extends RuleWithUserID
 		$this->secprofProfiles['file-blocking'] = $newAVprof;
 
 		$this->rewriteSecProfXML();
+
+		return true;
 	}
 
 	public function setSecProf_Spyware( $newAVprof )
@@ -490,7 +550,20 @@ class SecurityRule extends RuleWithUserID
 		$this->secprofProfiles['spyware'] = $newAVprof;
 
 		$this->rewriteSecProfXML();
+
+		return true;
 	}
+
+    public function setSecProf_Wildfire( $newAVprof )
+    {
+        $this->secproftype = 'profiles';
+        $this->secprofgroup = null;
+        $this->secprofProfiles['wildfire-analysis'] = $newAVprof;
+
+        $this->rewriteSecProfXML();
+
+        return true;
+    }
 
 	public function rewriteSecProfXML()
 	{
@@ -530,6 +603,26 @@ class SecurityRule extends RuleWithUserID
 			DH::removeChild($this->xmlroot, $this->secprofroot);
 
 	}
+
+
+    public function urlCategories()
+    {
+        return $this->_urlCategories;
+    }
+
+    public function urlCategoryIsAny()
+    {
+        return count($this->_urlCategories) == 0;
+    }
+
+    /**
+     * @param string $category
+     * @return bool return TRUE if this rule is using the category defined in $category
+     */
+    public function urlCategoriesHas($category)
+    {
+        return isset($this->_urlCategories[$category]);
+    }
 
 
 	public function action()
@@ -800,6 +893,8 @@ class SecurityRule extends RuleWithUserID
 
         if( strlen($this->_description) > 0 )
             print $padding."  Desc:  ".$this->_description."\n";
+        else
+            print $padding."  Desc:  \n";
 
         if( !$this->securityProfileIsBlank() )
         {
@@ -813,6 +908,32 @@ class SecurityRule extends RuleWithUserID
                 print "\n";
             }
         }
+        else
+            print $padding."  SecurityProfil:\n";
+
+
+        print $padding."  LogSetting: ";
+        if( !empty( $this->logSetting() ) )
+            print "[LogProfile] => '".$this->logSetting(). "'";
+        print " ( ";
+        if( $this->logStart() )
+            print "log at start";
+        if( $this->logStart() && $this->logEnd() )
+            print " - ";
+        if( $this->logEnd() )
+            print "log at end";
+        print " ) \n";
+
+
+        print $padding."  URL Category: ";
+        if( !empty($this->_urlCategories) )
+            print PH::list_to_string($this->_urlCategories)."\n";
+        else
+            echo "*ANY*\n";
+
+        if( $this->dsri )
+            print $padding."  DSRI: disabled\n";
+
 		print "\n";
 	}
 
@@ -976,6 +1097,26 @@ class SecurityRule extends RuleWithUserID
                 $type = 'traffic';
         }
 
+        if( $parentClass == 'DeviceGroup' && $con->info_PANOS_version_int < 80)
+        {
+            $deviceClass = get_class($this->owner->owner->owner);
+            if( $deviceClass == 'PanoramaConf')
+            {
+                $connected_devices = $this->owner->owner->owner->managedFirewallsSerialsModel;
+                foreach( $this->owner->owner->getDevicesInGroup(TRUE) as $serial => $device )
+                {
+                    if( strpos( $connected_devices[$serial]['model'], 'PA-70') !== false  )
+                    {
+                        if( $fastMode )
+                            $type = 'trsum';
+                        else
+                            $type = 'traffic';
+                    }
+                }
+            }
+        }
+
+
         $excludedAppsString = '';
 
         $first = true;
@@ -990,18 +1131,22 @@ class SecurityRule extends RuleWithUserID
 
         if( $parentClass == 'VirtualSystem' )
         {
-            $dvq = ' and (vsys eq '.$this->owner->owner->name().')';
+            $dvq = ' and (vsys eq ' . $this->owner->owner->name() . ')';
 
         }
-        else
+        else if( $con->info_PANOS_version_int < 71 )
         {
-            $devices = $this->owner->owner->getDevicesInGroup();
+            // if PANOS < 7.1 then you need to list each device serial number
+            $devices = $this->owner->owner->getDevicesInGroup(TRUE);
 
             if( count($devices) == 0 )
                 derr('cannot request rule stats for a device group that has no member');
 
-            $dvq = ' and ('.array_to_devicequery($devices).')';
-
+            $dvq = ' and (' . array_to_devicequery($devices) . ')';
+        }
+        else
+        {
+            $dvq = " and ( device-group eq '{$this->owner->owner->name()}')";
         }
 
         $repeatOrCount = 'sessions';
@@ -1041,7 +1186,7 @@ class SecurityRule extends RuleWithUserID
     }
 
 
-	public function &API_getServiceStats($timePeriod, $specificApps=null)
+	public function &API_getServiceStats($timePeriod = 'last-30-days', $fastMode = true, $limit = 50, $specificApps=null)
 	{
 		$con = findConnectorOrDie($this);
 
@@ -1077,16 +1222,25 @@ class SecurityRule extends RuleWithUserID
 
 		$parentClass = get_class($this->owner->owner);
 
+        if( $fastMode )
+            $type = 'panorama-trsum';
+        else
+            $type = 'panorama-traffic';
+
+        if( $parentClass == 'VirtualSystem' )
+        {
+            if( $fastMode )
+                $type = 'trsum';
+            else
+                $type = 'traffic';
+        }
+
 		if( $parentClass == 'VirtualSystem' )
 		{
-			$type = 'traffic';
 			$dvq = '(vsys eq '.$this->owner->owner->name().')';
-
 		}
 		else
 		{
-			$type = 'panorama-traffic';
-
 			$devices = $this->owner->owner->getDevicesInGroup();
 			//print_r($devices);
 
@@ -1098,12 +1252,11 @@ class SecurityRule extends RuleWithUserID
 			$dvq = '('.array_to_devicequery($devices).')';
 		}
 
-		$query = 'type=report&reporttype=dynamic&reportname=custom-dynamic-report&cmd=<type>'
-		         .'<'.$type.'><aggregate-by><member>proto</member><member>dport</member></aggregate-by>'
-		         .'</'.$type.'></type><period>'.$timePeriod.'</period>'
-		         .'<topn>100</topn><topm>500</topm><caption>untitled</caption>'
-		         .'<query>'."$dvq $query_appfilter and (rule eq '".$this->name."')</query>";
-
+        $query = "<type>"
+            ."<".$type."><aggregate-by><member>proto</member><member>dport</member></aggregate-by>"
+            ."</".$type."></type><period>".$timePeriod."</period>"
+            ."<topn>{$limit}</topn><topm>50</topm><caption>untitled</caption>"
+            ."<query>"."$dvq $query_appfilter and (rule eq '".$this->name."')</query>";
 
         $apiArgs = Array();
         $apiArgs['type'] = 'report';
@@ -1116,6 +1269,73 @@ class SecurityRule extends RuleWithUserID
 
 		return $ret;
 	}
+
+    public function &API_getAddressStats($timePeriod = 'last-30-days', $srcORdst = 'src', $fastMode = true, $limit = 50, $excludedAddresses = Array())
+    {
+        $con = findConnectorOrDie($this);
+
+        $parentClass = get_class($this->owner->owner);
+
+        if( $fastMode )
+            $type = 'panorama-trsum';
+        else
+            $type = 'panorama-traffic';
+
+        if( $parentClass == 'VirtualSystem' )
+        {
+            if( $fastMode )
+                $type = 'trsum';
+            else
+                $type = 'traffic';
+        }
+        
+        if( $parentClass == 'VirtualSystem' )
+        {
+            $dvq = '(vsys eq '.$this->owner->owner->name().')';
+        }
+        else
+        {
+            $devices = $this->owner->owner->getDevicesInGroup();
+            //print_r($devices);
+
+            $first = true;
+
+            if( count($devices) == 0 )
+                derr('cannot request rule stats for a device group that has no member');
+
+            $dvq = '('.array_to_devicequery($devices).')';
+        }
+
+        $excludedAppsString = '';
+
+        $first = true;
+        foreach( $excludedAddresses as &$e )
+        {
+            if( !$first )
+                $excludedAppsString .= ' and ';
+
+            $excludedAppsString .= "(app neq $e)";
+            $first = false;
+        }
+
+        $query = "<type>"
+            ."<".$type."><aggregate-by><member>".$srcORdst."</member></aggregate-by>"
+            ."</".$type."></type><period>".$timePeriod."</period>"
+            ."<topn>{$limit}</topn><topm>50</topm><caption>untitled</caption>"
+            ."<query>"."$dvq {$excludedAppsString} and (rule eq '".$this->name."')</query>";
+
+
+        $apiArgs = Array();
+        $apiArgs['type'] = 'report';
+        $apiArgs['reporttype'] = 'dynamic';
+        $apiArgs['reportname'] = 'custom-dynamic-report';
+        $apiArgs['async'] = 'yes';
+        $apiArgs['cmd'] = $query;
+
+        $ret = $con->getReport($apiArgs);
+
+        return $ret;
+    }
 
 	public function cleanForDestruction()
 	{
@@ -1153,6 +1373,68 @@ class SecurityRule extends RuleWithUserID
         return 'security';
     }
 
+    /**
+     * For developer use only
+     *
+     */
+    protected function rewriteSDsri_XML()
+    {
+        if( $this->dsri )
+        {
+            $find_option = DH::findFirstElementOrCreate('option', $this->xmlroot);
+            $this->xmlroot = $find_option;
+            $find = DH::findFirstElementOrCreate('disable-server-response-inspection', $this->xmlroot);
+            DH::setDomNodeText($find, 'yes');
+        }
+        else
+        {
+            $find_option = DH::findFirstElementOrCreate('option', $this->xmlroot);
+            $this->xmlroot = $find_option;
+            $find = DH::findFirstElementOrCreate('disable-server-response-inspection', $this->xmlroot);
+            DH::setDomNodeText($find, 'no');
+        }
+    }
+    
+    /**
+     * disable rule if $disabled = true, enable it if not
+     * @param bool $disabled
+     * @return bool true if value has changed
+     */
+    public function setDsri($dsri)
+    {
+        $old = $this->dsri;
+        $this->dsri = $dsri;
+
+        if( $dsri != $old )
+        {
+            $this->rewriteSDsri_XML();
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * disable rule if $dsri = true, enable it if not
+     * @param bool $dsri
+     * @return bool true if value has changed
+     */
+    public function API_setDsri($dsri)
+    {
+        $ret = $this->setDsri($dsri);
+
+        if( $ret )
+        {
+            $xpath = $this->getXPath().'/option/disable-server-response-inspection';
+            $con = findConnectorOrDie($this);
+            if( $this->dsri )
+                $con->sendEditRequest( $xpath, '<disable-server-response-inspection>yes</disable-server-response-inspection>');
+            else
+                $con->sendEditRequest( $xpath, '<disable-server-response-inspection>no</disable-server-response-inspection>');
+        }
+
+        return $ret;
+    }
 
     static public $templatexml = '<entry name="**temporarynamechangeme**"><option><disable-server-response-inspection>no</disable-server-response-inspection></option><from><member>any</member></from><to><member>any</member></to>
 <source><member>any</member></source><destination><member>any</member></destination><source-user><member>any</member></source-user><category><member>any</member></category><application><member>any</member></application><service><member>any</member>

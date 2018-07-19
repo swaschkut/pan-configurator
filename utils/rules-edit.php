@@ -1,8 +1,7 @@
 <?php
 
 /*
- * Copyright (c) 2014-2015 Palo Alto Networks, Inc. <info@paloaltonetworks.com>
- * Author: Christophe Painchaud <cpainchaud _AT_ paloaltonetworks.com>
+ * Copyright (c) 2014-2017 Christophe Painchaud <shellescape _AT_ gmail.com>
  *
  * Permission to use, copy, modify, and distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -109,6 +108,7 @@ if( isset(PH::$args['loadplugin']) )
     $pluginFile = PH::$args['loadplugin'];
     print " * loadPlugin was used. Now loading file: '{$pluginFile}'...";
     require_once $pluginFile;
+    RuleCallContext::prepareSupportedActions();
     print "OK!\n";
 }
 
@@ -186,7 +186,7 @@ if( isset(PH::$args['listactions']) )
 {
     ksort(RuleCallContext::$supportedActions);
 
-    print "Listing of supported actions:\n\n";
+    print "Listing of supported actions (".count(RuleCallContext::$supportedActions)." available):\n\n";
 
     print str_pad('', 100, '-')."\n";
     print str_pad('Action name', 28, ' ', STR_PAD_BOTH)."|".str_pad("Argument:Type",24, ' ', STR_PAD_BOTH)." |".
@@ -235,7 +235,13 @@ if( isset(PH::$args['listfilters']) )
 {
     ksort(RQuery::$defaultFilters['rule']);
 
-    print "Listing of supported filters:\n\n";
+    $countItems = 0;
+    foreach(RQuery::$defaultFilters['rule'] as $index => &$filter )
+    {
+        $countItems += count($filter['operators']);
+    }
+
+    print "Listing of supported filters ({$countItems} available):\n\n";
 
     foreach(RQuery::$defaultFilters['rule'] as $index => &$filter )
     {
@@ -411,7 +417,7 @@ if( $configType == 'panos' )
         $inputConnector->refreshSystemInfos();
         $newDGRoot = $xpathResult->item(0);
         $panoramaString = "<config version=\"{$inputConnector->info_PANOS_version}\"><shared></shared><devices><entry name=\"localhost.localdomain\"><device-group>".DH::domlist_to_xml($newDGRoot->childNodes)."</device-group></entry></devices></config>";
-        print $panoramaString;
+        #print $panoramaString;
         $fakePanorama->load_from_xmlstring($panoramaString);
 
         $pan = new PANConf($fakePanorama);
@@ -453,7 +459,7 @@ else
 //
 // Determine rule types
 //
-$supportedRuleTypes = Array('all', 'any', 'security', 'nat', 'decryption', 'appoverride', 'captiveportal', 'pbf', 'qos', 'dos');
+$supportedRuleTypes = Array('all', 'any', 'security', 'nat', 'decryption', 'appoverride', 'captiveportal', 'authentication', 'pbf', 'qos', 'dos');
 if( !isset(PH::$args['ruletype'])  )
 {
     print " - No 'ruleType' specified, using 'security' by default\n";
@@ -618,6 +624,10 @@ foreach( $rulesLocation as $location )
                     {
                         $rulesToProcess[] = Array('store' => $sub->captivePortalRules, 'rules' => $sub->captivePortalRules->resultingRuleSet());
                     }
+                    if( array_search('any', $ruleTypes) !== false || array_search('authentication', $ruleTypes) !== false )
+                    {
+                        $rulesToProcess[] = Array('store' => $sub->authenticationRules, 'rules' => $sub->authenticationRules->resultingRuleSet());
+                    }
                     if( array_search('any', $ruleTypes) !== false || array_search('dos', $ruleTypes) !== false )
                     {
                         $rulesToProcess[] = Array('store' => $sub->dosRules, 'rules' => $sub->dosRules->resultingRuleSet());
@@ -656,6 +666,10 @@ foreach( $rulesLocation as $location )
                     if( array_search('any', $ruleTypes) !== false || array_search('captiveportal', $ruleTypes) !== false )
                     {
                         $rulesToProcess[] = Array('store' => $sub->captivePortalRules, 'rules' => $sub->captivePortalRules->rules());
+                    }
+                    if( array_search('any', $ruleTypes) !== false || array_search('authentication', $ruleTypes) !== false )
+                    {
+                        $rulesToProcess[] = Array('store' => $sub->authenticationRules, 'rules' => $sub->authenticationRules->rules());
                     }
                     if( array_search('any', $ruleTypes) !== false || array_search('dos', $ruleTypes) !== false )
                     {
@@ -698,6 +712,10 @@ foreach( $rulesLocation as $location )
             {
                 $rulesToProcess[] = Array('store' => $pan->captivePortalRules, 'rules' => $pan->captivePortalRules->rules());
             }
+            if( array_search('any', $ruleTypes) !== false || array_search('authentication', $ruleTypes) !== false )
+            {
+                $rulesToProcess[] = Array('store' => $pan->authenticationRules, 'rules' => $pan->authenticationRules->rules());
+            }
             if( array_search('any', $ruleTypes) !== false || array_search('dos', $ruleTypes) !== false )
             {
                 $rulesToProcess[] = Array('store' => $pan->dosRules, 'rules' => $pan->dosRules->rules());
@@ -737,6 +755,10 @@ foreach( $rulesLocation as $location )
                 {
                     $rulesToProcess[] = Array('store' => $sub->captivePortalRules, 'rules' => $sub->captivePortalRules->rules());
                 }
+                if( array_search('any', $ruleTypes) !== false || array_search('authentication', $ruleTypes) !== false )
+                {
+                    $rulesToProcess[] = Array('store' => $sub->authenticationRules, 'rules' => $sub->authenticationRules->rules());
+                }
                 if( array_search('any', $ruleTypes) !== false || array_search('dos', $ruleTypes) !== false )
                 {
                     $rulesToProcess[] = Array('store' => $sub->dosRules, 'rules' => $sub->dosRules->rules());
@@ -770,6 +792,16 @@ foreach( $rulesLocation as $location )
 }
 // </editor-fold>
 
+
+foreach( $doActions as $doAction )
+{
+    if( $doAction->hasGlobalInitAction() )
+    {
+        $doAction->subSystem = $sub;
+        $doAction->executeGlobalInitAction();
+    }
+
+}
 
 //
 // It's time to process Rules !!!!
@@ -854,7 +886,7 @@ if( isset(PH::$args['stats']) )
     }
 }
 
-print "\n **** PROCESSING OF $totalObjectsProcessed OBJECTS PROCESSED over {$totalObjectsOfSelectedStores} available **** \n\n";
+print "\n **** PROCESSED $totalObjectsProcessed objects over {$totalObjectsOfSelectedStores} available **** \n\n";
 
 // save our work !!!
 if( $configOutput !== null )

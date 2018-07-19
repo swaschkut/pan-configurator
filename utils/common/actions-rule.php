@@ -1,7 +1,6 @@
 <?php
 /*
- * Copyright (c) 2014-2015 Palo Alto Networks, Inc. <info@paloaltonetworks.com>
- * Author: Christophe Painchaud <cpainchaud _AT_ paloaltonetworks.com>
+ * Copyright (c) 2014-2017 Christophe Painchaud <shellescape _AT_ gmail.com>
  *
  * Permission to use, copy, modify, and distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -488,7 +487,7 @@ RuleCallContext::$commonActionFunctions['calculate-zones'] = Array(
 
         if( $addressContainer->isAny() )
         {
-            print $context->padding." - SKIPPED : address continaer is ANY()\n";
+            print $context->padding." - SKIPPED : address container is ANY()\n";
             return;
         }
 
@@ -641,12 +640,41 @@ RuleCallContext::$commonActionFunctions['calculate-zones'] = Array(
                     $zoneContainer->API_sync();
             }
         }
+        elseif( $mode == 'unneeded-tag-add' )
+        {
+            print $context->padding." - UNNEEDED-TAG-ADD MODE: adding rule tag for unneeded zones.";
+
+            if( $addressContainer->isAny() )
+                print " *** IGNORED because value is 'ANY' ***\n";
+            elseif(count($plus) == 0)
+                print " *** IGNORED because no unneeded zones were found ***\n";
+            else
+            {
+                print "\n";
+
+                if( $rule->isNatRule() && $fromOrTo == 'to' )
+                {
+                    derr( $context->padding . ' NAT rules are not supported yet' );
+                }
+
+                if( $fromOrTo == 'from' )
+                    $tag_add = 'unneeded-from-zone';
+                elseif( $fromOrTo == 'to' )
+                    $tag_add = 'unneeded-to-zone';
+
+                $objectFind = $rule->tags->parentCentralStore->findOrCreate( $tag_add );
+                $rule->tags->addTag($objectFind);
+
+                if( $context->isAPI )
+                    $zoneContainer->API_sync();
+            }
+        }
     },
     'args' => Array(    'mode' => Array(    'type' => 'string',
         'default' => 'append',
-        'choices' => Array('replace', 'append', 'show'),
+        'choices' => Array('replace', 'append', 'show', 'unneeded-tag-add'),
         'help' =>   "Will determine what to do with resolved zones : show them, replace them in the rule".
-            " or only append them (removes none but adds missing ones)"
+            " , only append them (removes none but adds missing ones) or tag-add for unneeded zones"
     ),
         'virtualRouter' => Array(   'type' => 'string',
             'default' => '*autodetermine*',
@@ -698,7 +726,7 @@ RuleCallContext::$commonActionFunctions['zone-add'] = Array(
 
         $objectFind = $zoneContainer->parentCentralStore->find($context->arguments['zoneName']);
         if ($objectFind === null && $force == false)
-            derr("zone named '{$context->arguments['zoneName']}' not found");
+            derr("zone named '{$context->arguments['zoneName']}' not found, you can try to use xxx-add-force action instead");
 
         $objectFind = $zoneContainer->parentCentralStore->findOrCreate($context->arguments['zoneName']);
         if ($objectFind === null)
@@ -728,7 +756,7 @@ RuleCallContext::$commonActionFunctions['zone-replace'] = Array(
         if( $fromOrTo == 'from' )
         {
             if( $rule->isPbfRule()  && $rule->isInterfaceBased()
-                || $rule->isDoSRule() && $rule->isZoneBasedFrom() )
+                || $rule->isDoSRule() && !$rule->isZoneBasedFrom() )
             {
                 echo $context->padding." * SKIPPED : TO is Interface based.\n";
                 return;
@@ -742,7 +770,7 @@ RuleCallContext::$commonActionFunctions['zone-replace'] = Array(
                 echo $context->padding." * SKIPPED : there is no TO in PBF rules.\n";
                 return;
             }
-            if( $rule->isDoSRule() && $rule->isZoneBasedTo() )
+            if( $rule->isDoSRule() && !$rule->isZoneBasedTo() )
             {
                 echo $context->padding." * SKIPPED : TO is Interface based.\n";
                 return;
@@ -773,8 +801,26 @@ RuleCallContext::$commonActionFunctions['zone-replace'] = Array(
 
         if ($context->isAPI)
         {
-            $zoneContainer->API_addZone($zoneForReplacement);
-            $zoneContainer->API_removeZone($zoneToReplace);
+            if( $fromOrTo == 'to' && $rule->isNatRule() )
+            {
+                $zoneContainer->addZone($zoneForReplacement);
+                $zoneContainer->removeZone($zoneToReplace);
+                $connector = findConnectorOrDie($rule);
+                $connector->sendEditRequest(DH::elementToPanXPath($zoneContainer->xmlroot), $zoneContainer->xmlroot);
+            }
+            elseif( $fromOrTo == 'from' && $rule->isPbfRule() )
+            {
+                $zoneContainer->addZone($zoneForReplacement);
+                $zoneContainer->removeZone($zoneToReplace);
+                $connector = findConnectorOrDie($rule);
+                $connector->sendEditRequest(DH::elementToPanXPath($zoneContainer->xmlroot), $zoneContainer->xmlroot);
+            }
+            else
+            {
+                $zoneContainer->API_addZone($zoneForReplacement);
+                $zoneContainer->API_removeZone($zoneToReplace);
+            }
+
         }
         else
         {
@@ -785,7 +831,7 @@ RuleCallContext::$commonActionFunctions['zone-replace'] = Array(
     },
     'args' => Array(    'zoneToReplaceName' => Array( 'type' => 'string', 'default' => '*nodefault*' ),
                         'zoneForReplacementName' => Array( 'type' => 'string', 'default' => '*nodefault*' ),
-                        'force' => Array( 'type' => 'boolean', 'default' => 'no')
+                        'force' => Array( 'type' => 'bool', 'default' => 'no')
     )
 );
 
@@ -1203,6 +1249,115 @@ RuleCallContext::$supportedActions[] = Array(
     'args' => Array( 'objName' => Array( 'type' => 'string', 'default' => '*nodefault*' ) ),
 );
 RuleCallContext::$supportedActions[] = Array(
+    'name' => 'src-Remove-Objects-Matching-Filter',
+    'MainFunction' => function(RuleCallContext $context)
+    {
+        $rule = $context->object;
+
+        if( $rule->source->count() < 1 )
+            return;
+
+        $queryName = $context->arguments['filterName'];
+
+        if( !isset($context->nestedQueries[$queryName]) )
+        {
+            derr("cannot find query filter called '{$queryName}'");
+        }
+
+        $rQuery = new RQuery('address');
+        $errorMessage = '';
+        if( !$rQuery->parseFromString($context->nestedQueries[$queryName], $errorMessage) )
+            derr("error while parsing query: {$context->nestedQueries[$queryName]}");
+
+
+        foreach( $rule->source->members() as $member )
+        {
+            if( $rQuery->matchSingleObject($member) )
+            {
+                echo $context->padding."  - removing object '{$member->name()}'... ";
+                if( $context->isAPI )
+                    $rule->source->API_remove($member, true);
+                else
+                    $rule->source->remove($member, true);
+                echo "OK\n";
+            }
+        }
+
+        if( $rule->source->count() < 1 )
+        {
+            echo $context->padding." * no objects remaining so the Rule will be disabled...";
+            if( $context->isAPI )
+                $rule->API_setDisabled(true);
+            else
+                $rule->setDisabled(true);
+            echo "OK\n";
+        }
+
+
+
+    },
+    'args' => Array(    'filterName' => Array( 'type' => 'string', 'default' => '*nodefault*',
+                                                'help' => 'specify the query that will be used to filter the objects to be removed' ),
+    ),
+    'help' => "this action will go through all objects and see if they match the query you input and then remove them if it's the case."
+);
+RuleCallContext::$supportedActions[] = Array(
+    'name' => 'dst-Remove-Objects-Matching-Filter',
+    'MainFunction' => function(RuleCallContext $context)
+    {
+        $rule = $context->object;
+
+        if( $rule->destination->count() < 1 )
+            return;
+
+        $queryName = $context->arguments['filterName'];
+
+        if( !isset($context->nestedQueries[$queryName]) )
+        {
+            derr("cannot find query filter called '{$queryName}'");
+        }
+
+        $rQuery = new RQuery('address');
+        $errorMessage = '';
+        if( !$rQuery->parseFromString($context->nestedQueries[$queryName], $errorMessage) )
+            derr("error while parsing query: {$context->nestedQueries[$queryName]}\nError Message is: {$errorMessage}\n");
+
+
+        foreach( $rule->destination->members() as $member )
+        {
+            if( $rQuery->matchSingleObject($member) )
+            {
+                echo $context->padding."  - removing object '{$member->name()}'... ";
+                if( $context->isAPI )
+                    $rule->destination->API_remove($member, true);
+                else
+                    $rule->destination->remove($member, true);
+                echo "OK\n";
+            }
+        }
+
+        if( $rule->destination->count() < 1 )
+        {
+            echo $context->padding." * no objects remaining so the Rule will be disabled...";
+            if( $context->isAPI )
+                $rule->API_setDisabled(true);
+            else
+                $rule->setDisabled(true);
+            echo "OK\n";
+        }
+
+
+
+    },
+    'args' => Array(    'filterName' => Array( 'type' => 'string', 'default' => '*nodefault*',
+        'help' => 'specify the query that will be used to filter the objects to be removed' ),
+    ),
+    'help' => "this action will go through all objects and see if they match the query you input and then remove them if it's the case."
+);
+
+
+
+RuleCallContext::$supportedActions[] = Array(
     'name' => 'src-Remove-Force-Any',
     'section' => 'address',
     'MainFunction' => function(RuleCallContext $context)
@@ -1365,12 +1520,20 @@ RuleCallContext::$supportedActions[] = Array(
         else
             $objectFind = $rule->tags->parentCentralStore->findOrCreate($context->arguments['tagName']);
 
+        if( $context->arguments['tagColor'] != 'none' )
+        {
+            if( $context->isAPI )
+                $objectFind->API_setColor( $context->arguments['tagColor'] );
+            else
+                $objectFind->setColor( $context->arguments['tagColor'] );
+        }
+
         if( $context->isAPI )
             $rule->tags->API_addTag($objectFind);
         else
             $rule->tags->addTag($objectFind);
     },
-    'args' => Array( 'tagName' => Array( 'type' => 'string', 'default' => '*nodefault*' ) ),
+    'args' => Array( 'tagName' => Array( 'type' => 'string', 'default' => '*nodefault*' ), 'tagColor' => Array( 'type' => 'string', 'default' => 'none' ) ),
 );
 RuleCallContext::$supportedActions[] = Array(
     'name' => 'tag-Remove',
@@ -1537,7 +1700,39 @@ RuleCallContext::$supportedActions[] = Array(
     'MainFunction' => function(RuleCallContext $context)
     {
         $rule = $context->object;
-        $objectFind = $rule->apps->parentCentralStore->find($context->arguments['appName']);
+
+        foreach($context->arguments['appName'] as $appName)
+        {
+            $objectFind = $rule->apps->parentCentralStore->find($appName);
+            if( $objectFind === null )
+                derr("application named '{$appName}' not found");
+
+            echo $context->padding." - adding application '{$appName}'... ";
+
+            if( $context->isAPI )
+                $rule->apps->API_addApp($objectFind);
+            else
+                $rule->apps->addApp($objectFind);
+
+            echo "OK\n";
+        }
+
+    },
+    'args' => Array( 'appName' => Array( 'type' => 'pipeSeparatedList',
+                                        'subtype' => 'string',
+                                        'default' => '*nodefault*',
+                                        'help' => "pipe(|) separated list of additional field to include in the report. The following is available:\n".
+                                            "  - ResolveAddressSummary : fields with address objects will be resolved to IP addressed and summarized in a new column)\n")
+
+            ),
+);
+RuleCallContext::$supportedActions[] = Array(
+    'name' => 'app-Add-Force',
+    'section' => 'app',
+    'MainFunction' => function(RuleCallContext $context)
+    {
+        $rule = $context->object;
+        $objectFind = $rule->apps->parentCentralStore->findorCreate($context->arguments['appName']);
         if( $objectFind === null )
             derr("application named '{$context->arguments['appName']}' not found");
 
@@ -1582,7 +1777,52 @@ RuleCallContext::$supportedActions[] = Array(
     },
     'args' => Array( 'appName' => Array( 'type' => 'string', 'default' => '*nodefault*' ) ),
 );
+RuleCallContext::$supportedActions[] = Array(
+    'name' => 'app-Fix-Dependencies',
+    'MainFunction' => function(RuleCallContext $context)
+    {
+        $rule = $context->object;
 
+        if( !$rule->isSecurityRule() )
+            return null;
+
+        if( $rule->apps->count() < 1 )
+            return null;
+
+        if( !$rule->actionIsAllow() )
+            return null;
+
+        $app_depends_on = array();
+        $app_array = array();
+        foreach($rule->apps->membersExpanded() as $app)
+        {
+            $app_array[ $app->name() ] = $app->name();
+            foreach( $app->calculateDependencies() as $dependency )
+            {
+                $app_depends_on[ $dependency->name() ] = $dependency->name();
+            }
+        }
+
+        foreach( $app_depends_on as $app => $dependencies )
+        {
+            if( !isset( $app_array[ $app ] ) )
+            {
+                $add_app = $rule->owner->owner->appStore->find( $app );
+                if( $context->arguments['fix'] )
+                {
+                    if( $context->isAPI )
+                        $rule->apps->API_addApp( $add_app );
+                    else
+                        $rule->apps->addApp( $add_app );
+                }
+
+                print "        - app-id: ".$app." is missing in rule\n";
+            }
+        }
+    },
+    'args' => Array(  'fix' => Array( 'type' => 'bool', 'default' => 'no'  ), )
+
+);
 
 //                                                 //
 //               Target based Actions                 //
@@ -1651,7 +1891,7 @@ RuleCallContext::$supportedActions[] = Array(
 
     },
     'args' => Array(    'serial' => Array( 'type' => 'string', 'default' => '*nodefault*'  ),
-                        'vsys' => Array( 'type' => 'string', 'default' => '*NULL*'  )
+                        'vsys' => Array( 'type' => 'string', 'default' => '*NULL*', 'help' => 'if target firewall is single VSYS you should ignore this argument, otherwise just input it'  )
                         ),
 );
 RuleCallContext::$supportedActions[] = Array(
@@ -1949,6 +2189,60 @@ RuleCallContext::$supportedActions[] = Array(
     'args' => Array( 'profName' => Array( 'type' => 'string', 'default' => '*nodefault*' ) )
 );
 RuleCallContext::$supportedActions[] = Array(
+    'name' => 'securityProfile-Profile-Set',
+    'MainFunction' =>  function(RuleCallContext $context)
+    {
+        $rule = $context->object;
+
+        $type = $context->arguments['type'];
+        $profName = $context->arguments['profName'];
+
+        if( !$rule->isSecurityRule() )
+        {
+            print $context->padding."  - SKIPPED : this is not a Security rule\n";
+            return;
+        }
+
+        $ret = true;
+
+        if( $type == 'virus' )
+            $ret = $rule->setSecProf_AV($profName);
+        elseif( $type == 'vulnerability' )
+            $ret = $rule->setSecProf_Vuln($profName);
+        elseif( $type == 'url-filtering' )
+            $ret = $rule->setSecProf_URL($profName);
+        elseif( $type == 'data-filtering' )
+            $ret = $rule->setSecProf_DataFilt($profName);
+        elseif( $type == 'file-blocking' )
+            $ret = $rule->setSecProf_FileBlock($profName);
+        elseif( $type == 'spyware' )
+            $ret = $rule->setSecProf_Spyware($profName);
+        elseif( $type == 'wildfire' )
+            $ret = $rule->setSecProf_Wildfire($profName);
+        else
+            derr("unsupported profile type '{$type}'");
+
+        if( !$ret ){
+            echo $context->padding." * SKIPPED : no change detected\n";
+            return;
+        }
+
+
+        if( $context->isAPI )
+        {
+            $xpath = $rule->getXPath() . '/profile-setting';
+            $con = findConnectorOrDie($rule);
+            $con->sendEditRequest($xpath, DH::dom_to_xml($rule->secprofroot, false));
+        }
+        else
+            $rule->rewriteSecProfXML();
+
+    },
+    'args' => Array(    'type' => Array( 'type' => 'string', 'default' => '*nodefault*',
+                                            'choices' => Array( 'virus','vulnerability','url-filtering','data-filtering','file-blocking', 'spyware', 'wildfire')  ),
+                        'profName' => Array( 'type' => 'string', 'default' => '*nodefault*' ) )
+);
+RuleCallContext::$supportedActions[] = Array(
     'name' => 'securityProfile-Remove',
     'MainFunction' =>  function(RuleCallContext $context)
     {
@@ -1964,6 +2258,32 @@ RuleCallContext::$supportedActions[] = Array(
             $rule->API_removeSecurityProfile();
         else
             $rule->removeSecurityProfile();
+    },
+);
+RuleCallContext::$supportedActions[] = Array(
+    'name' => 'securityProfile-Remove-FastAPI',
+    'MainFunction' =>  function(RuleCallContext $context)
+    {
+        $rule = $context->object;
+
+        if( !$rule->isSecurityRule() )
+        {
+            print $context->padding."  - SKIPPED : this is not a Security rule\n";
+            return;
+        }
+
+        if( !$context->isAPI )
+            derr("only supported in API mode!");
+
+        if( $rule->removeSecurityProfile() )
+        {
+            print $context->padding." - QUEUED for bundled API call\n";
+            $context->addRuleToMergedApiChange('<profile-setting><profiles/></profile-setting>');
+        }
+    },
+    'GlobalFinishFunction' => function(RuleCallContext $context)
+    {
+        $context->doBundled_API_Call();
     },
 );
 RuleCallContext::$supportedActions[] = Array(
@@ -2000,22 +2320,62 @@ RuleCallContext::$supportedActions[] = Array(
     'MainFunction' =>  function(RuleCallContext $context)
     {
         $rule = $context->object;
-        $description = ' '.$rule->description();
+        $description = $rule->description();
 
-        $textToAppend = $context->arguments['text'];
+
+        $textToAppend = "";
+        if( $description != "" )
+            $textToAppend = " ";
+        if( $context->arguments['newline'] == 'yes' )
+            $textToAppend = "\n";
+        $textToAppend .= $context->rawArguments['text'];
 
         if( strlen($description) + strlen($textToAppend) > 253 )
         {
-            print $context->padding." - SKIPPED : description is too long\n";
+            echo $context->padding." - SKIPPED : resulting description is too long\n";
             return;
         }
+
+        echo $context->padding." - new description will be: '{$description}{$textToAppend}' ... ";
 
         if( $context->isAPI )
             $rule->API_setDescription($description.$textToAppend);
         else
-            $rule->setSecurityProfileGroup($description.$textToAppend);
+            $rule->setDescription($description.$textToAppend);
+
+        echo "OK";
     },
-    'args' => Array( 'text' => Array( 'type' => 'string', 'default' => '*nodefault*' ) )
+    'args' => Array( 'text' => Array( 'type' => 'string', 'default' => '*nodefault*' ), 'newline' => Array( 'type' => 'bool', 'default' => 'no'  ) )
+);
+
+RuleCallContext::$supportedActions[] = Array(
+    'name' => 'description-Prepend',
+    'MainFunction' =>  function(RuleCallContext $context)
+    {
+        $rule = $context->object;
+        $description = $rule->description();
+
+
+        $textToPrepend = $context->rawArguments['text'];
+        if( $context->arguments['newline'] == 'yes' )
+            $textToPrepend .= "\n";
+
+        if( strlen($description) + strlen($textToPrepend) > 253 )
+        {
+            echo $context->padding." - SKIPPED : resulting description is too long\n";
+            return;
+        }
+
+        echo $context->padding." - new description will be: '{$textToPrepend}{$description}' ... ";
+
+        if( $context->isAPI )
+            $rule->API_setDescription($textToPrepend.$description);
+        else
+            $rule->setDescription($textToPrepend.$description);
+
+        echo "OK";
+    },
+    'args' => Array( 'text' => Array( 'type' => 'string', 'default' => '*nodefault*' ), 'newline' => Array( 'type' => 'bool', 'default' => 'no'  ) )
 );
 
 
@@ -2082,20 +2442,7 @@ RuleCallContext::$supportedActions[] = Array(
     },
     'GlobalFinishFunction' => function(RuleCallContext $context)
     {
-        $setString = $context->generateRuleMergedApuChangeString(true);
-        if( $setString !== null )
-        {
-            print $context->padding . ' - sending API call for SHARED... ';
-            $context->connector->sendSetRequest('/config/shared', $setString);
-            print "OK!\n";
-        }
-        $setString = $context->generateRuleMergedApuChangeString(false);
-        if( $setString !== null )
-        {
-            print $context->padding . ' - sending API call for Device-Groups... ';
-            $context->connector->sendSetRequest("/config/devices/entry[@name='localhost.localdomain']", $setString);
-            print "OK!\n";
-        }
+        $context->doBundled_API_Call();
     },
     'args' => Array(    'trueOrFalse' => Array( 'type' => 'bool', 'default' => 'yes'  ) )
 );
@@ -2109,6 +2456,52 @@ RuleCallContext::$supportedActions[] = Array(
         else
             $rule->owner->remove($rule);
     }
+);
+RuleCallContext::$supportedActions[] = Array(
+    'name' => 'dsri-Set',
+    'MainFunction' => function(RuleCallContext $context)
+    {
+        $rule = $context->object;
+
+        if( !$rule->isSecurityRule() )
+        {
+            print $context->padding." * SKIPPED it's not a security rule\n";
+            return;
+        }
+
+        if( $context->isAPI )
+            $rule->API_setDsri($context->arguments['trueOrFalse']);
+        else
+            $rule->setDsri($context->arguments['trueOrFalse']);
+    },
+    'args' => Array(    'trueOrFalse' => Array( 'type' => 'bool', 'default' => 'no'  ) )
+);
+RuleCallContext::$supportedActions[] = Array(
+    'name' => 'dsri-Set-FastAPI',
+    'MainFunction' => function(RuleCallContext $context)
+    {
+        $rule = $context->object;
+
+        if( !$rule->isSecurityRule() )
+        {
+            print $context->padding." * SKIPPED it's not a security rule\n";
+            return;
+        }
+
+        if( !$context->isAPI )
+            derr('you cannot call this action without API mode');
+
+        if( $rule->setDsri($context->arguments['trueOrFalse']) )
+        {
+            print $context->padding." - QUEUED for bundled API call\n";
+            $context->addRuleToMergedApiChange('<option><disable-server-response-inspection>' . boolYesNo($context->arguments['trueOrFalse']) . '</disable-server-response-inspection></option>');
+        }
+    },
+    'GlobalFinishFunction' => function(RuleCallContext $context)
+    {
+        $context->doBundled_API_Call();
+    },
+    'args' => Array(    'trueOrFalse' => Array( 'type' => 'bool', 'default' => 'no'  ) )
 );
 RuleCallContext::$supportedActions[] = Array(
     'name' => 'biDirNat-Split',
@@ -2162,12 +2555,19 @@ RuleCallContext::$supportedActions[] = Array(
     {
         $rule = $context->object;
 
-        $newName = $context->arguments['text'].$rule->name();
-
+        $newName = $context->rawArguments['text'].$rule->name();
+        
         if( strlen($newName) > 31 )
         {
-            print $context->padding." * SKIPPED because new name '{$newName}' is too long\n";
-            return;
+            if( $context->object->owner->owner->version > 80 && strlen($newName) <= 63 && $context->arguments['accept63characters'] )
+            {
+                //do nothing
+            }
+            else
+            {
+                print $context->padding." * SKIPPED because new name '{$newName}' is too long\n";
+                return;
+            }
         }
 
         if( !$rule->owner->isRuleNameAvailable($newName) )
@@ -2185,7 +2585,23 @@ RuleCallContext::$supportedActions[] = Array(
             $rule->setName($newName);
         }
     },
-    'args' => Array(  'text' => Array( 'type' => 'string', 'default' => '*nodefault*'  ), )
+    'GlobalFinishFunction' => function(RuleCallContext $context)
+    {
+        if( $context->object->owner->owner->version > 80 && !$context->object->owner->owner->isFirewall() && $context->arguments['accept63characters'] )
+        {
+            print PH::boldText( "Panorama PAN-OS version 8.1 allow rule name >31 and <63 characters.\n".
+                "Please be aware that there is no validation available if DeviceGroup is connected to a firewall running PAN-OS <8.1.\n".
+                "If DG connected Firewall is PAN-OS version <8.1, Panorama push to device will fail with an error message.\n" );
+        }
+    },
+    'args' => Array(  'text' => Array( 'type' => 'string', 'default' => '*nodefault*'  ),
+        'accept63characters' => Array(
+        'type' => 'bool',
+        'default' => 'false',
+        'help' =>
+            "This bool is used to allow longer rule name for PAN-OS starting with version 8.1."
+        )
+    )
 );
 RuleCallContext::$supportedActions[] = Array(
     'name' => 'name-Append',
@@ -2193,12 +2609,19 @@ RuleCallContext::$supportedActions[] = Array(
     {
         $rule = $context->object;
 
-        $newName = $rule->name().$context->arguments['text'];
-
+        $newName = $rule->name().$context->rawArguments['text'];
+        
         if( strlen($newName) > 31 )
         {
-            print $context->padding." * SKIPPED because new name '{$newName}' is too long\n";
-            return;
+            if( $context->object->owner->owner->version > 80 && strlen($newName) <= 63 && $context->arguments['accept63characters'] )
+            {
+                //do nothing
+            }
+            else
+            {
+                print $context->padding." * SKIPPED because new name '{$newName}' is too long\n";
+                return;
+            }
         }
 
         if( !$rule->owner->isRuleNameAvailable($newName) )
@@ -2216,7 +2639,168 @@ RuleCallContext::$supportedActions[] = Array(
             $rule->setName($newName);
         }
     },
-    'args' => Array(  'text' => Array( 'type' => 'string', 'default' => '*nodefault*'  ), )
+    'GlobalFinishFunction' => function(RuleCallContext $context)
+    {
+        if( $context->object->owner->owner->version > 80 && !$context->object->owner->owner->isFirewall() && $context->arguments['accept63characters'] )
+        {
+            print PH::boldText( "\nPanorama PAN-OS version 8.1 allow rule name >31 and <63 characters.\n".
+                "Please be aware that there is no validation available if DeviceGroup is connected to a firewall running PAN-OS <8.1.\n".
+                "If DG connected Firewall is PAN-OS version <8.1, Panorama push to device will fail with an error message.\n" );
+        }
+    },
+    'args' => Array(  'text' => Array( 'type' => 'string', 'default' => '*nodefault*'  ),
+        'accept63characters' => Array(
+            'type' => 'bool',
+            'default' => 'false',
+            'help' =>
+                "This bool is used to allow longer rule name for PAN-OS starting with version 8.1."
+        )
+    )
+);
+RuleCallContext::$supportedActions[] = Array(
+    'name' => 'name-removePrefix',
+    'MainFunction' =>  function ( RuleCallContext $context )
+    {
+        $object = $context->object;
+        $prefix = $context->rawArguments['prefix'];
+
+        if( strpos($object->name(), $prefix) !== 0 )
+        {
+            echo $context->padding." *** SKIPPED : prefix not found\n";
+            return;
+        }
+        $newName = substr($object->name(), strlen($prefix));
+
+        if ( !preg_match("/^[a-zA-Z0-9]/", $newName[0]) )
+        {
+            echo $context->padding." *** SKIPPED : object name contains not allowed character at the beginning\n";
+            return;
+        }
+
+        echo $context->padding." - new name will be '{$newName}'\n";
+
+        $rootObject = PH::findRootObjectOrDie($object->owner->owner);
+
+        if( $object->owner->find($newName) !== null )
+        {
+            echo $context->padding." *** SKIPPED : an object with same name already exists\n";
+            return;
+        }
+        if( $context->isAPI )
+            $object->API_setName($newName);
+        else
+            $object->setName($newName);
+    },
+    'args' => Array( 'prefix' => Array( 'type' => 'string', 'default' => '*nodefault*' )
+    ),
+);
+RuleCallContext::$supportedActions[] = Array(
+    'name' => 'name-removeSuffix',
+    'MainFunction' =>  function ( RuleCallContext $context )
+    {
+        $object = $context->object;
+        $suffix = $context->rawArguments['suffix'];
+        $suffixStartIndex = strlen($object->name()) - strlen($suffix);
+
+        if( substr($object->name(), $suffixStartIndex, strlen($object->name()) ) != $suffix )
+        {
+            echo $context->padding." *** SKIPPED : suffix not found\n";
+            return;
+        }
+        $newName = substr( $object->name(), 0, $suffixStartIndex );
+
+        echo $context->padding." - new name will be '{$newName}'\n";
+
+        $rootObject = PH::findRootObjectOrDie($object->owner->owner);
+
+        if( $object->owner->find($newName) !== null )
+        {
+            echo $context->padding." *** SKIPPED : an object with same name already exists\n";
+            return;
+        }
+        if( $context->isAPI )
+            $object->API_setName($newName);
+        else
+            $object->setName($newName);
+    },
+    'args' => Array( 'suffix' => Array( 'type' => 'string', 'default' => '*nodefault*' )
+    ),
+);
+RuleCallContext::$supportedActions[] = Array(
+    'name' => 'name-Rename',
+    'GlobalInitFunction' => function(RuleCallContext $context)
+    {
+        $context->numCount = 0;
+    },
+    'MainFunction' => function(RuleCallContext $context)
+    {
+        $rule = $context->object;
+
+        $newName = $context->arguments['stringFormula'];
+        $context->numCount++;
+
+        if( strpos($newName, '$$sequential.number$$') !== FALSE )
+            $newName = str_replace('$$sequential.number$$', $context->numCount, $newName);
+
+        if( strpos($newName, '$$current.name$$') !== FALSE )
+            $newName = str_replace('$$current.name$$', $rule->name(), $newName);
+        
+        if( strlen($newName) > 31 )
+        {
+            if( $context->object->owner->owner->version > 80 && strlen($newName) <= 63 && $context->arguments['accept63characters'] )
+            {
+                //do nothing
+            }
+            else
+            {
+                print $context->padding." * SKIPPED because new name '{$newName}' is too long\n";
+                return;
+            }
+        }
+
+        if( !$rule->owner->isRuleNameAvailable($newName) )
+        {
+            print $context->padding." * SKIPPED because name '{$newName}' is not available\n";
+            return;
+        }
+
+        echo $context->padding." - new name will be '{$newName}'\n";
+
+        if( $context->isAPI )
+        {
+            $rule->API_setName($newName);
+        }
+        else
+        {
+            $rule->setName($newName);
+        }
+    },
+    'GlobalFinishFunction' => function(RuleCallContext $context)
+    {
+        if( $context->object->owner->owner->version > 80 && !$context->object->owner->owner->isFirewall() && $context->arguments['accept63characters'] )
+        {
+            print PH::boldText( "Panorama PAN-OS version 8.1 allow rule name >31 and <63 characters.\n".
+                "Please be aware that there is no validation available if DeviceGroup is connected to a firewall running PAN-OS <8.1.\n".
+                "If DG connected Firewall is PAN-OS version <8.1, Panorama push to device will fail with an error message.\n" );
+        }
+    },
+
+    'args' => Array( 'stringFormula' => Array(
+    'type' => 'string',
+    'default' => '*nodefault*',
+    'help' =>
+        "This string is used to compose a name. You can use the following aliases :\n".
+        "  - \$\$current.name\$\$ : current name of the object\n".
+        "  - \$\$sequential.number\$\$ : sequential number - starting with 1\n"
+       ),
+    'accept63characters' => Array(
+        'type' => 'bool',
+        'default' => 'false',
+        'help' =>
+            "This bool is used to allow longer rule name for PAN-OS starting with version 8.1."
+    )
+),
+    'help' => ''
 );
 RuleCallContext::$supportedActions[] = Array(
     'name' => 'ruleType-Change',
@@ -2329,9 +2913,9 @@ RuleCallContext::$supportedActions[] = Array(
         $pan = PH::findRootObjectOrDie($rule);;
 
         if( $args['preORpost'] == "post" )
-            $preORpost = true;
+            $moveToPost = true;
         else
-            $preORpost = false;
+            $moveToPost = false;
 
 
         /** @var RuleStore $ruleStore */
@@ -2354,19 +2938,243 @@ RuleCallContext::$supportedActions[] = Array(
         }
         if( $context->isAPI )
         {
-            $ruleStore->API_cloneRule($rule, null, $preORpost);
-            $rule->owner->API_remove($rule);
+            if( $ruleStore === $rule->owner )
+            {
+                if( $moveToPost )
+                    $ruleStore->API_moveRuleToPostRulebase($rule);
+                else
+                    $ruleStore->API_moveRuleToPreRulebase($rule);
+
+            }
+            else
+            {
+                $ruleStore->API_cloneRule($rule, null, $moveToPost);
+                $rule->owner->API_remove($rule);
+            }
         }
         else
         {
-            $ruleStore->cloneRule($rule, null, $preORpost);
-            $rule->owner->remove($rule);
+            if( $ruleStore === $rule->owner )
+            {
+                if( $moveToPost )
+                    $ruleStore->moveRuleToPostRulebase($rule);
+                else
+                    $ruleStore->moveRuleToPreRulebase($rule);
+
+            }
+            else
+            {
+                $ruleStore->cloneRule($rule, null, $moveToPost);
+                $rule->owner->remove($rule);
+            }
         }
 
     },
     'args' => Array(    'location' => Array( 'type' => 'string', 'default' => '*nodefault*'  ),
         'preORpost' => Array( 'type' => 'string', 'default' => 'pre', 'choices' => Array('pre','post') ) )
 );
+
+RuleCallContext::$supportedActions[] = Array(
+    'name' => 'position-Move-to-Top',
+    'MainFunction' => function(RuleCallContext $context)
+    {
+        $rule = $context->object;
+        $ruleStore = $rule->owner;
+
+        $serial = spl_object_hash($ruleStore);
+        $firstTimeHere = false;
+
+        if( $context->baseObject->isPanorama() )
+        {
+            if( $rule->isPreRule() )
+            {
+                if( isset($context->preCache[$serial]) )
+                    $referenceRule = $context->preCache[$serial];
+                else
+                {
+                    $referenceRule = $ruleStore->getRuleOnTop($rule->isPreRule());
+                    $firstTimeHere = true;
+                }
+
+                $context->preCache[$serial] = $rule;
+            }
+            else
+            {
+                if( isset($context->postCache[$serial]) )
+                    $referenceRule = $context->postCache[$serial];
+                else
+                {
+                    $referenceRule = $ruleStore->getRuleOnTop( $rule->isPreRule() );
+                    $firstTimeHere = true;
+                }
+
+                $context->postCache[$serial] = $rule;
+            }
+        }
+        else
+        {
+            if( isset($context->cache[$serial]) )
+                $referenceRule = $context->cache[$serial];
+            else
+            {
+                $referenceRule = $ruleStore->getRuleOnTop( $rule->isPreRule() );
+                $firstTimeHere = true;
+            }
+
+            $context->cache[$serial] = $rule;
+        }
+
+
+        if( $referenceRule === $rule )
+        {
+            echo $context->padding." * SKIPPED because it is already the first rule\n";
+            return;
+        }
+
+        echo $context->padding." - MOVING to top ... ";
+
+        if( $firstTimeHere )
+        {
+            if( $context->isAPI )
+                $ruleStore->API_moveRuleBefore($rule, $referenceRule);
+            else
+                $ruleStore->moveRuleBefore($rule, $referenceRule);
+        }
+        else
+        {
+            if( $context->isAPI )
+                $ruleStore->API_moveRuleAfter($rule, $referenceRule);
+            else
+                $ruleStore->moveRuleAfter($rule, $referenceRule);
+        }
+
+        echo "OK!\n";
+    },
+    'GlobalInitFunction' => function(RuleCallContext $context)
+    {
+        $context->preCache = Array();
+        $context->postCache = Array();
+        $context->cache = Array();
+    },
+);
+
+RuleCallContext::$supportedActions[] = Array(
+    'name' => 'position-Move-to-Bottom',
+    'MainFunction' => function(RuleCallContext $context)
+    {
+        $rule = $context->object;
+        $ruleStore = $rule->owner;
+
+        $referenceRule = $ruleStore->getRuleAtBottom($rule->isPreRule());
+
+        if( $referenceRule === $rule )
+        {
+            echo $context->padding." * SKIPPED because it is already the last rule\n";
+            return;
+        }
+
+        echo $context->padding." - MOVING to bottom ... ";
+        if( $context->isAPI )
+            $ruleStore->API_moveRuleAfter($rule, $referenceRule);
+        else
+            $ruleStore->moveRuleAfter($rule, $referenceRule);
+        echo "OK!\n";
+    },
+);
+
+RuleCallContext::$supportedActions[] = Array(
+    'name' => 'position-Move-Before',
+    'MainFunction' => function(RuleCallContext $context)
+    {
+        $rule = $context->object;
+        $ruleStore = $rule->owner;
+
+        $referenceRule = $ruleStore->find($context->arguments['rulename']);
+
+        if( $referenceRule === null )
+        {
+            echo $context->padding." * SKIPPED reference rule '{$context->arguments['rulename']}' was not found\n";
+            return;
+        }
+
+        if( $referenceRule->isPreRule() !== $rule->isPreRule() )
+        {
+            echo $context->padding." * SKIPPED reference rule '{$context->arguments['rulename']}' and this rule should both be PRE or POST, not a mix\n";
+            return;
+        }
+
+        if( $referenceRule === $rule )
+        {
+            echo $context->padding." * SKIPPED because it is already the last rule\n";
+            return;
+        }
+
+        echo $context->padding." - MOVING to before '{$context->arguments['rulename']}' ... ";
+        if( $context->isAPI )
+            $ruleStore->API_moveRuleBefore($rule, $referenceRule);
+        else
+            $ruleStore->moveRuleBefore($rule, $referenceRule);
+        echo "OK!\n";
+    },
+    'args' => Array(
+        'rulename' => Array( 'type' => 'string', 'default' => '*nodefault*'  ),
+    )
+);
+
+
+RuleCallContext::$supportedActions[] = Array(
+    'name' => 'position-Move-After',
+    'MainFunction' => function(RuleCallContext $context)
+    {
+        $rule = $context->object;
+        $ruleStore = $rule->owner;
+        $storeSerial = spl_object_hash($ruleStore);
+
+
+        if( isset($context->cache[$storeSerial]) )
+            $referenceRule = $context->cache[$storeSerial];
+        else
+        {
+            $referenceRule = $ruleStore->find($context->arguments['rulename']);
+            if( $referenceRule === null )
+            {
+                echo $context->padding." * SKIPPED reference rule '{$context->arguments['rulename']}' was not found\n";
+                return;
+            }
+            $context->cache[$storeSerial] = $referenceRule;
+        }
+
+        if( $referenceRule->isPreRule() !== $rule->isPreRule() )
+        {
+            echo $context->padding." * SKIPPED reference rule '{$context->arguments['rulename']}' and this rule should both be PRE or POST, not a mix\n";
+            return;
+        }
+
+        if( $context->arguments['rulename'] === $rule->name() )
+        {
+            echo $context->padding." * SKIPPED this was the referenced rulename in argument\n";
+            return;
+        }
+
+        $context->cache[$storeSerial] = $rule;
+
+        echo $context->padding." - MOVING to after '{$referenceRule->name()}' ... ";
+        if( $context->isAPI )
+            $ruleStore->API_moveRuleAfter($rule, $referenceRule);
+        else
+            $ruleStore->moveRuleAfter($rule, $referenceRule);
+        echo "OK!\n";
+    },
+    'GlobalInitFunction' => function(RuleCallContext $context)
+    {
+        $context->cache = Array();
+    },
+    'args' => Array(
+        'rulename' => Array( 'type' => 'string', 'default' => '*nodefault*'  ),
+    )
+);
+
+
 
 RuleCallContext::$supportedActions[] = Array(
     'name' => 'exportToExcel',
@@ -2386,17 +3194,14 @@ RuleCallContext::$supportedActions[] = Array(
         $filename = $args['filename'];
 
         $addResolvedAddressSummary = false;
-        $fieldsArray = explode('|',$context->arguments['additionalFields']) ;
-        foreach($fieldsArray as $fieldName)
-        {
-            $fieldName = strtolower($fieldName);
-            if( $fieldName == 'resolveaddresssummary' )
-                $addResolvedAddressSummary = true;
-            else{
-                if( $fieldName != '*none*')
-                    derr("unsupported field name '{$fieldName}' when export to Excel/HTML");
-            }
-        }
+        $addResolvedServiceSummary = false;
+
+        $optionalFields = &$context->arguments['additionalFields'];
+
+        if( isset($optionalFields['ResolveAddressSummary']) )
+            $addResolvedAddressSummary = true;
+        if( isset($optionalFields['ResolveServiceSummary']) )
+            $addResolvedServiceSummary = true;
 
         $fields = Array(
             'location' => 'location',
@@ -2405,11 +3210,14 @@ RuleCallContext::$supportedActions[] = Array(
             'tag' => 'tags',
             'from' => 'from',
             'to' => 'to',
+            'src_negated' => 'source_negated',
             'src' => 'source',
             'src_resolved_sum' => 'src_resolved_sum',
+            'dst_negated' => 'destination_negated',
             'dst' => 'destination',
             'dst_resolved_sum' => 'dst_resolved_sum',
             'service' => 'service',
+            'service_resolved_sum' => 'service_resolved_sum',
             'application' => 'application',
             'action' => 'action',
             'security' => 'security-profile',
@@ -2443,8 +3251,10 @@ RuleCallContext::$supportedActions[] = Array(
 
                 foreach($fields as $fieldName => $fieldID )
                 {
-                    if( ($fieldName == 'src_resolved_sum' || $fieldName == 'dst_resolved_sum' ||
-                            $fieldName == 'dnat_host_resolved_sum' || $fieldName == 'snat_address_resolved_sum' ) && !$addResolvedAddressSummary  )
+                    if( (($fieldName == 'src_resolved_sum' || $fieldName == 'dst_resolved_sum' ||
+                            $fieldName == 'dnat_host_resolved_sum' || $fieldName == 'snat_address_resolved_sum' ) && !$addResolvedAddressSummary) ||
+                        (($fieldName == 'service_resolved_sum'  ) && !$addResolvedServiceSummary)
+                    )
                         continue;
                     $lines .= $context->ruleFieldHtmlExport($rule, $fieldID);
                 }
@@ -2460,8 +3270,10 @@ RuleCallContext::$supportedActions[] = Array(
         $tableHeaders = '';
         foreach($fields as $fieldName => $value )
         {
-            if( ($fieldName == 'src_resolved_sum' || $fieldName == 'dst_resolved_sum' ||
-                    $fieldName == 'dnat_host_resolved_sum' || $fieldName == 'snat_address_resolved_sum' ) && !$addResolvedAddressSummary  )
+            if( (($fieldName == 'src_resolved_sum' || $fieldName == 'dst_resolved_sum' ||
+                        $fieldName == 'dnat_host_resolved_sum' || $fieldName == 'snat_address_resolved_sum' ) && !$addResolvedAddressSummary) ||
+                (($fieldName == 'service_resolved_sum'  ) && !$addResolvedServiceSummary)
+            )
                 continue;
             $tableHeaders .= "<th>{$fieldName}</th>\n";
         }
@@ -2484,11 +3296,13 @@ RuleCallContext::$supportedActions[] = Array(
     'args' => Array(
         'filename' => Array( 'type' => 'string', 'default' => '*nodefault*'  ),
         'additionalFields' =>
-            Array( 'type' => 'string',
+            Array( 'type' => 'pipeSeparatedList',
+                'subtype' => 'string',
                 'default' => '*NONE*',
-                'help' =>
-                    "pipe(|) separated list of additional field to include in the report. The following is available:\n".
-                    "  - resolveAddressSummary : fields with address objects will be resolved and summarized in a new column)\n"
+                'choices' => Array('ResolveAddressSummary', 'ResolveServiceSummary' ),
+                'help' => "pipe(|) separated list of additional field to include in the report. The following is available:\n".
+                    "  - ResolveAddressSummary : fields with address objects will be resolved to IP addressed and summarized in a new column)\n".
+                    "  - ResolveServiceSummary : fields with service objects will be resolved to their value and summarized in a new column)\n"
             )
     )
 );
@@ -2531,6 +3345,12 @@ RuleCallContext::$supportedActions[] = Array(
     {
         $rule = $context->object;
 
+        if( !$rule->isSecurityRule() )
+        {
+            print $context->padding . " - IGNORED because rule is not type 'Security'\n";
+            return;
+        }
+
         if( $rule->actionIsNegative() )
         {
             print $context->padding . " - IGNORED because Action is DENY\n";
@@ -2545,7 +3365,7 @@ RuleCallContext::$supportedActions[] = Array(
 
         $ports = '';
 
-        if( ($rule->services->isAny() || $rule->services->isApplicationDefault()) && !$context->arguments['restrictToListOfServices'] == '*sameAsInRule*' )
+        if( ($rule->services->isAny() || $rule->services->isApplicationDefault()) && $context->arguments['restrictToListOfServices'] != '*sameAsInRule*' )
         {
             $ports = '1-65535';
             $portMapping = ServiceDstPortMapping::mappingFromText($ports, true);
@@ -2561,9 +3381,9 @@ RuleCallContext::$supportedActions[] = Array(
             {
                 $services = $rule->services->members();
             }
-            else
+            elseif( $context->arguments['restrictToListOfServices'][0] == '@' )
             {
-                $listOfServicesQueryName = $context->arguments['restrictToListOfServices'];
+                $listOfServicesQueryName = substr($context->arguments['restrictToListOfServices'],1);
                 if( !isset($context->nestedQueries[$listOfServicesQueryName]) )
                 {
                     derr("cannot find query filter called '$listOfServicesQueryName'");
@@ -2584,6 +3404,23 @@ RuleCallContext::$supportedActions[] = Array(
                     }
                 }
             }
+            else
+            {
+                $listOfServices = explode('#', $context->arguments['restrictToListOfServices']);
+                $listOfServices = array_flip($listOfServices);
+
+
+                $services = Array();
+
+                foreach( $rule->services->membersExpanded() as $member )
+                {
+                    if( isset($listOfServices[$member->name()]) )
+                    {
+                        $services[] = $member;
+                    }
+                }
+            }
+
             if( count($services) == 0)
             {
                 print $context->padding." - IGNORED because NO MATCHING SERVICE FOUND\n";
@@ -2640,8 +3477,14 @@ RuleCallContext::$supportedActions[] = Array(
 
 
     },
-    'args' => Array(    'applicationName' => Array( 'type' => 'string', 'default' => '*nodefault*'  ),
-        'restrictToListOfServices' => Array( 'type' => 'string', 'default' => '*sameAsInRule*'  ), )
+    'args' => Array(    'applicationName' => Array( 'type' => 'string', 'default' => '*nodefault*',
+                                                    'help' => 'specify the application to put in the resulting App-Override rule' ),
+                        'restrictToListOfServices' => Array( 'type' => 'string', 'default' => '*sameAsInRule*',
+                                                             'help' => "you can limit which services will be included in the AppOverride rule by providing a #-separated list or a subquery prefixed with a @:\n".
+                                                                        "  - svc1#svc2#svc3... : #-separated list\n".
+                                                                        "  - @subquery1 : script will look for subquery1 filter which you have to provide as an additional argument to the script (ie: 'subquery1=(name eq tcp-50-web)')"),
+        ),
+    'help' => "This action will take a Security rule and clone it as an App-Override rule. By default all services specified in the rule will also be in the AppOverride rule."
 );
 // </editor-fold>
 /************************************ */

@@ -7,7 +7,7 @@
 	<title>Class ServiceGroup | PAN-Configurator</title>
 
 	<script type="text/javascript" src="resources/combined.js?772778653"></script>
-	<script type="text/javascript" src="elementlist.js?2180725909"></script>
+	<script type="text/javascript" src="elementlist.js?4105871058"></script>
 	<link rel="stylesheet" type="text/css" media="all" href="resources/style.css?3505392360" />
 
 </head>
@@ -223,7 +223,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#___construct">#</a>
-		<code><b>__construct</b>( <span>mixed <var>$name</var></span>, <span>mixed <var>$owner</var> = <span class="php-keyword1">null</span></span> )</code>
+		<code><b>__construct</b>( <span>mixed <var>$name</var></span>, <span>mixed <var>$owner</var> = <span class="php-keyword1">null</span></span>, <span>mixed <var>$fromTemplateXml</var> = <span class="php-keyword1">false</span></span> )</code>
 
 		<div class="description short">
 			
@@ -880,7 +880,7 @@
 
 		<td class="attributes"><code>
 			 public 
-			
+			<code><a href="class-ServiceDstPortMapping.html">ServiceDstPortMapping</a></code>
 			
 			</code>
 		</td>
@@ -898,6 +898,10 @@
 
 
 
+				<h4>Returns</h4>
+				<div class="list">
+					<code><code><a href="class-ServiceDstPortMapping.html">ServiceDstPortMapping</a></code></code><br />
+				</div>
 
 
 
@@ -1044,6 +1048,44 @@ their members inserted<br />
 		</div>
 		</div></td>
 	</tr>
+	<tr data-order="hasNamedObjectRecursive" id="_hasNamedObjectRecursive">
+
+		<td class="attributes"><code>
+			 public 
+			boolean
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_hasNamedObjectRecursive">#</a>
+		<code><b>hasNamedObjectRecursive</b>( <span>string <var>$objectName</var></span> )</code>
+
+		<div class="description short">
+			
+		</div>
+
+		<div class="description detailed hidden">
+			
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$objectName</var></dt>
+					<dd><code>string</code><br>$objectName</dd>
+				</dl></div>
+
+				<h4>Returns</h4>
+				<div class="list">
+					<code>boolean</code><br />
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
 	<tr data-order="removeAll" id="_removeAll">
 
 		<td class="attributes"><code>
@@ -1081,6 +1123,7 @@ their members inserted<br />
 	<tr>
 		<td><code>
 			<a href="class-PathableName.html#__PANC_shortName"><b>_PANC_shortName()</b></a>, 
+			<a href="class-PathableName.html#_getLocationString"><b>getLocationString()</b></a>, 
 			<a href="class-PathableName.html#_toString"><b>toString()</b></a>
 		</code></td>
 	</tr>
@@ -1102,12 +1145,14 @@ their members inserted<br />
 		<td><code>
 			<a href="class-ServiceCommon.html#_API_addObjectWhereIamUsed"><b>API_addObjectWhereIamUsed()</b></a>, 
 			<a href="class-ServiceCommon.html#_API_removeWhereIamUsed"><b>API_removeWhereIamUsed()</b></a>, 
+			<a href="class-ServiceCommon.html#_API_replaceWhereIamUsed"><b>API_replaceWhereIamUsed()</b></a>, 
+			<a href="class-ServiceCommon.html#___replaceWhereIamUsed"><b>__replaceWhereIamUsed()</b></a>, 
 			<a href="class-ServiceCommon.html#_addObjectWhereIamUsed"><b>addObjectWhereIamUsed()</b></a>, 
-			<a href="class-ServiceCommon.html#_isDynamic"><b>isDynamic()</b></a>, 
 			<a href="class-ServiceCommon.html#_isService"><b>isService()</b></a>, 
 			<a href="class-ServiceCommon.html#_isTmpSrv"><b>isTmpSrv()</b></a>, 
 			<a href="class-ServiceCommon.html#_removeReference"><b>removeReference()</b></a>, 
-			<a href="class-ServiceCommon.html#_removeWhereIamUsed"><b>removeWhereIamUsed()</b></a>
+			<a href="class-ServiceCommon.html#_removeWhereIamUsed"><b>removeWhereIamUsed()</b></a>, 
+			<a href="class-ServiceCommon.html#_replaceWhereIamUsed"><b>replaceWhereIamUsed()</b></a>
 		</code></td>
 	</tr>
 	</table>
@@ -1115,6 +1160,8 @@ their members inserted<br />
 	<caption>Methods used from <a href="class-ReferencableObject.html#methods">ReferencableObject</a></caption>
 	<tr>
 		<td><code>
+			<a href="class-ReferencableObject.html#_ReferencesStoreValidation"><b>ReferencesStoreValidation()</b></a>, 
+			<a href="class-ReferencableObject.html#_ReferencesTypeValidation"><b>ReferencesTypeValidation()</b></a>, 
 			<a href="class-ReferencableObject.html#_addReference"><b>addReference()</b></a>, 
 			<a href="class-ReferencableObject.html#_broadcastMyNameChange"><b>broadcastMyNameChange()</b></a>, 
 			<a href="class-ReferencableObject.html#_countReferences"><b>countReferences()</b></a>, 
@@ -1125,6 +1172,9 @@ their members inserted<br />
 			<a href="class-ReferencableObject.html#_generateRefHashComp"><b>generateRefHashComp()</b></a>, 
 			<a href="class-ReferencableObject.html#_getRefHashComp"><b>getRefHashComp()</b></a>, 
 			<a href="class-ReferencableObject.html#_getReferences"><b>getReferences()</b></a>, 
+			<a href="class-ReferencableObject.html#_getReferencesLocation"><b>getReferencesLocation()</b></a>, 
+			<a href="class-ReferencableObject.html#_getReferencesStore"><b>getReferencesStore()</b></a>, 
+			<a href="class-ReferencableObject.html#_getReferencesType"><b>getReferencesType()</b></a>, 
 			<a href="class-ReferencableObject.html#_name"><b>name()</b></a>, 
 			<a href="class-ReferencableObject.html#_replaceMeGlobally"><b>replaceMeGlobally()</b></a>, 
 			<a href="class-ReferencableObject.html#_setRefName"><b>setRefName()</b></a>, 
@@ -1199,6 +1249,50 @@ their members inserted<br />
 		<td class="value"><code></code></td>
 		<td class="description"><div>
 			<a href="#$tags" class="anchor">#</a>
+
+			<div class="description short">
+				
+			</div>
+
+			<div class="description detailed hidden">
+				
+
+			</div>
+		</div></td>
+	</tr>
+	<tr data-order="templatexml" id="$templatexml">
+		<td class="attributes"><code>
+			protected static 
+			string
+		</code></td>
+
+		<td class="name">
+<var>$templatexml</var>		</td>
+		<td class="value"><code><span class="php-quote">'&lt;entry name=&quot;**temporarynamechangeme**&quot;&gt;&lt;members&gt;&lt;/members&gt;&lt;/entry&gt;'</span></code></td>
+		<td class="description"><div>
+			<a href="#$templatexml" class="anchor">#</a>
+
+			<div class="description short">
+				
+			</div>
+
+			<div class="description detailed hidden">
+				
+
+			</div>
+		</div></td>
+	</tr>
+	<tr data-order="templatexmlroot" id="$templatexmlroot">
+		<td class="attributes"><code>
+			protected static 
+			mixed
+		</code></td>
+
+		<td class="name">
+<var>$templatexmlroot</var>		</td>
+		<td class="value"><code><span class="php-keyword1">null</span></code></td>
+		<td class="description"><div>
+			<a href="#$templatexmlroot" class="anchor">#</a>
 
 			<div class="description short">
 				

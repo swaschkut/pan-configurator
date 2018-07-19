@@ -1,8 +1,7 @@
 <?php
 
 /*
- * Copyright (c) 2014-2015 Palo Alto Networks, Inc. <info@paloaltonetworks.com>
- * Author: Christophe Painchaud <cpainchaud _AT_ paloaltonetworks.com>
+ * Copyright (c) 2014-2017 Christophe Painchaud <shellescape _AT_ gmail.com>
  *
  * Permission to use, copy, modify, and distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -100,6 +99,84 @@ PH::processCliArgs();
 
 $nestedQueries = Array();
 
+if( isset(PH::$args['loadplugin']) )
+{
+    $pluginFile = PH::$args['loadplugin'];
+    echo " * loadPlugin was used. Now loading file: '{$pluginFile}'...";
+    require_once $pluginFile;
+    AddressCallContext::prepareSupportedActions();
+    echo "OK!\n";
+}
+
+if( isset(PH::$args['help']) )
+{
+    $pos = array_search('help', $argv);
+
+    if( $pos === false )
+        display_usage_and_exit(false);
+
+    $keys = array_keys($argv);
+
+    if( $pos == end($keys) )
+        display_usage_and_exit(false);
+
+    $action = $argv[(array_search($pos, $keys) +1)];
+
+    if( !isset(AddressCallContext::$supportedActions[strtolower($action)]) )
+        derr("request help for action '{$action}' but it does not exist");
+
+    $action = & AddressCallContext::$supportedActions[strtolower($action)];
+
+    $args = Array();
+    if( isset($action['args']) )
+    {
+        foreach( $action['args'] as $argName => &$argDetails )
+        {
+            if( $argDetails['default'] == '*nodefault*' )
+                $args[] = "{$argName}";
+            else
+                $args[] = "[{$argName}]";
+        }
+    }
+
+    $args = PH::list_to_string($args);
+    print "*** help for Action ".PH::boldText($action['name']).":".$args."\n";
+
+    if( isset($action['help']) )
+        print $action['help'];
+
+    if( !isset($args) || !isset($action['args']) )
+    {
+        print "\n\n**No arguments required**";
+    }
+    else
+    {
+        print "\nListing arguments:\n\n";
+        foreach( $action['args'] as $argName => &$argDetails )
+        {
+            print "-- ".PH::boldText($argName)." :";
+            if( $argDetails['default'] != "*nodefault" )
+                print " OPTIONAL";
+            print " type={$argDetails['type']}";
+            if( isset($argDetails['choices']) )
+            {
+                print "     choices: ".PH::list_to_string($argDetails['choices']);
+            }
+            print "\n";
+            if( isset($argDetails['help']) )
+                print " ".str_replace("\n", "\n ",$argDetails['help']);
+            else
+                print "  *no help avaiable*";
+            print "\n\n";
+        }
+    }
+
+
+    print "\n\n";
+
+    exit(0);
+}
+
 foreach ( PH::$args as $index => &$arg )
 {
     if( !isset($supportedArguments[$index]) )
@@ -114,20 +191,6 @@ foreach ( PH::$args as $index => &$arg )
     }
 }
 
-if( isset(PH::$args['help']) )
-{
-    display_usage_and_exit();
-}
-
-if( isset(PH::$args['loadplugin']) )
-{
-    $pluginFile = PH::$args['loadplugin'];
-    echo " * loadPlugin was used. Now loading file: '{$pluginFile}'...";
-    require_once $pluginFile;
-    AddressCallContext::prepareSupportedActions();
-    echo "OK!\n";
-}
-
 
 if( isset(PH::$args['listactions']) )
 {
@@ -136,7 +199,7 @@ if( isset(PH::$args['listactions']) )
     echo "Listing of supported actions:\n\n";
 
     echo str_pad('', 100, '-')."\n";
-    echo str_pad('Action name', 28, ' ', STR_PAD_BOTH)."|".str_pad("Argument:Type",24, ' ', STR_PAD_BOTH)." |".
+    echo str_pad('Action name', 29, ' ', STR_PAD_BOTH)."|".str_pad("Argument:Type",28, ' ', STR_PAD_BOTH)." |".
         str_pad("Def. Values",12, ' ', STR_PAD_BOTH)."|   Choices\n";
     echo str_pad('', 100, '-')."\n";
 
@@ -145,7 +208,7 @@ if( isset(PH::$args['listactions']) )
 
         $output = "* ".$action['name'];
 
-        $output = str_pad($output, 28).'|';
+        $output = str_pad($output, 29).'|';
 
         if( isset($action['args']) )
         {
@@ -154,9 +217,9 @@ if( isset(PH::$args['listactions']) )
             foreach($action['args'] as $argName => &$arg)
             {
                 if( !$first )
-                    $output .= "\n".str_pad('',28).'|';
+                    $output .= "\n".str_pad('',29).'|';
 
-                $output .= " ".str_pad("#$count $argName:{$arg['type']}", 24)."| ".str_pad("{$arg['default']}",12)."| ";
+                $output .= " ".str_pad("#$count $argName:{$arg['type']}", 29)."| ".str_pad("{$arg['default']}",12)."| ";
                 if( isset($arg['choices']) )
                 {
                     $output .= PH::list_to_string($arg['choices']);
@@ -450,14 +513,14 @@ foreach( $objectsLocation as $location )
     {
         if( $location == 'shared' || $location == 'any'  )
         {
-            $objectsToProcess[] = Array('store' => $pan->addressStore, 'objects' => $pan->addressStore->all());
+            $objectsToProcess[] = Array('store' => $pan->addressStore, 'objects' => $pan->addressStore->all(null,true));
             $locationFound = true;
         }
         foreach ($pan->getVirtualSystems() as $sub)
         {
             if( ($location == 'any' || $location == 'all' || $location == $sub->name() && !isset($ruleStoresToProcess[$sub->name()]) ))
             {
-                $objectsToProcess[] = Array('store' => $sub->addressStore, 'objects' => $sub->addressStore->all());
+                $objectsToProcess[] = Array('store' => $sub->addressStore, 'objects' => $sub->addressStore->all(null,true));
                 $locationFound = true;
             }
         }
@@ -467,7 +530,7 @@ foreach( $objectsLocation as $location )
         if( $location == 'shared' || $location == 'any' )
         {
 
-            $objectsToProcess[] = Array('store' => $pan->addressStore, 'objects' => $pan->addressStore->all());
+            $objectsToProcess[] = Array('store' => $pan->addressStore, 'objects' => $pan->addressStore->all(null,true));
             $locationFound = true;
         }
 
@@ -475,7 +538,7 @@ foreach( $objectsLocation as $location )
         {
             if( ($location == 'any' || $location == 'all' || $location == $sub->name()) && !isset($ruleStoresToProcess[$sub->name().'%pre']) )
             {
-                $objectsToProcess[] = Array('store' => $sub->addressStore, 'objects' => $sub->addressStore->all() );
+                $objectsToProcess[] = Array('store' => $sub->addressStore, 'objects' => $sub->addressStore->all(null,true) );
                 $locationFound = true;
             }
         }
@@ -505,6 +568,15 @@ foreach( $objectsLocation as $location )
 }
 // </editor-fold>
 
+
+foreach( $doActions as $doAction )
+{
+    if( $doAction->hasGlobalInitAction() )
+    {
+        $doAction->subSystem = $sub;
+        $doAction->executeGlobalInitAction();
+    }
+}
 
 //
 // It's time to process Rules !!!!

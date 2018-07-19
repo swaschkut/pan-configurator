@@ -1,8 +1,7 @@
 <?php
 
 /*
- * Copyright (c) 2014-2015 Palo Alto Networks, Inc. <info@paloaltonetworks.com>
- * Author: Christophe Painchaud <cpainchaud _AT_ paloaltonetworks.com>
+ * Copyright (c) 2014-2017 Christophe Painchaud <shellescape _AT_ gmail.com>
  *
  * Permission to use, copy, modify, and distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -32,6 +31,8 @@ class NatRule extends Rule
 	public $snatinterface = null;
 	
 	private $_snatbidir = 'no';
+
+	private $_snatUsesFloatingIP = false;
 
     /** @var null|Address|AddressGroup */
 	public $dnathost = null;
@@ -270,6 +271,12 @@ class NatRule extends Rule
 								$translad = $this->parentAddressStore->findOrCreate( $node->textContent );
 								$this->snathosts->addObject($translad);
 							}
+                            else if( $node->nodeName == 'floating-ip' )
+                            {
+                                $translad = $this->parentAddressStore->findOrCreate( $node->textContent );
+                                $this->snathosts->addObject($translad);
+                                $this->_snatUsesFloatingIP = true;
+                            }
 							else
 								derr("Cannot understand dynamic NAT for rule '".$this->name."'\n");
 						}
@@ -441,7 +448,10 @@ class NatRule extends Rule
                 $snatIP = $this->snathosts->all();
                 if( count($snatIP) > 0)
                 {
-                    DH::createOrResetElement($subsubroot, 'ip', reset($snatIP)->name() );
+                    if( $this->_snatUsesFloatingIP )
+                        DH::createOrResetElement($subsubroot, 'floating-ip', reset($snatIP)->name() );
+                    else
+                        DH::createOrResetElement($subsubroot, 'ip', reset($snatIP)->name() );
                 }
 				
 			}
@@ -529,8 +539,24 @@ class NatRule extends Rule
 		$this->dnatports = null;
 
 		$this->dnatroot->parentNode->removeChild($this->dnatroot);
-		
+
+		return true;
 	}
+
+    public function API_setNoDNAT( )
+    {
+        $ret = $this->setNoDNAT();
+        if( $ret )
+        {
+            $connector = findConnectorOrDie($this);
+            $xpath = $this->getXPath().'/destination-translation';
+
+            $connector->sendDeleteRequest($xpath);
+
+        }
+
+        return $ret;
+    }
 
     /**
      * @param Address|AddressGroup $host
@@ -609,8 +635,23 @@ class NatRule extends Rule
 		$this->snattype = 'none';
 		$this->snathosts->setAny();
 		$this->rewriteSNAT_XML();
-		
+
+		return true;
 	}
+
+    public function API_setNoSNAT()
+    {
+        $ret = $this->setNoSNAT();
+        if( $ret )
+        {
+            $connector = findConnectorOrDie($this);
+            $xpath = $this->getXPath().'/source-translation';
+
+            $connector->sendDeleteRequest($xpath);
+        }
+
+        return $ret;
+    }
 
     public function setDestinationInterface($newDestinationInterface)
     {

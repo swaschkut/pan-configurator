@@ -1,7 +1,6 @@
 <?php
 /*
- * Copyright (c) 2014-2015 Palo Alto Networks, Inc. <info@paloaltonetworks.com>
- * Author: Christophe Painchaud <cpainchaud _AT_ paloaltonetworks.com>
+ * Copyright (c) 2014-2017 Christophe Painchaud <shellescape _AT_ gmail.com>
  *
  * Permission to use, copy, modify, and distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -48,18 +47,27 @@ class PanoramaConf
 	public $localhostlocaldomain;
 
     /** @var string[]|DomNode */
-	public $devicegrouproot;
+	public $templateroot;
 
+    /** @var string[]|DomNode */
+    public $templatestackroot;
+
+    /** @var string[]|DomNode */
+    public $devicegrouproot;
 
     public $version = null;
 
 	protected $managedFirewallsSerials = Array();
+    public $managedFirewallsSerialsModel = Array();
 
     /** @var DeviceGroup[] */
 	public $deviceGroups = Array();
 
     /** @var Template[]  */
     public $templates = Array();
+
+    /** @var TemplateStack[]  */
+    public $templatestacks = Array();
 
     /** @var RuleStore */
 	public $securityRules;
@@ -75,6 +83,9 @@ class PanoramaConf
 
     /** @var RuleStore */
     public $captivePortalRules;
+
+    /** @var RuleStore */
+    public $authenticationRules;
 
     /** @var RuleStore */
     public $pbfRules;
@@ -141,6 +152,7 @@ class PanoramaConf
 		$this->decryptionRules = new RuleStore($this, 'DecryptionRule', true);
         $this->appOverrideRules = new RuleStore($this, 'AppOverrideRule', true);
         $this->captivePortalRules = new RuleStore($this, 'CaptivePortalRule', true);
+        $this->authenticationRules = new RuleStore($this, 'AuthenticationRule', true);
         $this->pbfRules = new RuleStore($this, 'PbfRule', true);
         $this->qosRules = new RuleStore($this, 'QoSRule', true);
         $this->dosRules = new RuleStore($this, 'DoSRule', true);
@@ -212,6 +224,9 @@ class PanoramaConf
 			$this->managedFirewallsSerials[] = $s;
 		}
 
+		if( is_object( $this->connector ) )
+            $this->managedFirewallsSerialsModel = $this->connector->panorama_getConnectedFirewallsSerials();
+
 		$this->sharedroot = DH::findFirstElementOrCreate('shared', $this->xmlroot);
 
 		$this->devicesroot = DH::findFirstElementOrDie('devices', $this->xmlroot);
@@ -220,6 +235,7 @@ class PanoramaConf
 
 		$this->devicegrouproot = DH::findFirstElementOrCreate('device-group', $this->localhostroot);
         $this->templateroot = DH::findFirstElementOrCreate('template', $this->localhostroot);
+        $this->templatestackroot = DH::findFirstElementOrCreate('template-stack', $this->localhostroot);
 
         //
         // Extract Tag objects
@@ -260,6 +276,28 @@ class PanoramaConf
 		$tmp = DH::findFirstElementOrCreate('service-group', $this->sharedroot);
 		$this->serviceStore->load_servicegroups_from_domxml($tmp);
 		// End of address groups extraction
+
+        //
+        // Extract application
+        //
+        $tmp = DH::findFirstElementOrCreate('application', $this->sharedroot);
+        $this->appStore->load_application_custom_from_domxml($tmp);
+        // End of application extraction
+
+        //
+        // Extract application filter
+        //
+        $tmp = DH::findFirstElementOrCreate('application-filter', $this->sharedroot);
+        $this->appStore->load_application_filter_from_domxml($tmp);
+        // End of application filter groups extraction
+
+        //
+        // Extract application groups
+        //
+        $tmp = DH::findFirstElementOrCreate('application-group', $this->sharedroot);
+        $this->appStore->load_application_group_from_domxml($tmp);
+        // End of application groups extraction
+
 
         //
         // Extracting policies
@@ -394,6 +432,30 @@ class PanoramaConf
         $this->captivePortalRules->load_from_domxml($tmp, $tmpPost);
 
 
+        if( $prerulebase === false )
+            $tmp = null;
+        else
+        {
+            $tmp = DH::findFirstElement('authentication', $prerulebase);
+            if( $tmp !== false )
+                $tmp = DH::findFirstElement('rules', $tmp);
+
+            if( $tmp === false )
+                $tmp = null;
+        }
+        if( $postrulebase === false )
+            $tmpPost = null;
+        else
+        {
+            $tmpPost = DH::findFirstElement('authentication-portal', $postrulebase);
+            if( $tmpPost !== false )
+                $tmpPost = DH::findFirstElement('rules', $tmpPost);
+
+            if( $tmpPost === false )
+                $tmpPost = null;
+        }
+        $this->authenticationRules->load_from_domxml($tmp, $tmpPost);
+
 
         if( $prerulebase === false )
             $tmp = null;
@@ -490,6 +552,21 @@ class PanoramaConf
         // end of Templates
         //
 
+        //
+        // loading templatestacks
+        //
+        foreach ($this->templatestackroot->childNodes as $node)
+        {
+            if ($node->nodeType != XML_ELEMENT_NODE) continue;
+
+            $ldv = new TemplateStack('*tmp*', $this);
+            $ldv->load_from_domxml($node);
+            $this->templatestacks[] = $ldv;
+            //print "TemplateStack '{$ldv->name()}' found\n";
+        }
+        //
+        // end of Templates
+        //
 
         //
 		// loading Device Groups now
@@ -509,7 +586,10 @@ class PanoramaConf
         }
         else
         {
-            $dgMetaDataNode = DH::findXPathSingleEntryOrDie('/config/readonly/dg-meta-data/dginfo', $this->xmlroot);
+            if( $this->version < 80 )
+                $dgMetaDataNode = DH::findXPathSingleEntryOrDie('/config/readonly/dg-meta-data/dginfo', $this->xmlroot);
+            else
+                $dgMetaDataNode = DH::findXPathSingleEntryOrDie('/config/readonly/devices/entry/device-group', $this->xmlroot);
 
             $dgToParent = Array();
             $parentToDG = Array();
@@ -556,7 +636,12 @@ class PanoramaConf
                 }
 
                 if( count($dgLoadOrder) <= $dgLoadOrderCount )
+                {
+                    print "Problems could be available with the following DeviceGroup(s)\n";
+                    print_r($dgLoadOrder);
                     derr('dg-meta-data seems to be corrupted, parent.child template cannot be calculated ', $dgMetaDataNode);
+                }
+
 
             }
 
@@ -698,6 +783,7 @@ class PanoramaConf
         $gpreDecryptRules = $this->decryptionRules->countPreRules();
         $gpreAppOverrideRules = $this->appOverrideRules->countPreRules();
         $gpreCPRules = $this->captivePortalRules->countPreRules();
+        $gpreAuthRules = $this->authenticationRules->countPreRules();
         $gprePbfRules = $this->pbfRules->countPreRules();
         $gpreQoSRules = $this->qosRules->countPreRules();
         $gpreDoSRules = $this->dosRules->countPreRules();
@@ -707,6 +793,7 @@ class PanoramaConf
         $gpostDecryptRules = $this->decryptionRules->countPostRules();
         $gpostAppOverrideRules = $this->appOverrideRules->countPostRules();
         $gpostCPRules = $this->captivePortalRules->countPostRules();
+        $gpostAuthRules = $this->authenticationRules->countPostRules();
         $gpostPbfRules = $this->pbfRules->countPostRules();
         $gpostQoSRules = $this->qosRules->countPostRules();
         $gpostDoSRules = $this->dosRules->countPostRules();
@@ -733,6 +820,7 @@ class PanoramaConf
             $gpreDecryptRules += $cur->decryptionRules->countPreRules();
             $gpreAppOverrideRules += $cur->appOverrideRules->countPreRules();
             $gpreCPRules += $cur->captivePortalRules->countPreRules();
+            $gpreAuthRules += $cur->authenticationRules->countPreRules();
             $gprePbfRules += $cur->pbfRules->countPreRules();
             $gpreQoSRules += $cur->qosRules->countPreRules();
             $gpreDoSRules += $cur->dosRules->countPreRules();
@@ -742,6 +830,7 @@ class PanoramaConf
             $gpostDecryptRules += $cur->decryptionRules->countPostRules();
             $gpostAppOverrideRules += $cur->appOverrideRules->countPostRules();
             $gpostCPRules += $cur->captivePortalRules->countPostRules();
+            $gpostAuthRules += $cur->authenticationRules->countPostRules();
             $gpostPbfRules += $cur->pbfRules->countPostRules();
             $gpostQoSRules += $cur->qosRules->countPostRules();
             $gpostDoSRules += $cur->dosRules->countPostRules();
@@ -783,6 +872,9 @@ class PanoramaConf
 
         print "- ".$this->captivePortalRules->countPreRules()." (".$gpreCPRules.") pre-CaptivePortal Rules\n";
         print "- ".$this->captivePortalRules->countPostRules()." (".$gpostCPRules.") post-CaptivePortal Rules\n";
+
+        print "- ".$this->authenticationRules->countPreRules()." (".$gpreAuthRules.") pre-Authentication Rules\n";
+        print "- ".$this->authenticationRules->countPostRules()." (".$gpostAuthRules.") post-Authentication Rules\n";
 
         print "- ".$this->dosRules->countPreRules()." (".$gpreDoSRules.") pre-DoS Rules\n";
         print "- ".$this->dosRules->countPostRules()." (".$gpostDoSRules.") post-DoS Rules\n";

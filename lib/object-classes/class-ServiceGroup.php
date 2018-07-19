@@ -1,8 +1,7 @@
 <?php
 
 /*
- * Copyright (c) 2014-2015 Palo Alto Networks, Inc. <info@paloaltonetworks.com>
- * Author: Christophe Painchaud <cpainchaud _AT_ paloaltonetworks.com>
+ * Copyright (c) 2014-2017 Christophe Painchaud <shellescape _AT_ gmail.com>
  *
  * Permission to use, copy, modify, and distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -16,6 +15,8 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 */
+
+
 class ServiceGroup
 {
 	use PathableName;
@@ -32,10 +33,27 @@ class ServiceGroup
     public $tags;
 
     
-	public function __construct($name,$owner=null)
+	public function __construct($name,$owner=null, $fromTemplateXml = false)
 	{
 		$this->owner = $owner;
-		$this->name = $name;
+
+        if( $fromTemplateXml )
+        {
+            $doc = new DOMDocument();
+            $doc->loadXML(self::$templatexml);
+
+            $node = DH::findFirstElement('entry',$doc);
+
+            $rootDoc = $this->owner->serviceGroupRoot->ownerDocument;
+
+            $this->xmlroot = $rootDoc->importNode($node, true);
+            $this->load_from_domxml($this->xmlroot);
+
+            $this->name = $name;
+            $this->xmlroot->setAttribute('name', $name);
+        }
+
+        $this->name = $name;
 
         $this->tags = new TagRuleContainer($this);
 	}
@@ -110,7 +128,7 @@ class ServiceGroup
                 foreach( $this->members as $member )
                     if( $member === $f )
                     {
-                        mwarning("service '{$memberName}' is already part of group '{$this->name}', you should review your your config file");
+                        mwarning("duplicated member named '{$memberName}' detected in service group '{$this->name}', you should review your XML config file", $this->xmlroot);
                         $alreadyInGroup = true;
                         break;
                     }
@@ -138,7 +156,7 @@ class ServiceGroup
 	public function setName($newName)
 	{
 		$this->setRefName($newName);
-        $this->xmlroot->setAttribute('name', $newName);
+		$this->xmlroot->setAttribute('name', $newName);
 	}
 
     /**
@@ -553,6 +571,13 @@ class ServiceGroup
 		{
 			if( $object->isGroup() )
 			{
+                if( $this->name() == $object->name() )
+                {
+                    mwarning( "servicegroup with name: ".$this->name()." is added as subgroup to itself, you should review your XML config file" );
+                    continue;
+                }
+
+
 				$ret = array_merge( $ret, $object->expand() );
                 if( $keepGroupsInList )
                     $ret[] = $object;
@@ -595,6 +620,23 @@ class ServiceGroup
 		return false;
 	}
 
+    /**
+     * @param string $objectName
+     * @return bool
+     */
+    public function hasNamedObjectRecursive($objectName)
+    {
+        foreach( $this->members as $o )
+        {
+            if( $o->name() === $objectName )
+                return true;
+            if( $o->isGroup() )
+                if( $o->hasNamedObjectRecursive($objectName) ) return true;
+        }
+
+        return false;
+    }
+
 
     public function removeAll($rewriteXml = true)
     {
@@ -610,8 +652,9 @@ class ServiceGroup
             $this->rewriteXML();
         }
     }
-	
-	
+
+    static protected $templatexml = '<entry name="**temporarynamechangeme**"><members></members></entry>';
+    static protected $templatexmlroot = null;
 }
 
 

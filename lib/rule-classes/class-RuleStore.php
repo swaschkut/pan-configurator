@@ -1,8 +1,7 @@
 <?php
 
 /*
- * Copyright (c) 2014-2015 Palo Alto Networks, Inc. <info@paloaltonetworks.com>
- * Author: Christophe Painchaud <cpainchaud _AT_ paloaltonetworks.com>
+ * Copyright (c) 2014-2017 Christophe Painchaud <shellescape _AT_ gmail.com>
  *
  * Permission to use, copy, modify, and distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -67,6 +66,7 @@ class RuleStore
         'DecryptionRule' => Array( 'name' => 'Decryption', 'varName' => 'decryptionRules', 'xpathRoot' => 'decryption' ),
         'AppOverrideRule' => Array( 'name' => 'AppOverride', 'varName' => 'appOverrideRules', 'xpathRoot' => 'application-override' ),
         'CaptivePortalRule' => Array( 'name' => 'CaptivePortal', 'varName' => 'captivePortalRules', 'xpathRoot' => 'captive-portal' ),
+        'AuthenticationRule' => Array( 'name' => 'Authentication', 'varName' => 'authenticationRules', 'xpathRoot' => 'authentication' ),
         'PbfRule' => Array( 'name' => 'Pbf', 'varName' => 'pbfRules', 'xpathRoot' => 'pbf' ),
         'QoSRule' => Array( 'name' => 'QoS', 'varName' => 'qosRules', 'xpathRoot' => 'qos' ),
         'DoSRule' => Array( 'name' => 'DoS', 'varName' => 'dosRules', 'xpathRoot' => 'dos' )
@@ -128,6 +128,9 @@ class RuleStore
 	public function load_from_domxml($xml , $xmlPost=null)
 	{
 		global $PANC_DEBUG;
+
+        $duplicatesRemoval = Array();
+        $nameIndex = Array();
 		
 		if( $xml !== null )
         {
@@ -145,6 +148,17 @@ class RuleStore
                 /** @var SecurityRule|NatRule|DecryptionRule|Rule $nr */
                 $nr = new $this->type($this);
                 $nr->load_from_domxml($node);
+                if( PH::$enableXmlDuplicatesDeletion )
+                {
+                    if( isset($nameIndex[$nr->name()]) )
+                    {
+                        mwarning("rule named '{$nr->name()}' is present twice on the config and was cleaned by PAN-C");
+                        $duplicatesRemoval[] = $node;
+                        continue;
+                    }
+                }
+
+                $nameIndex[$nr->name()] = TRUE;
                 $this->_rules[] = $nr;
             }
         }
@@ -165,9 +179,25 @@ class RuleStore
                 }
 				$nr = new $this->type($this);
 				$nr->load_from_domxml($node);
-				$this->_postRules[] = $nr;
+                if( PH::$enableXmlDuplicatesDeletion )
+                {
+                    if( isset($nameIndex[$nr->name()]) )
+                    {
+                        mwarning("rule named '{$nr->name()}' is present twice on the config and was cleaned by PAN-C");
+                        $duplicatesRemoval[] = $node;
+                        continue;
+                    }
+                }
+
+                $nameIndex[$nr->name()] = TRUE;
+                $this->_postRules[] = $nr;
 			}
 		}
+
+        foreach( $duplicatesRemoval as $node )
+        {
+            $node->parentNode->removeChild($node);
+        }
 
 		$this->regen_Indexes();
 	}
@@ -586,6 +616,12 @@ class RuleStore
 	 */
 	public function moveRuleAfter( $ruleToBeMoved , $ruleRef, $rewriteXml=true )
 	{
+        if ($ruleToBeMoved === $ruleRef)
+        {
+            mwarning("Tried to move rule '{$ruleToBeMoved->name()}' after itself!");
+            return;
+        }
+
 		// TODO fix after pre/post suppression
 		if( is_string($ruleToBeMoved) )
 		{
@@ -649,9 +685,7 @@ class RuleStore
             foreach ($this->_rules as $rule)
             {
                 if ($rule === $ruleToBeMoved)
-                {
                     continue;
-                }
 
                 $newArray[$i] = $rule;
 
@@ -666,16 +700,14 @@ class RuleStore
 
             $this->_rules = &$newArray;
         }
-        elseif( ! $this->isPreOrPost )
+        else
         {
             $i = 0;
             $newArray = Array();
             foreach ($this->_postRules as $rule)
             {
                 if ($rule === $ruleToBeMoved)
-                {
                     continue;
-                }
 
                 $newArray[$i] = $rule;
 
@@ -703,13 +735,25 @@ class RuleStore
 	 */
 	public function API_moveRuleAfter( $ruleToBeMoved , $ruleRef, $rewritexml=true )
 	{
+        if ($ruleToBeMoved === $ruleRef)
+        {
+            print "\n   - skip object '".PH::boldText($ruleToBeMoved->name())."' can't move after self!\n";
+            return;
+        }
+
         $this->moveRuleAfter($ruleToBeMoved , $ruleRef, $rewritexml);
 
-		$xpath = $ruleToBeMoved->getXPath();
 		$con = findConnectorOrDie($this);
 
-		$url = 'type=config&action=move&xpath='.$xpath.'&where=after&dst='.$ruleRef->name();
-		$con->sendRequest($url);
+        $params = Array();
+
+        $params['type'] = 'config';
+        $params['action'] = 'move';
+        $params['xpath'] = $ruleToBeMoved->getXPath();
+        $params['where'] = 'after';
+        $params['dst'] = $ruleRef->name();
+
+		$con->sendRequest($params);
 	}
 
     public function removeAll()
@@ -742,13 +786,19 @@ class RuleStore
 	 */
     public function moveRuleBefore( $ruleToBeMoved , $ruleRef, $rewriteXml=true )
     {
+        if ($ruleToBeMoved === $ruleRef)
+        {
+            print "\n   - skipp object '".PH::boldText($ruleToBeMoved->name())."' can't move before self!\n";
+            return;
+        }
+
         // TODO fix after pre/post suppression
         if( is_string($ruleToBeMoved) )
         {
             $tmpRule = $this->find($ruleToBeMoved);
             if( $tmpRule === null )
                 derr("cannot find rule named '$ruleToBeMoved'");
-            return $this->moveRuleAfter( $tmpRule, $ruleRef, $rewriteXml );
+            return $this->moveRuleBefore( $tmpRule, $ruleRef, $rewriteXml );
         }
 
         if( is_string($ruleRef) )
@@ -756,7 +806,7 @@ class RuleStore
             $tmpRule = $this->find($ruleRef);
             if( $tmpRule === null )
                 derr("cannot find rule named '$tmpRule'");
-            return $this->moveRuleAfter( $ruleToBeMoved, $tmpRule, $rewriteXml );
+            return $this->moveRuleBefore( $ruleToBeMoved, $tmpRule, $rewriteXml );
         }
 
         $rtbmSerial = spl_object_hash($ruleToBeMoved);
@@ -809,20 +859,20 @@ class RuleStore
                     continue;
                 }
 
-                $newArray[$i] = $rule;
-
-                $i++;
-
                 if ($rule === $ruleRef)
                 {
                     $newArray[$i] = $ruleToBeMoved;
                     $i++;
                 }
+
+                $newArray[$i] = $rule;
+
+                $i++;
             }
 
             $this->_rules = &$newArray;
         }
-        elseif( ! $this->isPreOrPost )
+        else
         {
             $i = 0;
             $newArray = Array();
@@ -833,15 +883,15 @@ class RuleStore
                     continue;
                 }
 
-                $newArray[$i] = $rule;
-
-                $i++;
-
                 if ($rule === $ruleRef)
                 {
                     $newArray[$i] = $ruleToBeMoved;
                     $i++;
                 }
+
+                $newArray[$i] = $rule;
+
+                $i++;
             }
             $this->_postRules = &$newArray;
         }
@@ -859,13 +909,22 @@ class RuleStore
 	 */
 	public function API_moveRuleBefore( $ruleToBeMoved , $ruleRef, $rewritexml=true )
 	{
+        if ($ruleToBeMoved === $ruleRef)
+        {
+            print "\n   - skipp object '".PH::boldText($ruleToBeMoved->name())."' can't move befor self!\n";
+            return;
+        }
 		$this->moveRuleBefore($ruleToBeMoved , $ruleRef, $rewritexml);
 
-		$xpath = $ruleToBeMoved->getXPath();
 		$con = findConnectorOrDie($this);
 
-		$url = 'type=config&action=move&xpath='.$xpath.'&where=before&dst='.$ruleRef->name();
-		$con->sendRequest($url);
+        $params['type'] = 'config';
+        $params['action'] = 'move';
+        $params['xpath'] = $ruleToBeMoved->getXPath();
+        $params['where'] = 'before';
+        $params['dst'] = $ruleRef->name();
+
+        $con->sendRequest($params);
 	}
 	
 	
@@ -1289,17 +1348,22 @@ class RuleStore
 	*/
 	public function rewriteXML()
 	{
-		DH::clearDomNodeChilds($this->xmlroot);
+        if( $this->xmlroot !== null )
+            DH::clearDomNodeChilds($this->xmlroot);
+        else
+            $this->createXmlRoot();
+
 		foreach($this->_rules as $rule )
 		{
 			$this->xmlroot->appendChild($rule->xmlroot);
 		}
+
 		if( $this->isPreOrPost )
 		{
 			if( $this->postRulesRoot !== null )
                 DH::clearDomNodeChilds($this->postRulesRoot);
-            else // TODO better handling of rewrite
-                return;
+            else
+                $this->createPostXmlRoot();
 
 			foreach($this->_postRules as $rule )
 			{
@@ -1521,6 +1585,46 @@ class RuleStore
         else
             derr("rule '{$rule->name()}' not found");
 
+    }
+
+    /**
+     * @param null|bool $lookInPreRules
+     * @return null|Rule|SecurityRule|NatRule|DecryptionRule|AppOverrideRule|CaptivePortalRule|PbfRule|QoSRule|DoSRule null if not found
+     */
+    public function getRuleOnTop($lookInPreRules = true)
+    {
+        if( !$this->isPreOrPost || $lookInPreRules === true )
+        {
+            if( count($this->_rules) == 0 )
+                return null;
+
+            return reset($this->_rules);
+        }
+
+        if( count($this->_postRules) == 0 )
+            return null;
+
+        return reset($this->_postRules);
+    }
+
+    /**
+     * @param null|bool $lookInPreRules
+     * @return null|Rule|SecurityRule|NatRule|DecryptionRule|AppOverrideRule|CaptivePortalRule|PbfRule|QoSRule|DoSRule null if not found
+     */
+    public function getRuleAtBottom($lookInPreRules = true)
+    {
+        if( !$this->isPreOrPost || $lookInPreRules === true )
+        {
+            if( count($this->_rules) == 0 )
+                return null;
+
+            return end($this->_rules);
+        }
+
+        if( count($this->_postRules) == 0 )
+            return null;
+
+        return end($this->_postRules);
     }
 
 

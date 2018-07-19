@@ -1,7 +1,6 @@
 <?php
 /*
- * Copyright (c) 2014-2015 Palo Alto Networks, Inc. <info@paloaltonetworks.com>
- * Author: Christophe Painchaud <cpainchaud _AT_ paloaltonetworks.com>
+ * Copyright (c) 2014-2017 Christophe Painchaud <shellescape _AT_ gmail.com>
  *
  * Permission to use, copy, modify, and distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -44,7 +43,10 @@ class DeviceGroup
 									<pre-rulebase><security><rules></rules></security><nat><rules></rules></nat></pre-rulebase>
 									</entry>';
 
-	
+
+    /** @var AppStore */
+    public $appStore;
+
 	/** @var TagStore */
 	public $tagStore=null;
 	
@@ -65,6 +67,9 @@ class DeviceGroup
 
     /** @var RuleStore */
     public $captivePortalRules;
+
+    /** @var RuleStore */
+    public $authenticationRules;
 
     /** @var RuleStore */
     public $pbfRules;
@@ -116,6 +121,7 @@ class DeviceGroup
 		$this->decryptionRules = new RuleStore($this, 'DecryptionRule', true);
         $this->appOverrideRules = new RuleStore($this, 'AppOverrideRule', true);
         $this->captivePortalRules = new RuleStore($this, 'CaptivePortalRule', true);
+        $this->authenticationRules = new RuleStore($this, 'AuthenticationRule', true);
         $this->pbfRules = new RuleStore($this, 'PbfRule', true);
         $this->qosRules = new RuleStore($this, 'QoSRule', true);
         $this->dosRules = new RuleStore($this, 'DoSRule', true);
@@ -203,6 +209,26 @@ class DeviceGroup
 		//print "VirtualSystem '".$this->name."' service groups loaded\n" ;
 		// End of <service-group> extraction
 
+        //
+        // Extract application
+        //
+        $tmp = DH::findFirstElementOrCreate('application', $xml);
+        $this->appStore->load_application_custom_from_domxml($tmp);
+        // End of application extraction
+
+        //
+        // Extract application filter
+        //
+        $tmp = DH::findFirstElementOrCreate('application-filter', $xml);
+        $this->appStore->load_application_filter_from_domxml($tmp);
+        // End of application filter groups extraction
+
+        //
+        // Extract application groups
+        //
+        $tmp = DH::findFirstElementOrCreate('application-group', $xml);
+        $this->appStore->load_application_group_from_domxml($tmp);
+        // End of application groups extraction
 
 
         //
@@ -342,6 +368,31 @@ class DeviceGroup
         $this->captivePortalRules->load_from_domxml($tmp, $tmpPost);
 
 
+        if( $prerulebase === false )
+            $tmp = null;
+        else
+        {
+            $tmp = DH::findFirstElement('authentication', $prerulebase);
+            if( $tmp !== false )
+                $tmp = DH::findFirstElement('rules', $tmp);
+
+            if( $tmp === false )
+                $tmp = null;
+        }
+        if( $postrulebase === false )
+            $tmpPost = null;
+        else
+        {
+            $tmpPost = DH::findFirstElement('authenticaiton', $postrulebase);
+            if( $tmpPost !== false )
+                $tmpPost = DH::findFirstElement('rules', $tmpPost);
+
+            if( $tmpPost === false )
+                $tmpPost = null;
+        }
+        $this->authenticationRules->load_from_domxml($tmp, $tmpPost);
+
+
 
         if( $prerulebase === false )
             $tmp = null;
@@ -459,10 +510,37 @@ class DeviceGroup
     }
 
 
-
-	public function getDevicesInGroup()
+    /**
+     * @param bool $includeSubDeviceGroups look for device inside sub device-groups
+     * @return array
+     */
+	public function getDevicesInGroup($includeSubDeviceGroups = false)
 	{
-		return $this->devices;
+		$devices = $this->devices;
+
+		if( $includeSubDeviceGroups )
+        {
+            foreach( $this->_childDeviceGroups as $childDG )
+            {
+                $subDevices = $childDG->getDevicesInGroup(true);
+                foreach( $subDevices as $subDevice )
+                {
+                    $serial = $subDevice['serial'];
+
+                    if( isset($devices[$serial]) )
+                    {
+                        foreach($subDevice['vsyslist'] as $vsys)
+                        {
+                            $devices[$serial]['vsyslist'][$vsys] = $vsys;
+                        }
+                    }
+                    else
+                        $devices[$serial] = $subDevice;
+                }
+            }
+        }
+
+		return $devices;
 	}
 	
 	public function name()
@@ -493,7 +571,8 @@ class DeviceGroup
         print "- {$this->pbfRules->countPreRules()} / {$this->pbfRules->countPostRules()} pre/post PBF rules\n";
         print "- {$this->decryptionRules->countPreRules()} / {$this->decryptionRules->countPostRules()} pre/post Decrypt rules\n";
         print "- {$this->appOverrideRules->countPreRules()} / {$this->appOverrideRules->countPostRules()} pre/post AppOverride rules\n";
-        print "- {$this->captivePortalRules->countPreRules()} / {$this->captivePortalRules->countPostRules()} pre/post AppOverride rules\n";
+        print "- {$this->captivePortalRules->countPreRules()} / {$this->captivePortalRules->countPostRules()} pre/post Captive Portal rules\n";
+        print "- {$this->authenticationRules->countPreRules()} / {$this->authenticationRules->countPostRules()} pre/post Authentication rules\n";
         print "- {$this->dosRules->countPreRules()} / {$this->dosRules->countPostRules()} pre/post DoS rules\n";
 
         print "- {$this->addressStore->count()}/{$this->addressStore->countAddresses()}/{$this->addressStore->countAddressGroups()}/{$this->addressStore->countTmpAddresses()}/{$this->addressStore->countUnused()} total/address/group/tmp/unused objects\n";
@@ -523,6 +602,29 @@ class DeviceGroup
         }
 
         return $this->_childDeviceGroups;
+    }
+
+    /**
+     * @return DeviceGroup[]
+     */
+    public function parentDeviceGroups()
+    {
+        if( $this->name() == 'shared' )
+        {
+            $dgs[$this->name()] = $this;
+            return $dgs;
+        }
+
+        $dg_tmp = $this;
+        $dgs = Array();
+
+        while( $dg_tmp !== null )
+        {
+            $dgs[$dg_tmp->name()] = $dg_tmp;
+            $dg_tmp = $dg_tmp->parentDeviceGroup;
+        }
+
+        return $dgs;
     }
 
 }

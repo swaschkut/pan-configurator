@@ -1,8 +1,7 @@
 <?php
 
 /*
- * Copyright (c) 2014-2015 Palo Alto Networks, Inc. <info@paloaltonetworks.com>
- * Author: Christophe Painchaud <cpainchaud _AT_ paloaltonetworks.com>
+ * Copyright (c) 2014-2017 Christophe Painchaud <shellescape _AT_ gmail.com>
  *
  * Permission to use, copy, modify, and distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -99,293 +98,87 @@ $supportedArguments['loadplugin'] = Array('niceName' => 'loadPlugin', 'shortHelp
 $supportedArguments['help'] = Array('niceName' => 'help', 'shortHelp' => 'this message');
 
 
-//
-// Supported Actions
-//
-$supportedActions = Array();
-// <editor-fold desc="  ****  Supported Actions Array  ****" defaultstate="collapsed" >
-
-
-$supportedActions['delete'] = Array(
-    'name' => 'delete',
-    'MainFunction' => function ( TagCallContext $context )
-    {
-        $object = $context->object;
-
-        if( $object->countReferences() != 0 )
-        {
-            print $context->padding."  * SKIPPED: this object is used by other objects and cannot be deleted (use deleteForce to try anyway)\n";
-            return;
-        }
-        if( $context->isAPI )
-            $object->owner->API_removeTag($object);
-        else
-            $object->owner->removeTag($object);
-    },
-);
-
-$supportedActions['deleteforce'] = Array(
-    'name' => 'deleteForce',
-    'MainFunction' => function ( TagCallContext $context )
-    {
-        $object = $context->object;
-
-        if( $object->countReferences() != 0 )
-            print $context->padding."  * WARNING : this object seems to be used so deletion may fail.\n";
-        if( $context->isAPI )
-            $object->owner->API_removeTag($object);
-        else
-            $object->owner->removeTag($object);
-    },
-);
-
-
-$supportedActions['name-addprefix'] = Array(
-    'name' => 'name-addPrefix',
-    'MainFunction' =>  function ( TagCallContext $context )
-    {
-        $object = $context->object;
-        $newName = $context->arguments['prefix'].$object->name();
-        print $context->padding." - new name will be '{$newName}'\n";
-        if( strlen($newName) > 127 )
-        {
-            print " *** SKIPPED : resulting name is too long\n";
-            return;
-        }
-        $rootObject = PH::findRootObjectOrDie($object->owner->owner);
-
-        if( $rootObject->isPanorama() && $object->owner->find($newName, null, false) !== null ||
-            $rootObject->isFirewall() && $object->owner->find($newName, null, true) !== null   )
-        {
-            print " *** SKIPPED : an object with same name already exists\n";
-            return;
-        }
-        if( $context->isAPI )
-            $object->API_setName($newName);
-        else
-
-            $object->setName($newName);
-    },
-    'args' => Array( 'prefix' => Array( 'type' => 'string', 'default' => '*nodefault*' )
-    ),
-);
-$supportedActions['name-addsuffix'] = Array(
-    'name' => 'name-addSuffix',
-    'MainFunction' =>  function ( TagCallContext $context )
-    {
-        $object = $context->object;
-        $newName = $object->name().$context->arguments['suffix'];
-        print $context->padding." - new name will be '{$newName}'\n";
-        if( strlen($newName) > 127 )
-        {
-            print " *** SKIPPED : resulting name is too long\n";
-            return;
-        }
-        $rootObject = PH::findRootObjectOrDie($object->owner->owner);
-
-        if( $rootObject->isPanorama() && $object->owner->find($newName, null, false) !== null ||
-            $rootObject->isFirewall() && $object->owner->find($newName, null, true) !== null   )
-        {
-            print " *** SKIPPED : an object with same name already exists\n";
-            return;
-        }
-        if( $context->isAPI )
-            $object->API_setName($newName);
-        else
-            $object->setName($newName);
-    },
-    'args' => Array( 'suffix' => Array( 'type' => 'string', 'default' => '*nodefault*' )
-    ),
-);
-$supportedActions['name-removeprefix'] = Array(
-    'name' => 'name-removePrefix',
-    'MainFunction' =>  function ( TagCallContext $context )
-    {
-        $object = $context->object;
-        $prefix = $context->arguments['prefix'];
-
-        if( strpos($object->name(), $prefix) !== 0 )
-        {
-            echo $context->padding." *** SKIPPED : prefix not found\n";
-            return;
-        }
-        $newName = substr($object->name(), strlen($prefix));
-
-        if ( !preg_match("/^[a-zA-Z0-9]/", $newName[0]) )
-        {
-            echo $context->padding." *** SKIPPED : object name contains not allowed character at the beginning\n";
-            return;
-        }
-
-        echo $context->padding." - new name will be '{$newName}'\n";
-
-        $rootObject = PH::findRootObjectOrDie($object->owner->owner);
-
-        if( $rootObject->isPanorama() && $object->owner->find($newName, null, false) !== null ||
-            $rootObject->isFirewall() && $object->owner->find($newName, null, true) !== null   )
-        {
-            echo $context->padding." *** SKIPPED : an object with same name already exists\n";
-            return;
-        }
-        if( $context->isAPI )
-            $object->API_setName($newName);
-        else
-            $object->setName($newName);
-    },
-    'args' => Array( 'prefix' => Array( 'type' => 'string', 'default' => '*nodefault*' )
-    ),
-);
-$supportedActions['name-removesuffix'] = Array(
-    'name' => 'name-removeSuffix',
-    'MainFunction' =>  function ( TagCallContext $context )
-    {
-        $object = $context->object;
-        $suffix = $context->arguments['suffix'];
-        $suffixStartIndex = strlen($object->name()) - strlen($suffix);
-
-        if( substr($object->name(), $suffixStartIndex, strlen($object->name()) ) != $suffix )
-        {
-            echo $context->padding." *** SKIPPED : suffix not found\n";
-            return;
-        }
-        $newName = substr( $object->name(), 0, $suffixStartIndex );
-
-        echo $context->padding." - new name will be '{$newName}'\n";
-
-        $rootObject = PH::findRootObjectOrDie($object->owner->owner);
-
-        if( $rootObject->isPanorama() && $object->owner->find($newName, null, false) !== null ||
-            $rootObject->isFirewall() && $object->owner->find($newName, null, true) !== null   )
-        {
-            echo $context->padding." *** SKIPPED : an object with same name already exists\n";
-            return;
-        }
-        if( $context->isAPI )
-            $object->API_setName($newName);
-        else
-            $object->setName($newName);
-    },
-    'args' => Array( 'suffix' => Array( 'type' => 'string', 'default' => '*nodefault*' )
-    ),
-);
-$supportedActions['name-touppercase'] = Array(
-    'name' => 'name-toUpperCase',
-    'MainFunction' =>  function ( TagCallContext $context )
-    {
-        $object = $context->object;
-        #$newName = $context->arguments['prefix'].$object->name();
-        $newName = mb_strtoupper($object->name(), 'UTF8' );
-        print $context->padding." - new name will be '{$newName}'\n";
-        $rootObject = PH::findRootObjectOrDie($object->owner->owner);
-
-        if( $newName === $object->name() )
-        {
-            print " *** SKIPPED : object is already uppercase\n";
-            return;
-        }
-
-        if( $rootObject->isPanorama() && $object->owner->find($newName, null, false) !== null ||
-            $rootObject->isFirewall() && $object->owner->find($newName, null, true) !== null   )
-        {
-            print " *** SKIPPED : an object with same name already exists\n";
-            #use existing uppercase TAG and replace old lowercase where used with this existing uppercase TAG
-            return;
-        }
-        if( $context->isAPI )
-            $object->API_setName($newName);
-        else
-
-            $object->setName($newName);
-    }
-);
-$supportedActions['name-tolowercase'] = Array(
-    'name' => 'name-toLowerCase',
-    'MainFunction' =>  function ( TagCallContext $context )
-    {
-        $object = $context->object;
-        #$newName = $context->arguments['prefix'].$object->name();
-        $newName = mb_strtolower( $object->name(), 'UTF8' );
-        print $context->padding." - new name will be '{$newName}'\n";
-
-        $rootObject = PH::findRootObjectOrDie($object->owner->owner);
-
-        if( $newName === $object->name() )
-        {
-            print " *** SKIPPED : object is already lowercase\n";
-            return;
-        }
-
-        if( $rootObject->isPanorama() && $object->owner->find($newName, null, false) !== null ||
-            $rootObject->isFirewall() && $object->owner->find($newName, null, true) !== null   )
-        {
-            print " *** SKIPPED : an object with same name already exists\n";
-            #use existing lowercase TAG and replace old uppercase where used with this
-            return;
-        }
-        if( $context->isAPI )
-            $object->API_setName($newName);
-        else
-
-            $object->setName($newName);
-    }
-);
-$supportedActions['name-toucwords'] = Array(
-    'name' => 'name-toUCWords',
-    'MainFunction' =>  function ( TagCallContext $context )
-    {
-        $object = $context->object;
-        #$newName = $context->arguments['prefix'].$object->name();
-        $newName = mb_strtolower( $object->name(), 'UTF8' );
-        $newName = ucwords( $newName );
-        print $context->padding." - new name will be '{$newName}'\n";
-
-        $rootObject = PH::findRootObjectOrDie($object->owner->owner);
-
-        if( $newName === $object->name() )
-        {
-            print " *** SKIPPED : object is already UCword\n";
-            return;
-        }
-
-        if( $rootObject->isPanorama() && $object->owner->find($newName, null, false) !== null ||
-            $rootObject->isFirewall() && $object->owner->find($newName, null, true) !== null   )
-        {
-            print " *** SKIPPED : an object with same name already exists\n";
-            #use existing lowercase TAG and replace old uppercase where used with this
-            return;
-        }
-        if( $context->isAPI )
-            $object->API_setName($newName);
-        else
-
-            $object->setName($newName);
-    }
-);
-
-$supportedActions['displayreferences'] = Array(
-    'name' => 'displayReferences',
-    'MainFunction' => function ( TagCallContext $context )
-    {
-        $object = $context->object;
-
-        $object->display_references(7);
-    },
-);
-
-$supportedActions['display'] = Array(
-    'name' => 'display',
-    'MainFunction' => function ( TagCallContext $context )
-    {
-        $object = $context->object;
-        print "     * ".get_class($object)." '{$object->name()}' \n";
-        print "\n\n";
-    },
-);
-// </editor-fold>
-
-
 
 PH::processCliArgs();
+
+
+if( isset(PH::$args['loadplugin']) )
+{
+    $pluginFile = PH::$args['loadplugin'];
+    print " * loadPlugin was used. Now loading file: '{$pluginFile}'...";
+    require_once $pluginFile;
+    TagCallContext::prepareSupportedActions();
+    print "OK!\n";
+}
+
+if( isset(PH::$args['help']) )
+{
+    $pos = array_search('help', $argv);
+
+    if( $pos === false )
+        display_usage_and_exit(false);
+
+    $keys = array_keys($argv);
+
+    if( $pos == end($keys) )
+        display_usage_and_exit(false);
+
+    $action = $argv[(array_search($pos, $keys) +1)];
+
+    if( !isset(TagCallContext::$supportedActions[strtolower($action)]) )
+        derr("request help for action '{$action}' but it does not exist");
+
+    $action = & TagCallContext::$supportedActions[strtolower($action)];
+
+    $args = Array();
+    if( isset($action['args']) )
+    {
+        foreach( $action['args'] as $argName => &$argDetails )
+        {
+            if( $argDetails['default'] == '*nodefault*' )
+                $args[] = "{$argName}";
+            else
+                $args[] = "[{$argName}]";
+        }
+    }
+
+    $args = PH::list_to_string($args);
+    print "*** help for Action ".PH::boldText($action['name']).":".$args."\n";
+
+    if( isset($action['help']) )
+        print $action['help'];
+
+    if( !isset($args) || !isset($action['args']) )
+    {
+        print "\n\n**No arguments required**";
+    }
+    else
+    {
+        print "\nListing arguments:\n\n";
+        foreach( $action['args'] as $argName => &$argDetails )
+        {
+            print "-- ".PH::boldText($argName)." :";
+            if( $argDetails['default'] != "*nodefault" )
+                print " OPTIONAL";
+            print " type={$argDetails['type']}";
+            if( isset($argDetails['choices']) )
+            {
+                print "     choices: ".PH::list_to_string($argDetails['choices']);
+            }
+            print "\n";
+            if( isset($argDetails['help']) )
+                print " ".str_replace("\n", "\n ",$argDetails['help']);
+            else
+                print "  *no help available*";
+            print "\n\n";
+        }
+    }
+
+
+    print "\n\n";
+
+    exit(0);
+}
 
 foreach ( PH::$args as $index => &$arg )
 {
@@ -396,23 +189,9 @@ foreach ( PH::$args as $index => &$arg )
     }
 }
 
-if( isset(PH::$args['help']) )
-{
-    display_usage_and_exit();
-}
-
-if( isset(PH::$args['loadplugin']) )
-{
-    $pluginFile = PH::$args['loadplugin'];
-    print " * loadPlugin was used. Now loading file: '{$pluginFile}'...";
-    require_once $pluginFile;
-    print "OK!\n";
-}
-
-
 if( isset(PH::$args['listactions']) )
 {
-    ksort($supportedActions);
+    ksort(TagCallContext::$supportedActions);
 
     print "Listing of supported actions:\n\n";
 
@@ -421,7 +200,7 @@ if( isset(PH::$args['listactions']) )
         str_pad("Def. Values",12, ' ', STR_PAD_BOTH)."|   Choices\n";
     print str_pad('', 100, '-')."\n";
 
-    foreach($supportedActions as &$action )
+    foreach(TagCallContext::$supportedActions as &$action )
     {
 
         $output = "* ".$action['name'];
@@ -633,7 +412,7 @@ foreach( $explodedActions as &$exAction )
 
     $actionName = strtolower($explodedAction[0]);
 
-    if( !isset($supportedActions[$actionName]) )
+    if( !isset(TagCallContext::$supportedActions[$actionName]) )
     {
         display_error_usage_exit('unsupported Action: "'.$actionName.'"');
     }
@@ -641,7 +420,7 @@ foreach( $explodedActions as &$exAction )
     if( count($explodedAction) == 1 )
         $explodedAction[1] = '';
 
-    $context = new TagCallContext($supportedActions[$actionName], $explodedAction[1]);
+    $context = new TagCallContext(TagCallContext::$supportedActions[$actionName], $explodedAction[1]);
     $context->baseObject = $pan;
     if( $configInput['type'] == 'api' )
     {
@@ -780,6 +559,15 @@ foreach( $objectsLocation as $location )
 }
 // </editor-fold>
 
+
+foreach( $doActions as $doAction )
+{
+    if( $doAction->hasGlobalInitAction() )
+    {
+        $doAction->subSystem = $sub;
+        $doAction->executeGlobalInitAction();
+    }
+}
 
 //
 // It's time to process Rules !!!!

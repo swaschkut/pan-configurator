@@ -7,7 +7,7 @@
 	<title>Class DeviceGroup | PAN-Configurator</title>
 
 	<script type="text/javascript" src="resources/combined.js?772778653"></script>
-	<script type="text/javascript" src="elementlist.js?2180725909"></script>
+	<script type="text/javascript" src="elementlist.js?4105871058"></script>
 	<link rel="stylesheet" type="text/css" media="all" href="resources/style.css?3505392360" />
 
 </head>
@@ -339,14 +339,14 @@
 
 		<td class="attributes"><code>
 			 public 
-			
+			array
 			
 			</code>
 		</td>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_getDevicesInGroup">#</a>
-		<code><b>getDevicesInGroup</b>( )</code>
+		<code><b>getDevicesInGroup</b>( <span>boolean <var>$includeSubDeviceGroups</var> = <span class="php-keyword1">false</span></span> )</code>
 
 		<div class="description short">
 			
@@ -356,7 +356,16 @@
 			
 
 
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$includeSubDeviceGroups</var></dt>
+					<dd><code>boolean</code><br>$includeSubDeviceGroups look for device inside sub device-groups</dd>
+				</dl></div>
 
+				<h4>Returns</h4>
+				<div class="list">
+					<code>array</code><br />
+				</div>
 
 
 
@@ -526,6 +535,7 @@
 	<tr>
 		<td><code>
 			<a href="class-PathableName.html#__PANC_shortName"><b>_PANC_shortName()</b></a>, 
+			<a href="class-PathableName.html#_getLocationString"><b>getLocationString()</b></a>, 
 			<a href="class-PathableName.html#_toString"><b>toString()</b></a>
 		</code></td>
 	</tr>
@@ -702,6 +712,28 @@
 								&lt;/entry&gt;'</span></code></td>
 		<td class="description"><div>
 			<a href="#$templatexml" class="anchor">#</a>
+
+			<div class="description short">
+				
+			</div>
+
+			<div class="description detailed hidden">
+				
+
+			</div>
+		</div></td>
+	</tr>
+	<tr data-order="appStore" id="$appStore">
+		<td class="attributes"><code>
+			public  
+			<code><a href="class-AppStore.html">AppStore</a></code>
+		</code></td>
+
+		<td class="name">
+<var>$appStore</var>		</td>
+		<td class="value"><code></code></td>
+		<td class="description"><div>
+			<a href="#$appStore" class="anchor">#</a>
 
 			<div class="description short">
 				

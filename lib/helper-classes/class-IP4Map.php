@@ -1,7 +1,6 @@
 <?php
 /*
- * Copyright (c) 2014-2015 Palo Alto Networks, Inc. <info@paloaltonetworks.com>
- * Author: Christophe Painchaud <cpainchaud _AT_ paloaltonetworks.com>
+ * Copyright (c) 2014-2017 Christophe Painchaud <shellescape _AT_ gmail.com>
  *
  * Permission to use, copy, modify, and distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -88,6 +87,17 @@ class IP4Map
         }
 
         return $affectedRows;
+    }
+
+    public function intersection( IP4Map $otherMap )
+    {
+        $invertedMap = IP4Map::mapFromText('0.0.0.0-255.255.255.255');
+        $invertedMap->substract($otherMap);
+
+        $result = clone $otherMap;
+        $result->substract($invertedMap);
+
+        return $result;
     }
 
     public function substractSingleIP4Entry(&$subEntry)

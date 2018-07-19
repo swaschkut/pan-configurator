@@ -1,8 +1,7 @@
 <?php
 
 /*
- * Copyright (c) 2014-2015 Palo Alto Networks, Inc. <info@paloaltonetworks.com>
- * Author: Christophe Painchaud <cpainchaud _AT_ paloaltonetworks.com>
+ * Copyright (c) 2014-2017 Christophe Painchaud <shellescape _AT_ gmail.com>
  *
  * Permission to use, copy, modify, and distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -86,6 +85,7 @@ class Address
 	/**
 	* @ignore
 	* @param DOMElement $xml
+     * @return bool TRUE if loaded ok, FALSE if not
 	*/
 	public function load_from_domxml(DOMElement $xml)
 	{
@@ -120,7 +120,13 @@ class Address
 		}
 
 		if( !$typeFound )
-			derr('Object type not found or not supported for object '.$this->name.'. Please check your configuration file and fix it.', $xml);
+        {
+            if( !PH::$ignoreInvalidAddressObjects )
+                derr('Object type not found or not supported for address object ' . $this->name . '. Please check your configuration file and fix it or invoke ith argument "shadow-ignoreInvalidAddressObjects"', $xml);
+
+            mwarning('Object type not found or not supported for address object ' . $this->name . ' but you manually did bypass this error', $xml);
+            return false;
+        }
 
 		if( $this->owner->owner->version >= 60 )
 		{
@@ -129,6 +135,8 @@ class Address
 				$this->tags->load_from_domxml($tagRoot);
 		}
 
+
+		return true;
 	}
 
     /**
@@ -284,6 +292,11 @@ class Address
      */
 	public function API_setName($newName)
 	{
+        if( $this->isTmpAddr() )
+        {
+            mwarning('renaming of TMP object in API is not possible, it was ignored');
+            return;
+        }
 		$c = findConnectorOrDie($this);
 		$xpath = $this->getXPath();
         $c->sendRenameRequest($xpath, $newName);
@@ -391,15 +404,17 @@ class Address
         {
             if( ! $this->nameIsValidRuleIPEntry()  )
             {
-                derr('cannot resolve this Temporary object !');
+                // if this object is temporary/unsupported, we send an empty mapping
+                $this->_ip4Map = new IP4Map();
+                $this->_ip4Map->unresolved[$this->name] = $this;
             }
-            $this->_ip4Map = IP4Map::mapFromText($this->name);
+            else
+                $this->_ip4Map = IP4Map::mapFromText($this->name);
         }
         elseif( $this->type != self::TypeIpRange && $this->type != self::TypeIpNetmask )
         {
             $this->_ip4Map = new IP4Map();
             $this->_ip4Map->unresolved[$this->name] = $this;
-            //$this->_ip4Map->
         }
         elseif( $this->type == self::TypeIpNetmask || $this->type == self::TypeIpRange )
         {

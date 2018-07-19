@@ -1,7 +1,6 @@
 <?php
 /*
- * Copyright (c) 2014-2015 Palo Alto Networks, Inc. <info@paloaltonetworks.com>
- * Author: Christophe Painchaud <cpainchaud _AT_ paloaltonetworks.com>
+ * Copyright (c) 2014-2017 Christophe Painchaud <shellescape _AT_ gmail.com>
  *
  * Permission to use, copy, modify, and distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -34,7 +33,7 @@ $supportedArguments[] = Array(
         "  - SameMembers: groups holding same members replaced by the one picked first (default)\n".
         "  - SameIP4Mapping: groups resolving the same IP4 coverage will be replaced by the one picked first\n".
         "  - WhereUsed: groups used exactly in the same location will be merged into 1 single groups with all members together\n",
-    'argDesc'=> 'SamePorts|WhereUsed');
+    'argDesc'=> 'SameMembers|SameIP4Mapping|WhereUsed');
 $supportedArguments[] = Array('niceName' => 'Location', 'shortHelp' => 'specify if you want to limit your query to a VSYS/DG. By default location=shared for Panorama, =vsys1 for PANOS', 'argDesc' => '=sys1|shared|dg1');
 $supportedArguments[] = Array('niceName' => 'mergeCountLimit', 'shortHelp' => 'stop operations after X objects have been merged', 'argDesc'=> '100');
 $supportedArguments[] = Array('niceName' => 'pickFilter', 'shortHelp' => 'specify a filter a pick which object will be kept while others will be replaced by this one', 'argDesc' => '(name regex /^g/)');
@@ -47,6 +46,8 @@ $usageMsg = PH::boldText('USAGE: ')."php ".basename(__FILE__)." in=inputfile.xml
 prepareSupportedArgumentsArray($supportedArguments);
 
 PH::processCliArgs();
+
+$nestedQueries = Array();
 
 // check that only supported arguments were provided
 foreach ( PH::$args as $index => &$arg )
@@ -313,7 +314,7 @@ foreach( $objectsToSearchThrough as $object )
     if( !$object->isGroup() || $object->isDynamic() )
         continue;
 
-    if( $excludeFilter !== null && $excludeFilter->matchSingleObject($object) )
+    if( $excludeFilter !== null && $excludeFilter->matchSingleObject( Array('object' =>$object, 'nestedQueries'=>&$nestedQueries) ) )
         continue;
 
     $skipThisOne = false;
@@ -386,7 +387,7 @@ foreach( $hashMap as $index => &$hash )
         {
             foreach( $upperHashMap[$index] as $object )
             {
-                if( $pickFilter->matchSingleObject($object) )
+                if( $pickFilter->matchSingleObject( Array('object' =>$object, 'nestedQueries'=>&$nestedQueries) ) )
                 {
                     $pickedObject = $object;
                     break;
@@ -401,7 +402,7 @@ foreach( $hashMap as $index => &$hash )
         {
             foreach( $hash as $object )
             {
-                if( $pickFilter->matchSingleObject($object) )
+                if( $pickFilter->matchSingleObject( Array('object' =>$object, 'nestedQueries'=>&$nestedQueries) ) )
                 {
                     $pickedObject = $object;
                     break;
@@ -442,9 +443,9 @@ foreach( $hashMap as $index => &$hash )
                     echo "    - group '{$object->name()}' merged with its ancestor, deleting this one... ";
                     $object->replaceMeGlobally($ancestor);
                     if( $apiMode )
-                        $object->owner->API_remove($object);
+                        $object->owner->API_remove($object, true);
                     else
-                        $object->owner->remove($object);
+                        $object->owner->remove($object, true);
 
                     echo "OK!\n";
 
@@ -497,22 +498,18 @@ foreach( $hashMap as $index => &$hash )
         }
         else
         {
-            echo "    - replacing '{$object->name()}' with '{$pickedObject->name()}' where it's used\n";
+            echo "    - replacing '{$object->_PANC_shortName()}' ...\n";
+            $object->__replaceWhereIamUsed($apiMode, $pickedObject, true, 5);
+
+            echo "    - deleting '{$object->_PANC_shortName()}'\n";
             if( $apiMode )
             {
-                $object->API_addObjectWhereIamUsed($pickedObject, TRUE, 6);
-                $object->API_removeWhereIamUsed(TRUE, 6);
-                echo "    - deleting '{$object->name()}'... ";
-                $object->owner->API_remove($object);
-                echo "OK!\n";
+                //true flag needed for nested groups in a specific constellation
+                $object->owner->API_remove($object, true);
             }
             else
             {
-                $object->addObjectWhereIamUsed($pickedObject, TRUE, 6);
-                $object->removeWhereIamUsed(TRUE, 6);
-                echo "    - deleting '{$object->name()}'... ";
-                $object->owner->remove($object);
-                echo "OK!\n";
+                $object->owner->remove($object, true);
             }
         }
 

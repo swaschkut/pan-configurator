@@ -1,8 +1,7 @@
 <?php
 
 /*
- * Copyright (c) 2014-2015 Palo Alto Networks, Inc. <info@paloaltonetworks.com>
- * Author: Christophe Painchaud <cpainchaud _AT_ paloaltonetworks.com>
+ * Copyright (c) 2014-2017 Christophe Painchaud <shellescape _AT_ gmail.com>
  *
  * Permission to use, copy, modify, and distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -137,10 +136,11 @@ class AddressGroup
                         mwarning('unsupported AddressGroup type: ', $xml);
                 }
                 else
-                    $this->isDynamic;
+                    $this->isDynamic = true;
 			}
 			else
 			{
+			    $membersIndex = Array();
 				foreach( $this->membersRoot->childNodes as $node)
 				{
 					if( $node->nodeType != 1 ) continue;
@@ -149,6 +149,13 @@ class AddressGroup
 
                     if( strlen($memberName) < 1 )
                         derr('found a member with empty name !', $node);
+
+                    if( isset($membersIndex[$memberName]) )
+                    {
+                        mwarning("duplicated member named '{$memberName}' detected in address group '{$this->name}',  you should review your XML config file", $this->xmlroot);
+                        continue;
+                    }
+                    $membersIndex[$memberName] = true;
 
 					$f = $this->owner->findOrCreate($memberName, $this, true);
 					$this->members[] = $f;
@@ -309,7 +316,90 @@ class AddressGroup
         return $ret;
     }
 
+    /**
+     * tag a member with its group membership name
+     * @param bool $rewriteXml
+     * @return bool
+     */
+    public function tagMember( $newTag, $rewriteXml = true )
+    {
+        foreach( $this->members() as $member )
+        {
+            if( $member->isGroup() )
+                $member->tagMember( $newTag );
+            else
+                $member->tags->addTag( $newTag );
+        }
 
+        if( $rewriteXml )
+            $this->rewriteXML();
+
+        return true;
+    }
+
+    /**
+     * tag a member with its group membership name
+     * @param bool $rewriteXml
+     * @return bool
+     */
+    public function API_tagMember( $newTag, $rewriteXml = true )
+    {
+        $ret = $this->tagMember( $newTag, $rewriteXml );
+
+        if($ret)
+            $this->API_sync();
+
+        return $ret;
+    }
+
+    /**
+     * tag a member with its group membership name
+     * @param bool $rewriteXml
+     * @return bool
+     */
+    public function tagRuleandGroupMember( $rule, $prefix, $rewriteXml = true )
+    {
+        $tagStore = $rule->owner->owner->tagStore;
+
+        $newTag = $tagStore->findOrCreate($prefix . $this->name());
+
+        $rule->tags->addTag( $newTag );
+
+        foreach( $this->members() as $member )
+        {
+            if( $member->isGroup() )
+                $member->tagRuleandGroupMember($rule, $prefix);
+            elseif( !$member->isTmpAddr() )
+            {
+                $tagStore = $rule->owner->owner->tagStore;
+
+                $newTagName = $prefix . $this->name();
+                $newTag = $tagStore->findOrCreate($newTagName);
+
+                $member->tags->addTag($newTag);
+            }
+        }
+
+        if( $rewriteXml )
+            $this->rewriteXML();
+
+        return true;
+    }
+
+    /**
+     * tag a member with its group membership name
+     * @param bool $rewriteXml
+     * @return bool
+     */
+    public function API_tagRuleandGroupMember( $rule, $prefix, $rewriteXml = true )
+    {
+        $ret = $this->tagRuleandGroupMember( $rule, $prefix, $rewriteXml );
+
+        if($ret)
+            $this->API_sync();
+
+        return $ret;
+    }
 	/**
 	* Clear this Group from all its members
 	*
@@ -393,7 +483,7 @@ class AddressGroup
 	 */
 	public function has($obj)
 	{
-		return ! array_search($obj, $this->members, true) === false;
+        return array_search($obj, $this->members, true) !== false;
 	}
 	
 	/**
@@ -404,9 +494,6 @@ class AddressGroup
 	{
         if( $this->isDynamic() )
             derr('unsupported');
-
-        if( $this->owner === null )
-            return;
 
 		if( $this->owner->owner->version >= 60 )
 			DH::Hosts_to_xmlDom($this->membersRoot, $this->members, 'member', false);
@@ -423,7 +510,7 @@ class AddressGroup
 	public function count()
 	{
 		if( $this->isDynamic )
-			derr('unsupported with Dynamic Address Groups');
+			mwarning('unsupported with Dynamic Address Groups');
 		return count($this->members);
 	}
 
@@ -576,6 +663,12 @@ class AddressGroup
             $serial = spl_object_hash($object);
             if( $object->isGroup() )
             {
+                if( $this->name() == $object->name() )
+                {
+                    mwarning( "addressgroup with name: ".$this->name()." is added as subgroup to itself, you should review your XML config file" );
+                    continue;
+                }
+
                 /** @var AddressGroup $object */
                 $tmpList = $object->expand();
                 $ret = array_merge( $ret, $tmpList);
@@ -791,6 +884,31 @@ class AddressGroup
         $result['ip4'] = $mapObject;
 
         return $result;
+    }
+
+    public function hasGroupinGroup()
+    {
+        $is_group = false;
+        foreach( $this->members() as $member )
+        {
+            if( $member->isGroup() )
+                $is_group = true;
+        }
+
+        return $is_group;
+    }
+
+    public function getGroupNamerecursive( $group_name_array )
+    {
+        foreach( $this->members() as $member )
+        {
+            if( $member->isGroup() )
+            {
+                $group_name_array[] = $member->name();
+                $group_name_array = $member->getGroupNamerecursive( $group_name_array );
+            }
+        }
+        return $group_name_array;
     }
 	
 

@@ -1,7 +1,6 @@
 <?php
 /*
- * Copyright (c) 2014-2015 Palo Alto Networks, Inc. <info@paloaltonetworks.com>
- * Author: Christophe Painchaud <cpainchaud _AT_ paloaltonetworks.com>
+ * Copyright (c) 2014-2017 Christophe Painchaud <shellescape _AT_ gmail.com>
  *
  * Permission to use, copy, modify, and distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -115,6 +114,11 @@ ServiceCallContext::$supportedActions[] = Array(
         foreach ($objectRefs as $objectRef)
         {
             print $context->padding." * replacing in {$objectRef->toString()}\n";
+            if( $objectRef === $foundObject || $objectRef->name() == $foundObject->name() )
+            {
+                print $context->padding."   - SKIPPED : cannot replace an object by itself\n";
+                continue;
+            }
             if( $context->isAPI )
                 $objectRef->API_replaceReferencedObject($object, $foundObject);
             else
@@ -177,19 +181,15 @@ ServiceCallContext::$supportedActions[] = Array(
 
         $addWhereUsed = false;
         $addUsedInLocation = false;
-        $fieldsArray = explode('|',$context->arguments['additionalFields']) ;
-        foreach($fieldsArray as $fieldName)
-        {
-            $fieldName = strtolower($fieldName);
-            if( $fieldName == 'whereused' )
-                $addWhereUsed = true;
-            elseif( $fieldName == 'usedinlocation' )
-                $addUsedInLocation = true;
-            else{
-                if( $fieldName != '*none*')
-                    derr("unsupported field name '{$fieldName}' when export to Excel/HTML");
-            }
-        }
+
+        $optionalFields = &$context->arguments['additionalFields'];
+
+        if( isset($optionalFields['WhereUsed']) )
+            $addWhereUsed = true;
+
+        if( isset($optionalFields['UsedInLocation']) )
+            $addUsedInLocation = true;
+
 
         $headers = '<th>location</th><th>name</th><th>type</th><th>dport</th><th>sport</th><th>members</th><th>description</th><th>tags</th>';
 
@@ -289,8 +289,10 @@ ServiceCallContext::$supportedActions[] = Array(
     },
     'args' => Array(    'filename' => Array( 'type' => 'string', 'default' => '*nodefault*' ),
         'additionalFields' =>
-            Array( 'type' => 'string',
+            Array( 'type' => 'pipeSeparatedList',
+                'subtype' => 'string',
                 'default' => '*NONE*',
+                'choices' => Array('WhereUsed', 'UsedInLocation'),
                 'help' =>
                     "pipe(|) separated list of additional field to include in the report. The following is available:\n".
                     "  - WhereUsed : list places where object is used (rules, groups ...)\n".
@@ -305,6 +307,12 @@ ServiceCallContext::$supportedActions[] = Array(
     'MainFunction' =>  function ( ServiceCallContext $context )
     {
         $object = $context->object;
+
+        if( $object->isTmpSrv() )
+        {
+            print $context->padding."   * SKIPPED because this object is Tmp\n";
+            return;
+        }
 
         $localLocation = 'shared';
 
@@ -350,10 +358,24 @@ ServiceCallContext::$supportedActions[] = Array(
         $conflictObject = $targetStore->find($object->name() ,null, false);
         if( $conflictObject === null )
         {
+            if( $object->isGroup() )
+            {
+                foreach($object->members() as $memberObject)
+                    if( $targetStore->find($memberObject->name()) === NULL )
+                    {
+                        echo $context->padding."   * SKIPPED : this group has an object named '{$memberObject->name()} that does not exist in target location '{$targetLocation}'\n";
+                        return;
+                    }
+            }
+
             print $context->padding."   * moved, no conflict\n";
             if( $context->isAPI )
             {
-                derr("unsupported with API yet, use offline mode instead");
+                $oldXpath = $object->getXPath();
+                $object->owner->remove($object);
+                $targetStore->add($object);
+                $object->API_sync();
+                $context->connector->sendDeleteRequest($oldXpath);
             }
             else
             {
@@ -369,7 +391,7 @@ ServiceCallContext::$supportedActions[] = Array(
             return;
         }
 
-        print $context->padding."   - there is a conflict with type ";
+        print $context->padding."   - there is a conflict with an object of same name and type. Please use service-merger.php script with argument 'allowmergingwithupperlevel'";
         if( $conflictObject->isGroup() )
             print "Group\n";
         else
@@ -384,12 +406,6 @@ ServiceCallContext::$supportedActions[] = Array(
         if( $conflictObject->isTmpSrv() && !$object->isTmpSrv() )
         {
             derr("unsupported situation with a temporary object");
-            return;
-        }
-
-        if( $object->isTmpSrv() )
-        {
-            print $context->padding."   * SKIPPED because this object is Tmp\n";
             return;
         }
 
@@ -751,6 +767,90 @@ ServiceCallContext::$supportedActions[] = Array(
 );
 
 ServiceCallContext::$supportedActions[] = Array(
+    'name' => 'name-Rename',
+    'MainFunction' =>  function ( ServiceCallContext $context )
+    {
+        $object = $context->object;
+
+        if( $object->isTmpSrv() )
+        {
+            echo $context->padding." *** SKIPPED : not applicable to TMP objects\n";
+            return;
+        }
+        if( $object->isGroup() )
+        {
+            echo $context->padding." *** SKIPPED : not applicable to Group objects\n";
+            return;
+        }
+
+        $newName = $context->arguments['stringFormula'];
+
+        if( strpos($newName, '$$current.name$$') !== FALSE )
+        {
+            $newName = str_replace('$$current.name$$', $object->name(), $newName);
+        }
+        if( strpos( $newName, '$$value$$' ) !== FALSE )
+        {
+            $newName = str_replace( '$$value$$', $object->value(), $newName);
+        }
+
+
+        if( strpos( $newName, '$$protocol$$' ) !== FALSE )
+        {
+            $newName = str_replace( '$$protocol$$', $object->protocol(), $newName);
+        }
+        if( strpos( $newName, '$$destinationport$$' ) !== FALSE )
+        {
+            $newName = str_replace( '$$destinationport$$', $object->getDestPort(), $newName);
+        }
+        if( strpos( $newName, '$$sourceport$$' ) !== FALSE )
+        {
+            $newName = str_replace( '$$sourceport$$', $object->getSourcePort(), $newName);
+        }
+
+
+
+        if( $object->name() == $newName )
+        {
+            echo $context->padding." *** SKIPPED : new name and old name are the same\n";
+            return;
+        }
+
+        echo $context->padding." - new name will be '{$newName}'\n";
+
+        $findObject = $object->owner->find($newName);
+        if( $findObject !== null )
+        {
+            echo $context->padding." *** SKIPPED : an object with same name already exists\n";
+            return;
+        }
+        else
+        {
+            echo $context->padding." - renaming object... ";
+            if( $context->isAPI )
+                $object->API_setName($newName);
+            else
+                $object->setName($newName);
+            echo "OK!\n";
+        }
+
+    },
+    'args' => Array( 'stringFormula' => Array(
+        'type' => 'string',
+        'default' => '*nodefault*',
+        'help' =>
+            "This string is used to compose a name. You can use the following aliases :\n".
+            "  - \\$\$current.name\\$\\$ : current name of the object\n".
+            "  - \\$\$destinationport\\$\\$ : destination Port\n".
+            "  - \\$\$protocol\\$\\$ : service protocol\n".
+            "  - \\$\$sourceport\\$\\$ : source Port\n".
+            "  - \\$\$value\\$\\$ : value of the object\n"
+    )
+    ),
+    'help' => ''
+);
+
+ServiceCallContext::$supportedActions[] = Array(
     'name' => 'displayReferences',
     'MainFunction' => function ( ServiceCallContext $context )
     {
@@ -765,10 +865,162 @@ ServiceCallContext::$supportedActions[] = Array(
     'MainFunction' => function ( ServiceCallContext $context )
     {
         $object = $context->object;
-        print "     * ".get_class($object)." '{$object->name()}' \n";
-        if( $object->isGroup() ) foreach($object->members() as $member) print "          - {$member->name()}\n";
+        print "     * ".get_class($object)." '{$object->name()}'    ";
+        if( $object->isGroup() )
+        {
+            print "\n";
+            foreach($object->members() as $member)
+            {
+                if( $object->isGroup() )
+                    print "          - {$member->name()}\n";
+                else
+                    print "          - {$member->name()}   desc: '{$member->description()}'\n";
+            }
+
+        }
+        else
+            print "value: '{$object->protocol()}/{$object->getDestPort()}'    desc: '{$object->description()}'\n";
+
         print "\n\n";
     },
 );
 
+ServiceCallContext::$supportedActions[] = Array(
+    'name' => 'tag-Add',
+    'section' => 'tag',
+    'MainFunction' => function(ServiceCallContext $context)
+    {
+        $object = $context->object;
+        $objectFind = $object->tags->parentCentralStore->find($context->arguments['tagName']);
+        if( $objectFind === null )
+            derr("tag named '{$context->arguments['tagName']}' not found");
 
+        if( $context->isAPI )
+            $object->tags->API_addTag($objectFind);
+        else
+            $object->tags->addTag($objectFind);
+    },
+    'args' => Array( 'tagName' => Array( 'type' => 'string', 'default' => '*nodefault*' ) ),
+);
+ServiceCallContext::$supportedActions[] = Array(
+    'name' => 'tag-Add-Force',
+    'section' => 'tag',
+    'MainFunction' => function(ServiceCallContext $context)
+    {
+        $object = $context->object;
+        if( $context->isAPI )
+        {
+            $objectFind = $object->tags->parentCentralStore->find($context->arguments['tagName']);
+            if( $objectFind === null)
+                $objectFind = $object->tags->parentCentralStore->API_createTag($context->arguments['tagName']);
+        }
+        else
+            $objectFind = $object->tags->parentCentralStore->findOrCreate($context->arguments['tagName']);
+
+        if( $context->isAPI )
+            $object->tags->API_addTag($objectFind);
+        else
+            $object->tags->addTag($objectFind);
+    },
+    'args' => Array( 'tagName' => Array( 'type' => 'string', 'default' => '*nodefault*' ) ),
+);
+ServiceCallContext::$supportedActions[] = Array(
+    'name' => 'tag-Remove',
+    'section' => 'tag',
+    'MainFunction' => function(ServiceCallContext $context)
+    {
+        $object = $context->object;
+        $objectFind = $object->tags->parentCentralStore->find($context->arguments['tagName']);
+        if( $objectFind === null )
+            derr("tag named '{$context->arguments['tagName']}' not found");
+
+        if( $context->isAPI )
+            $object->tags->API_removeTag($objectFind);
+        else
+            $object->tags->removeTag($objectFind);
+    },
+    'args' => Array( 'tagName' => Array( 'type' => 'string', 'default' => '*nodefault*' ) ),
+);
+ServiceCallContext::$supportedActions[] = Array(
+    'name' => 'tag-Remove-All',
+    'section' => 'tag',
+    'MainFunction' => function(ServiceCallContext $context)
+    {
+        $object = $context->object;
+        foreach($object->tags->tags() as $tag )
+        {
+            echo $context->padding."  - removing tag {$tag->name()}... ";
+            if( $context->isAPI )
+                $object->tags->API_removeTag($tag);
+            else
+                $object->tags->removeTag($tag);
+            echo "OK!\n";
+        }
+    },
+    //'args' => Array( 'tagName' => Array( 'type' => 'string', 'default' => '*nodefault*' ) ),
+);
+ServiceCallContext::$supportedActions[] = Array(
+    'name' => 'tag-Remove-Regex',
+    'section' => 'tag',
+    'MainFunction' => function(ServiceCallContext $context)
+    {
+        $object = $context->object;
+        $pattern = '/'.$context->arguments['regex'].'/';
+        foreach($object->tags->tags() as $tag )
+        {
+            $result = preg_match($pattern, $tag->name());
+            if( $result === false )
+                derr("'$pattern' is not a valid regex");
+            if( $result == 1 )
+            {
+                echo $context->padding."  - removing tag {$tag->name()}... ";
+                if( $context->isAPI )
+                    $object->tags->API_removeTag($tag);
+                else
+                    $object->tags->removeTag($tag);
+                echo "OK!\n";
+            }
+        }
+    },
+    'args' => Array( 'regex' => Array( 'type' => 'string', 'default' => '*nodefault*' ) ),
+);
+
+ServiceCallContext::$supportedActions[] = Array(
+    'name' => 'description-Append',
+    'MainFunction' =>  function(ServiceCallContext $context)
+    {
+        $service = $context->object;
+        if( $service->isGroup())
+        {
+            echo $context->padding." *** SKIPPED : a service group has no description\n";
+            return;
+        }
+        if( $service->isTmpSrv() )
+        {
+            echo $context->padding." *** SKIPPED : object is tmp\n";
+            return;
+        }
+        $description = $service->description();
+
+        $textToAppend = "";
+        if( $description != "" )
+            $textToAppend = " ";
+        $textToAppend .= $context->rawArguments['text'];
+
+        if( strlen($description) + strlen($textToAppend) > 253 )
+        {
+            echo $context->padding." - SKIPPED : resulting description is too long\n";
+            return;
+        }
+
+        echo $context->padding." - new description will be: '{$description}{$textToAppend}' ... ";
+
+        if( $context->isAPI )
+            $service->API_setDescription($description.$textToAppend);
+        else
+            $service->setDescription($description.$textToAppend);
+
+        echo "OK";
+    },
+    'args' => Array( 'text' => Array( 'type' => 'string', 'default' => '*nodefault*' ))
+);

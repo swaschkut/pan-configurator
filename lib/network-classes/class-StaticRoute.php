@@ -1,7 +1,6 @@
 <?php
 /*
- * Copyright (c) 2014-2015 Palo Alto Networks, Inc. <info@paloaltonetworks.com>
- * Author: Christophe Painchaud <cpainchaud _AT_ paloaltonetworks.com>
+ * Copyright (c) 2014-2017 Christophe Painchaud <shellescape _AT_ gmail.com>
  *
  * Permission to use, copy, modify, and distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -29,6 +28,9 @@ class StaticRoute
     protected $_nexthopType = 'none';
 
     protected $_nexthopIP = null;
+
+    /** @var null|string  */
+    protected $_nexthopVR = null;
 
     /** @var VirtualRouter */
     public $owner;
@@ -76,7 +78,16 @@ class StaticRoute
             {
                 $this->_nexthopType = 'ip-address';
                 $this->_nexthopIP = $fhTypeNode->textContent;
+                return;
             }
+            $fhTypeNode = DH::findFirstElement('next-vr', $fhNode);
+            if( $fhTypeNode !== false )
+            {
+                $this->_nexthopType = 'next-vr';
+                $this->_nexthopVR = $fhTypeNode->textContent;
+                return;
+            }
+
         }
     }
 
@@ -99,6 +110,14 @@ class StaticRoute
     public function nexthopIP()
     {
         return $this->_nexthopIP;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function nexthopVR()
+    {
+        return $this->_nexthopVR;
     }
 
     public function nexthopInterface()

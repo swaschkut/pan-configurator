@@ -1,7 +1,6 @@
 <?php
 /*
- * Copyright (c) 2014-2015 Palo Alto Networks, Inc. <info@paloaltonetworks.com>
- * Author: Christophe Painchaud <cpainchaud _AT_ paloaltonetworks.com>
+ * Copyright (c) 2014-2017 Christophe Painchaud <shellescape _AT_ gmail.com>
  *
  * Permission to use, copy, modify, and distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -21,6 +20,7 @@
 class CallContext
 {
     public $arguments = Array();
+    public $rawArguments = Array();
 
     /** @var  Rule|SecurityRule|NatRule|DecryptionRule|AppOverrideRule|CaptivePortalRule|PbfRule|QoSRule|DoSRule $object  */
     public $object;
@@ -48,7 +48,7 @@ class CallContext
         $this->prepareArgumentsForAction($arguments);
 
         if( $nestedQueries === null )
-            $nestedQueries = Array();
+            $this->nestedQueries = Array();
         else
             $this->nestedQueries = &$nestedQueries;
     }
@@ -69,6 +69,8 @@ class CallContext
             {
                 if( is_bool($argValue) )
                     print "$argName=".boolYesNo($argValue).", ";
+                elseif( is_array($argValue) )
+                    print "$argName=".PH::list_to_string($argValue, '|').", ";
                 else
                     print "$argName=$argValue, ";
             }
@@ -77,6 +79,17 @@ class CallContext
         print "\n";
 
         $this->actionRef['MainFunction']($this);
+    }
+
+    public function hasGlobalInitAction()
+    {
+        return isset($this->actionRef['GlobalInitFunction']);
+    }
+
+    public function executeGlobalInitAction()
+    {
+        print "   - action '{$this->actionRef['name']}' has tasks to process before start.\n";
+        $this->actionRef['GlobalInitFunction']($this);
     }
 
     public function hasGlobalFinishAction()
@@ -93,6 +106,7 @@ class CallContext
     public function prepareArgumentsForAction($arguments)
     {
         $this->arguments = Array();
+        $this->rawArguments = Array();
 
         if(strlen($arguments) != 0 && !isset($this->actionRef['args']) )
             display_error_usage_exit("error while processing argument '{$this->actionRef['name']}' : arguments were provided while they are not supported by this action");
@@ -114,6 +128,7 @@ class CallContext
             if( isset($ex[$count]) )
                 $argValue = $ex[$count];
 
+            $this->rawArguments[$argName] = $argValue;
 
             if( (!isset($properties['default']) || $properties['default'] == '*nodefault*') && ($argValue === null || strlen($argValue)) == 0 )
                 derr("action '{$this->actionRef['name']}' argument#{$count} '{$argName}' requires a value, it has no default one");
@@ -135,6 +150,45 @@ class CallContext
                     if( !isset($tmpChoice[$argValue]) )
                         derr("unsupported value '{$argValue}' for action '{$this->actionRef['name']}' arg#{$count} '{$argName}'");
                 }
+            }
+            elseif( $properties['type'] == 'pipeSeparatedList' )
+            {
+                $tmpArray = Array();
+
+                if( $argValue != $properties['default'] )
+                {
+                    if( isset($properties['choices']) )
+                    {
+                        $tmpChoices = Array();
+                        foreach($properties['choices'] as $choice )
+                        {
+                            $tmpChoices[strtolower($choice)] = $choice;
+                        }
+
+                        $inputChoices = explode('|', $argValue);
+
+                        foreach( $inputChoices as $inputValue )
+                        {
+                            $inputValue = strtolower(trim($inputValue));
+
+                            if( !isset($tmpChoices[$inputValue]) )
+                                derr("unsupported value '{$argValue}' for action '{$this->actionRef['name']}' arg#{$count} '{$argName}'. Available choices are:".PH::list_to_string($properties['choices']));
+
+                            $tmpArray[$tmpChoices[$inputValue]] = $tmpChoices[$inputValue];
+                        }
+                    }
+                    else
+                    {
+                        $inputChoices = explode('|', $argValue);
+
+                        foreach( $inputChoices as $inputValue )
+                        {
+                            $tmpArray[$inputValue] = $inputValue;
+                        }
+                    }
+                }
+
+                $argValue = &$tmpArray;
             }
             elseif( $properties['type'] == 'boolean' || $properties['type'] == 'bool' )
             {
@@ -172,6 +226,8 @@ class CallContext
             {
                 if( is_bool($argValue) )
                     $ret .= "$argName=".boolYesNo($argValue).", ";
+                if( is_array($argValue) )
+                    $ret .= "$argName=".PH::list_to_string($argValue).", ";
                 else
                     $ret .= "$argName=$argValue, ";
             }
@@ -195,6 +251,7 @@ class RuleCallContext extends CallContext
         {
             $tmpArgs[strtolower($arg['name'])] = $arg;
         }
+        ksort($tmpArgs);
         self::$supportedActions = $tmpArgs;
     }
 
@@ -230,7 +287,7 @@ class RuleCallContext extends CallContext
     }
 
 
-    public function generateRuleMergedApuChangeString($forSharedRules=false)
+    public function generateRuleMergedApiChangeString($forSharedRules=false)
     {
 
         if( !isset($this->mergeArray) )
@@ -295,7 +352,7 @@ class RuleCallContext extends CallContext
 
             return '<device-group>'.$strPointer.'</device-group>';
         }
-        else
+        elseif( !$forSharedRules )
         {
             if( count($mergeArray) < 1 )
                 return null;
@@ -303,7 +360,7 @@ class RuleCallContext extends CallContext
             $xml = '<vsys>';
             foreach($mergeArray as $subSystemName => &$types)
             {
-                $xml .= "<entry name=\"{$subSystemName}\"><rules>";
+                $xml .= "<entry name=\"{$subSystemName}\"><rulebase>";
 
                 foreach($types as $typeName => &$rules)
                 {
@@ -317,24 +374,25 @@ class RuleCallContext extends CallContext
                     $xml .= "</rules></{$typeName}>\n";
                 }
 
-                $xml .= "</rules></entry>";
+                $xml .= "</rulebase></entry>";
             }
             $xml .= '</vsys>';
 
             return $xml;
         }
+        return null;
     }
 
     public function doBundled_API_Call()
     {
-        $setString = $this->generateRuleMergedApuChangeString(true);
+        $setString = $this->generateRuleMergedApiChangeString(true);
         if( $setString !== null )
         {
             print $this->padding . ' - sending API call for SHARED... ';
             $this->connector->sendSetRequest('/config/shared', $setString);
             print "OK!\n";
         }
-        $setString = $this->generateRuleMergedApuChangeString(false);
+        $setString = $this->generateRuleMergedApiChangeString(false);
         if( $setString !== null )
         {
             print $this->padding . ' - sending API call for Device-Groups/VSYS... ';
@@ -421,6 +479,22 @@ class RuleCallContext extends CallContext
             return self::enclose($rule->to->getAll(), $wrap);
         }
 
+        if( $fieldName == 'source_negated' )
+        {
+            if( !method_exists($rule, 'sourceIsNegated') || !$rule->sourceIsNegated() )
+                return self::enclose('no');
+
+            return self::enclose('yes');
+        }
+
+        if( $fieldName == 'destination_negated' )
+        {
+            if( !method_exists($rule, 'destinationIsNegated') || !$rule->destinationIsNegated() )
+                return self::enclose('no');
+
+            return self::enclose('yes');
+        }
+
         if( $fieldName == 'source' )
         {
             if( $rule->source->isAny() )
@@ -454,6 +528,81 @@ class RuleCallContext extends CallContext
             return self::enclose($rule->services->getAll(), $wrap);
         }
 
+        if( $fieldName == 'service_resolved_sum' )
+        {
+            if( $rule->isDecryptionRule() )
+                return self::enclose('');
+            if( $rule->isAppOverrideRule() )
+                return self::enclose($rule->ports());
+
+
+            if( $rule->isNatRule() )
+            {
+                if( $rule->service !== null )
+                    return self::enclose(Array($rule->service));
+                return self::enclose('any');
+            }
+
+            if( $rule->services->isAny() )
+                return self::enclose('any');
+            if( $rule->services->isApplicationDefault() )
+                return self::enclose('application-default');
+
+            $objects = $rule->services->getAll();
+
+            $array = array();
+            foreach( $objects as $object )
+            {
+                $port_mapping = $object->dstPortMapping();
+                $mapping_texts = $port_mapping->mappingToText();
+
+                //TODO: handle predefined service objects in a different way
+                if( $object->name() == 'service-http' )
+                    $mapping_texts = 'tcp/80';
+                if( $object->name() == 'service-https' )
+                    $mapping_texts = 'tcp/443';
+
+
+                if( strpos($mapping_texts, " ") !== FALSE )
+                    $mapping_text_array = explode(" ", $mapping_texts);
+                else
+                    $mapping_text_array[] = $mapping_texts;
+
+
+                foreach( $mapping_text_array as $mapping_text )
+                {
+                    $protocol = "tmp";
+                    if( strpos($mapping_text, "tcp/") !== FALSE )
+                        $protocol = "tcp/";
+                    elseif( strpos($mapping_text, "udp/") !== FALSE )
+                        $protocol = "udp/";
+
+                    $mapping_text = str_replace( $protocol, "", $mapping_text );
+                    $mapping_text = explode( ",", $mapping_text);
+
+                    foreach( $mapping_text as $mapping )
+                    {
+                        if( !isset( $array[$protocol.$mapping] ) )
+                        {
+                            $port_mapping_text[$protocol.$mapping] = $protocol.$mapping;
+
+                            if( strpos($mapping, "-") !== FALSE )
+                            {
+                                $array[$protocol.$mapping] = $protocol.$mapping;
+                                $range = explode( "-", $mapping );
+                                for( $i = $range[0]; $i<=$range[1]; $i++ )
+                                    $array[$protocol.$i] = $protocol.$i;
+                            }
+                            else
+                                $array[$protocol.$mapping] = $protocol.$mapping;
+                        }
+                    }
+                }
+            }
+
+            return self::enclose($port_mapping_text);
+        }
+        
         if( $fieldName == 'application' )
         {
             if( !$rule->isSecurityRule() )
@@ -639,6 +788,7 @@ class ServiceCallContext extends CallContext
         {
             $tmpArgs[strtolower($arg['name'])] = $arg;
         }
+        ksort($tmpArgs);
         self::$supportedActions = $tmpArgs;
     }
 
@@ -664,17 +814,41 @@ class AddressCallContext extends CallContext
         {
             $tmpArgs[strtolower($arg['name'])] = $arg;
         }
+        ksort($tmpArgs);
         self::$supportedActions = $tmpArgs;
     }
 }
 require_once  "actions-address.php";
 AddressCallContext::prepareSupportedActions();
 
+
+
+
 class TagCallContext extends CallContext
 {
     /** @var  Tag */
     public $object;
+
+
+    public static $commonActionFunctions = Array();
+    public static $supportedActions = Array();
+
+    static public function prepareSupportedActions()
+    {
+        $tmpArgs = Array();
+        foreach( self::$supportedActions as &$arg )
+        {
+            $tmpArgs[strtolower($arg['name'])] = $arg;
+        }
+        ksort($tmpArgs);
+        self::$supportedActions = $tmpArgs;
+    }
 }
+require_once  "actions-tag.php";
+TagCallContext::prepareSupportedActions();
+
+
+
 
 class SessionCallContext extends CallContext
 {

@@ -1,8 +1,7 @@
 <?php
 
 /*
- * Copyright (c) 2014-2015 Palo Alto Networks, Inc. <info@paloaltonetworks.com>
- * Author: Christophe Painchaud <cpainchaud _AT_ paloaltonetworks.com>
+ * Copyright (c) 2014-2017 Christophe Painchaud <shellescape _AT_ gmail.com>
  *
  * Permission to use, copy, modify, and distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -129,6 +128,24 @@ class DecryptionRule extends RuleWithUserID
         print "\n";
     }
 
+    public function cleanForDestruction()
+    {
+        $this->from->__destruct();
+        $this->to->__destruct();
+        $this->source->__destruct();
+        $this->destination->__destruct();
+        $this->tags->__destruct();
+        $this->services->__destruct();
+
+        $this->from = null;
+        $this->to = null;
+        $this->source = null;
+        $this->destination = null;
+        $this->tags = null;
+        $this->services = null;
+
+        $this->owner = null;
+    }
 
     public function isDecryptionRule()
     {

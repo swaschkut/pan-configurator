@@ -1,8 +1,7 @@
 <?php
 
 /*
- * Copyright (c) 2014-2015 Palo Alto Networks, Inc. <info@paloaltonetworks.com>
- * Author: Christophe Painchaud <cpainchaud _AT_ paloaltonetworks.com>
+ * Copyright (c) 2014-2017 Christophe Painchaud <shellescape _AT_ gmail.com>
  *
  * Permission to use, copy, modify, and distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -17,10 +16,28 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 */
 
+if( PHP_MAJOR_VERSION <= 5 && PHP_MINOR_VERSION <= 4 )
+    die("\n*** ERROR **** PAN-Configurator requires PHP version >= 5.5\n");
+
 set_time_limit ( 0 );
 ini_set("memory_limit","14512M");
 error_reporting(E_ALL);
 gc_enable();
+
+// For Web apps, STDIN/ERR are not prepopulated
+if (!defined('STDIN'))
+{
+    define('STDIN', fopen('php://stdin', 'r'));
+}
+if (!defined('STDOUT'))
+{
+    define('STDOUT', fopen('php://stdout', 'w'));
+}
+if (!defined('STDERR'))
+{
+    define('STDERR', fopen('php://stderr', 'w'));
+}
+
 
 date_default_timezone_set('UTC');
 
@@ -107,6 +124,7 @@ require_once $basedir.'/misc-classes/class-PanAPIConnector.php';
 
 require_once $basedir.'/helper-classes/class-IP4Map.php';
 require_once $basedir.'/helper-classes/class-ServiceDstPortMapping.php';
+require_once $basedir.'/helper-classes/class-ServiceSrcPortMapping.php';
 require_once $basedir.'/helper-classes/class-cidr.php';
 
 require_once $basedir.'/container-classes/class-ObjRuleContainer.php';
@@ -135,6 +153,7 @@ require_once $basedir.'/device-and-system-classes/class-PANConf.php';
 require_once $basedir.'/device-and-system-classes/class-PanoramaConf.php';
 require_once $basedir.'/device-and-system-classes/class-DeviceGroup.php';
 require_once $basedir.'/device-and-system-classes/class-Template.php';
+require_once $basedir.'/device-and-system-classes/class-TemplateStack.php';
 require_once $basedir.'/device-and-system-classes/class-ManagedDevice.php';
 
 require_once $basedir.'/network-classes/class-Zone.php';
@@ -154,6 +173,18 @@ require_once $basedir.'/network-classes/class-TmpInterface.php';
 require_once $basedir.'/network-classes/class-TmpInterfaceStore.php';
 require_once $basedir.'/network-classes/class-AggregateEthernetInterface.php';
 require_once $basedir.'/network-classes/class-AggregateEthernetIfStore.php';
+require_once $basedir . '/network-classes/class-IkeCryptoProfileStore.php';
+require_once $basedir . '/network-classes/class-IkeCryptoProfil.php';
+require_once $basedir . '/network-classes/class-IPSecCryptoProfileStore.php';
+require_once $basedir . '/network-classes/class-IPSecCryptoProfil.php';
+require_once $basedir.'/network-classes/class-IKEGatewayStore.php';
+require_once $basedir.'/network-classes/class-IKEGateway.php';
+require_once $basedir.'/network-classes/class-VlanIfStore.php';
+require_once $basedir.'/network-classes/class-VlanInterface.php';
+require_once $basedir.'/network-classes/class-TunnelIfStore.php';
+require_once $basedir.'/network-classes/class-TunnelInterface.php';
+require_once $basedir.'/network-classes/class-VirtualWire.php';
+require_once $basedir.'/network-classes/class-VirtualWireStore.php';
 
 require_once $basedir.'/rule-classes/class-RuleStore.php';
 require_once $basedir.'/rule-classes/class-Rule.php';
@@ -164,6 +195,7 @@ require_once $basedir.'/rule-classes/class-NatRule.php';
 require_once $basedir.'/rule-classes/class-DecryptionRule.php';
 require_once $basedir.'/rule-classes/class-AppOverrideRule.php';
 require_once $basedir.'/rule-classes/class-CaptivePortalRule.php';
+require_once $basedir.'/rule-classes/class-AuthenticationRule.php';
 require_once $basedir.'/rule-classes/class-PbfRule.php';
 require_once $basedir.'/rule-classes/class-QoSRule.php';
 require_once $basedir.'/rule-classes/class-DoSRule.php';
@@ -311,6 +343,8 @@ function convert($size)
 {
     if( $size == 0 )
         return '0';
+    elseif( $size < 0 )
+        return '[how is this possible?] <0';
     $unit=array('b','kb','mb','gb','tb','pb');
     return @round($size/pow(1024,($i=floor(log($size,1024)))),2).' '.$unit[$i];
 }
@@ -440,6 +474,8 @@ function derr($msg, $object=null)
         $count++;
     }
 
+    echo "\n";
+
     exit(1);
 }
 
@@ -491,6 +527,11 @@ function mdeb($msg)
     fwrite(STDERR,"\n\n");
 }
 
+/**
+ * @param string $msg
+ * @param null|DOMNode|DOMElement $object
+ * @throws Exception
+ */
 function mwarning($msg, $object = null)
 {
     global $PANC_WARN;
@@ -611,7 +652,7 @@ function findConnectorOrDie( $object )
     if( $object->owner === null )
         derr("cannot find API connector");
 
-    return findConnector($object->owner);
+    return findConnectorOrDie($object->owner);
 }
 
 

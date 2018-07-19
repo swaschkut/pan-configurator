@@ -1,8 +1,7 @@
 <?php
 
 /*
- * Copyright (c) 2014-2015 Palo Alto Networks, Inc. <info@paloaltonetworks.com>
- * Author: Christophe Painchaud <cpainchaud _AT_ paloaltonetworks.com>
+ * Copyright (c) 2014-2017 Christophe Painchaud <shellescape _AT_ gmail.com>
  *
  * Permission to use, copy, modify, and distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -31,7 +30,51 @@ class App
 	public $icmp = null;
 
 	public $icmpsub = null;
+    public $icmp6sub = null;
 	public $proto = null;
+
+	public $timeout = null;
+    public $tcp_timeout = null;
+    public $udp_timeout = null;
+    public $tcp_half_closed_timeout = null;
+    public $tcp_time_wait_timeout = null;
+
+    /** @var null|array  */
+    public $app_filter_details = null;
+
+	/** @var null|string  */
+	public $category = null;
+	/** @var null|string  */
+	public $subCategory = null;
+    /** @var null|string  */
+	public $technology = null;
+    /** @var null|string  */
+    public $risk = null;
+
+    /** @var bool  */
+    public $virusident = false;
+    /** @var bool  */
+    public $filetypeident = false;
+    /** @var bool  */
+    public $fileforward = false;
+
+    /** @var bool  */
+    public $custom_signature = false;
+
+    /** @var string[]  */
+    public $_characteristics = Array();
+	
+    static public $_supportedCharacteristics = Array(
+        'evasive' => 'evasive',
+        'excessive-bandwidth' => 'excessive-bandwidth',
+        'prone-to-misuse' => 'prone-to-misuse',
+        'saas' => 'saas',
+        'transfers-files' => 'transfers-files',
+        'tunnels-other-apps' => 'tunnels-other-apps',
+        'used-by-malware' => 'used-by-malware',
+        'vulnerabilities' => 'vulnerabilities',
+        'widely-used' => 'widely-used'
+        );
 	
 	//public $type = 'notfound';
 
@@ -39,6 +82,9 @@ class App
  	{
  		$this->owner = $owner;
 		$this->name = $name;
+
+		foreach( self::$_supportedCharacteristics as $characteristicName )
+		    $this->_characteristics[$characteristicName] = false;
  	}
 
  	public function isUsingSpecialProto()
@@ -166,22 +212,37 @@ class App
 		foreach( $plus as $plusApp )
 		{
 			$found = false;
-			foreach( $this->explicitUse as $explApp )
-			{
-				if( $explApp === $plusApp )
-				{
-					$found = true;
-					break;
-				}
-			}
+            foreach( $this->implicitUse as $implApp )
+            {
+                if( $implApp === $plusApp )
+                {
+                    $found = true;
+                    break;
+                }
+            }
 			if( !$found )
 				$ret[] = $plusApp;
 		}
 
 		return $ret;
 	}
- 	
-	
+
+    public function isCustom()
+    {
+        if( $this->type == 'application-custom' )
+            return true;
+
+        return false;
+    }
+
+    public function CustomHasSignature()
+    {
+        if( $this->isCustom() )
+            if( $this->custom_signature )
+                return true;
+
+        return false;
+    }
 }
 
 

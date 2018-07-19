@@ -1,8 +1,7 @@
 <?php
 
 /*
- * Copyright (c) 2014-2015 Palo Alto Networks, Inc. <info@paloaltonetworks.com>
- * Author: Christophe Painchaud <cpainchaud _AT_ paloaltonetworks.com>
+ * Copyright (c) 2014-2017 Christophe Painchaud <shellescape _AT_ gmail.com>
  *
  * Permission to use, copy, modify, and distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -454,6 +453,27 @@ class DH
 
         return $nodes->item(0);
 
+    }
+
+    /**
+     * @param string $xpathString
+     * @param DOMDocument|DOMNode $contextNode
+     * @return DOMNode|bool returns FALSE if not found
+     */
+    static public function findXPathSingleEntry( $xpathString, $contextNode )
+    {
+        $nodes = DH::findXPath($xpathString, $contextNode);
+
+        if( $nodes === FALSE )
+            derr("XPath query evaluation error for '{$xpathString}'");
+
+        if( $nodes->length == 0 )
+            return FALSE;
+
+        if( $nodes->length > 1 )
+            derr("more than 1 matching node found for xpath '{$xpathString}'");
+
+        return $nodes->item(0);
     }
 
 
