@@ -260,6 +260,98 @@ if( $action == 'display' || $action == 'unregister-unused')
         }
     }
 }
+elseif( $action == 'register' || $action == 'unregister' )
+{
+    echo " - action is '$action'\n";
+    $records = Array();
+
+    if( isset(PH::$args['records']) )
+    {
+        echo " - a list of 'records' was provided on CLI, now parsing it...";
+        $explode = explode('/', PH::$args['records']);
+        foreach( $explode as $record )
+        {
+            $lrecord = explode(',', $record);
+            if( count($lrecord) != 2 )
+                display_error_usage_exit("the following record does not have the right syntax: '{$record}'");
+            $username = trim($lrecord[1]);
+            $ipaddress = trim($lrecord[0]);
+
+            if( strlen($username) < 1 )
+                display_error_usage_exit("blank username in record '{$record}'");
+
+            if( strlen($ipaddress) < 1 )
+                display_error_usage_exit("blank IP in record '{$record}'");
+
+            if( isset($records[$ipaddress]) && $records[$ipaddress] != $username )
+                display_error_usage_exit("record '{$ipaddress}\\{$username}' conflicts with '{$ipaddress}\\{$records[$ipaddress]}'");
+
+            if( !filter_var($ipaddress, FILTER_VALIDATE_IP) )
+                display_error_usage_exit("IP address '{$ipaddress}' is not valid in record '{$record}'");
+
+            $records[$ipaddress] = array( $username );
+        }
+
+        echo "OK!\n";
+    }
+    elseif( isset(PH::$args['recordfile']) )
+    {
+        echo " - record file was provided, now parsing it...";
+
+        $explode = file_get_contents(PH::$args['recordfile']);
+        $explode = explode("\n", $explode);
+
+        foreach( $explode as $record )
+        {
+            if( strlen(trim($record)) < 1 )
+                continue; // this is an empty line
+
+            $lrecord = explode(',', $record);
+            if( count($lrecord) != 2 )
+                display_error_usage_exit("the following record does not have the right syntax: '{$record}'");
+            $username = trim($lrecord[1]);
+            $ipaddress = trim($lrecord[0]);
+
+            if( strlen($username) < 1 )
+                display_error_usage_exit("blank username in record '{$record}'");
+
+            if( strlen($ipaddress) < 1 )
+                display_error_usage_exit("blank IP in record '{$record}'");
+
+            if( isset($records[$ipaddress]) && $records[$ipaddress] != $username )
+                display_error_usage_exit("record '{$ipaddress}\\{$username}' conflicts with '{$ipaddress}\\{$records[$ipaddress]}'");
+
+            if( !filter_var($ipaddress, FILTER_VALIDATE_IP) )
+                display_error_usage_exit("IP address '{$ipaddress}' is not valid in record '{$record}'");
+
+            $records[$ipaddress] = array( $username);
+        }
+
+        echo "OK!\n";
+    }
+    else
+        derr("you need to provide 'records' or 'recordfile' argument");
+
+    $count = count($records);
+    echo " - found {$count} records:\n";
+    foreach( $records as $ip => $user )
+    {
+        echo "   - " . str_pad($ip, 16) . " / {$user[0]}\n";
+    }
+
+    echo " - now sending records to API ... ";
+    if( $action == 'register' )
+    {
+        //Array( '1.1.1.1' => Array('tag1', 'tag3'), '2.3.4.5' => Array('tag7') )
+        print_r($records);
+        $connector->register_sendUpdate($records, null, $location);
+    }
+
+    else
+        $connector->register_sendUpdate(null, $records, $location);
+
+    echo "OK!\n";
+}
 elseif( $action == 'fakeregister' )
 {
     $numberOfIPs = 20;
