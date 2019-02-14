@@ -4,6 +4,7 @@ CHANGELOG
 1.5.16 (20190214)
 
 GENERAL:
+* update predefined.xml to 8122-5298
 
 UTILS:
 
