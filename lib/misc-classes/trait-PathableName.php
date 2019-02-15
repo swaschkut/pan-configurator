@@ -29,7 +29,10 @@ trait PathableName
     public function toString()
     {
         if( isset($this->name) )
-            $ret = get_class($this).':'.$this->name;
+            if( isset($this->_alternativeName) && $this->_alternativeName != "" )
+                $ret = get_class($this).':'.$this->name." *".$this->_alternativeName."*";
+            else
+                $ret = get_class($this).':'.$this->name;
         else
             $ret = get_class($this);
 

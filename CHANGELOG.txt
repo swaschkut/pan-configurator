@@ -5,6 +5,7 @@ CHANGELOG
 
 GENERAL:
 * update predefined.xml to 8122-5298
+* trait-PahtableName.php | imporove function toString() to display alternativeName of VSYS
 
 UTILS:
 
