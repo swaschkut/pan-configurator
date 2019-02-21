@@ -366,6 +366,12 @@ AddressCallContext::$supportedActions[] = Array(
             return;
         }
 
+        if( $address0bjectToAdd->isType_ipWildcard() )
+        {
+            echo $context->padding."     *  SKIPPED because wildcard address object can not be added as a member to a address group\n";
+            return;
+        }
+
         if( $context->isAPI )
             $object->API_addMember( $address0bjectToAdd );
         else
