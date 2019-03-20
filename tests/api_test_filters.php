@@ -24,22 +24,25 @@ if( strpos( $configInput, "api://" ) !== false )
 else
     derr( '"in" argument must be of type API [in=api://192.168.55.208]' );
 
-$cli = "php ../utils/upload-config.php in=input/panorama-8.0.xml out=api://{$api_ip_address} loadAfterUpload injectUserAdmin2  2>&1";
-echo " * Executing CLI: {$cli}\n";
-
-$output = Array();
-$retValue = 0;
-
-exec($cli, $output, $retValue);
-
-foreach($output as $line)
+if( isset(PH::$args['upload']) )
 {
-    echo '   ##  '; echo $line; echo "\n";
-}
+    $cli = "php ../utils/upload-config.php in=input/panorama-8.0.xml out=api://{$api_ip_address} loadAfterUpload injectUserAdmin2  2>&1";
+    echo " * Executing CLI: {$cli}\n";
 
-if( $retValue != 0 )
-    derr("CLI exit with error code '{$retValue}'");
-echo "\n";
+    $output = Array();
+    $retValue = 0;
+
+    exec($cli, $output, $retValue);
+
+    foreach($output as $line)
+    {
+        echo '   ##  '; echo $line; echo "\n";
+    }
+
+    if( $retValue != 0 )
+        derr("CLI exit with error code '{$retValue}'");
+    echo "\n";
+}
 
 //$api_ip_address = "192.168.55.208";
 
