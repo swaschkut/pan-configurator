@@ -2458,7 +2458,7 @@ RQuery::$defaultFilters['rule']['rule']['operators']['is.unused.fast'] = Array(
 
             if( $sub->isVirtualSystem() )
             {
-                print "Firewall: ".$connector->info_hostname." (serial: '".$connector->info_serial."') was rebooted '".$connector->info_uptime."' ago.\n";
+                print "Firewall: ".$connector->info_hostname." (serial: '".$connector->info_serial."', PAN-OS: '".$connector->info_PANOS_version."') was rebooted '".$connector->info_uptime."' ago.\n";
                 $apiResult = $connector->sendCmdRequest($apiCmd);
 
                 $rulesXml = DH::findXPath('/result/rules/entry', $apiResult);
@@ -2489,12 +2489,12 @@ RQuery::$defaultFilters['rule']['rule']['operators']['is.unused.fast'] = Array(
                     $newConnector = new PanAPIConnector($connector->apihost, $connector->apikey, 'panos-via-panorama', $device['serial']);
                     $newConnector->setShowApiCalls($connector->showApiCalls);
                     $newConnector->refreshSystemInfos();
-                    print "Firewall: ".$newConnector->info_hostname." (serial: '".$newConnector->info_serial."') was rebooted '".$newConnector->info_uptime."' ago.\n";
+                    print "Firewall: ".$newConnector->info_hostname." (serial: '".$newConnector->info_serial."', PAN-OS: '".$newConnector->info_PANOS_version."') was rebooted '".$newConnector->info_uptime."' ago.\n";
                     $tmpCache = Array();
 
                     foreach($device['vsyslist'] as $vsys)
                     {
-                        if( $context->object->owner->owner->version < 81 )
+                        if( $newConnector->info_PANOS_version_int < 81 )
                             $apiCmd = '<show><running><rule-use><rule-base>' . $rule_base . '</rule-base><type>unused</type><vsys>' . $vsys . '</vsys></rule-use></running></show>';
                         else
                             $apiCmd = '<show><running><rule-use><highlight><rule-base>' . $rule_base . '</rule-base><type>unused</type><vsys>' . $vsys . '</vsys></highlight></rule-use></running></show>';
