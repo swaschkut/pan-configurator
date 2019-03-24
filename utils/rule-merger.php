@@ -694,6 +694,19 @@ foreach( $rulesToProcess as $index => $rule )
             unset($matchingHashTable[$ruleToCompare->serial]);
             print "    - ignoring rule #{$ruleToComparePosition} '{$ruleToCompare->name()}' because it's not matchin the filter query\n";
         }
+        elseif( ($rule->sourceIsNegated() or $rule->destinationIsNegated()) or ($ruleToCompare->sourceIsNegated() or $ruleToCompare->destinationIsNegated()) )
+        {
+            if( $rule->sourceIsNegated() && $ruleToCompare->sourceIsNegated() )
+                continue;
+            elseif( $rule->destinationIsNegated() && $ruleToCompare->destinationIsNegated() )
+                continue;
+            else
+            {
+                unset($matchingHashTable[$ruleToCompare->serial]);
+                print "    - ignoring rule #{$ruleToComparePosition} '{$ruleToCompare->name()}' because it's source / destination is not matching NEGATION of original Rule\n";
+            }
+
+        }
     }
 
     if( count($matchingHashTable) == 0 )

@@ -5,12 +5,13 @@ CHANGELOG
 
 GENERAL:
 * update predefined.xml to 8122-5298
-* trait-PahtableName.php | imporove function toString() to display alternativeName of VSYS
+* trait-PathableName.php | improve function toString() to display alternativeName of VSYS
 
 UTILS:
 
 BUGFIX:
-
+- fix for pa_rule-edit 'filter=(rule is.unused.fast)' for PAN-OS version detection if connection is going through Panorama
+- fix for pa_rule-merge if NEGATION of original Rule and RuleToCompare differ
 
 ------------------------------------------------------------------------------------------------------------------------
 
