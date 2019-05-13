@@ -309,6 +309,23 @@ class PANConf
      * @param string $name
      * @return VirtualSystem|null
      */
+    public function findVSYS_by_displayName($displayname)
+    {
+        $tmp_vsys = $this->getVirtualSystems();
+        foreach( $tmp_vsys as $vsys )
+        {
+            if( $vsys->alternativeName() ==  $displayname)
+                return $vsys;
+
+        }
+
+        return null;
+    }
+
+    /**
+     * @param string $name
+     * @return VirtualSystem|null
+     */
     public function findVirtualSystem($name)
     {
         foreach( $this->virtualSystems as $vsys )
@@ -509,7 +526,10 @@ class PANConf
 
         $xmlNode->setAttribute('name', $newVsysName);
         if( strlen($displayName) > 0 )
+        {
             DH::createElement($xmlNode, 'display-name', $displayName);
+        }
+
 
         $this->vsyssroot->appendChild($xmlNode);
 
