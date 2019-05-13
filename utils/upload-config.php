@@ -143,6 +143,8 @@ if( isset(PH::$args['fromxpath']) )
 if( isset(PH::$args['toxpath']) )
 {
     $toXpath = str_replace('"', "'", PH::$args['toxpath']);
+    if( $loadConfigAfterUpload )
+        $loadConfigAfterUpload = false;
 }
 
 if( !isset(PH::$args['apiTimeout']) )
