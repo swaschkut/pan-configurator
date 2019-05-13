@@ -272,7 +272,6 @@ class EthernetInterface
     }
 
     function isEthernetType() { return true; }
-    function isAggregateTypeType() { return false; }
 
     /**
      * return true if change was successful false if not (duplicate rulename?)
@@ -347,7 +346,10 @@ class EthernetInterface
         if( strpos($ip, "/") === FALSE )
         {
             $tmp_vsys = $this->owner->owner->network->findVsysInterfaceOwner($this->name());
-            $object = $tmp_vsys->addressStore->find($ip);
+            if( is_object($tmp_vsys) )
+                $object = $tmp_vsys->addressStore->find($ip);
+            else
+                derr("vsys for interface: " . $this->name() . " not found. \n", $this);
 
             if( is_object($object) )
                 $object->addReference($this);
