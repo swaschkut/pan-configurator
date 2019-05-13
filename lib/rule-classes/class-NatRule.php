@@ -528,7 +528,10 @@ class NatRule extends Rule
 	
 	public function changeSourceNAT($newtype, $interface=null, $bidirectional=false)
 	{
-		derr('not supported yet');
+	    if( $newtype == 'static-ip' )
+	        $this->snattype = $newtype;
+        else
+		    derr('not supported yet');
 		
 		$this->rewriteSNAT_XML();
 	}
@@ -795,6 +798,11 @@ class NatRule extends Rule
 
         if( $this->_targets !== null )
             print $padding."  Targets:  ".$this->targets_toString()."\n";
+
+        if( strlen($this->_description) > 0 )
+            print $padding."  Desc:  ".$this->_description."\n";
+        else
+            print $padding."  Desc:  \n";
 
 		print "\n";
 	}
