@@ -77,7 +77,9 @@ class VirtualWireStore extends ObjStore
         $virtualWire->owner = null;
         $virtualWire->setName($name);
 
+        //20190507 - which add method is best, is addVirtualWire needed??
         $this->addVirtualWire( $virtualWire );
+        $this->add( $virtualWire );
 
         return $virtualWire;
     }

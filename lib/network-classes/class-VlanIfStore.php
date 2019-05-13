@@ -61,7 +61,9 @@ class VlanIfStore extends ObjStore
         $vlanIf->owner = null;
         $vlanIf->setName($name);
 
+        //20190507 - which add method is best, is addVlanIf needed??
         $this->addVlanIf( $vlanIf );
+        $this->add( $vlanIf );
 
         return $vlanIf;
     }

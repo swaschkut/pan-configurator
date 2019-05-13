@@ -61,7 +61,9 @@ class TunnelIfStore extends ObjStore
         $tunnelIf->owner = null;
         $tunnelIf->setName($name);
 
+        //20190507 - which add method is best, is addTunnelIf needed??
         $this->addTunnelIf( $tunnelIf );
+        $this->add( $tunnelIf );
 
         return $tunnelIf;
     }

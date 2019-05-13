@@ -111,7 +111,9 @@ class EthernetIfStore extends ObjStore
         if( $ae !== null)
             $ethernetIf->setAE($ae);
 
+        //20190507 - which add method is best, is addEthernetIf needed??
         $this->addEthernetIf( $ethernetIf );
+        $this->add( $ethernetIf );
 
         return $ethernetIf;
     }
