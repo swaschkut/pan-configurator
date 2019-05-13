@@ -467,6 +467,7 @@ class VirtualSystem
 
         $node = DH::findFirstElementOrCreate('display-name', $this->xmlroot);
         DH::setDomNodeText($node, $newName);
+        $this->_alternativeName = $newName;
 
         return true;
     }
