@@ -203,7 +203,13 @@ class Tag
             derr('value can be text only');
 
         if( !isset(self::$TagColors[$newColor]) )
-            derr("color '".$newColor."' not available");
+        {
+            $tmp_newColor = array_search( $newColor, self::$TagColors );
+
+            if( $tmp_newColor === false )
+                derr("color '".$newColor."' not available");
+        }
+
         else
             $newColor = self::$TagColors[$newColor];
 
