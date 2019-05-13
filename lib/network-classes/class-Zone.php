@@ -49,9 +49,9 @@ class Zone
         self::TypeLayer3 => 'layer3',
         self::TypeExternal => 'external',
         self::TypeVirtualWire => 'virtual-wire',
-        self::TypeVirtualWire => 'tap',
-        self::TypeVirtualWire => 'layer2',
-        self::TypeVirtualWire => 'tunnel',
+        self::TypeTap => 'tap',
+        self::TypeLayer2 => 'layer2',
+        self::TypeTunnel => 'tunnel',
          );
 
 
