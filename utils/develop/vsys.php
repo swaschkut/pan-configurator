@@ -317,7 +317,7 @@ foreach( $template_array as $template)
         {
 
 
-            print "\n\nVSYS name: " . $sub->name() . "\n";
+            print "\n\nVSYS name: " . $sub->name() . " - *".$sub->alternativeName()."*\n";
 
             foreach( $sub->importedInterfaces as $interfacecontainer )
             {
