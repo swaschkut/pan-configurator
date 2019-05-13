@@ -32,6 +32,18 @@ class NetworkPropertiesContainer
     /** @var IPSecCryptoProfileStore */
     public $ipsecCryptoProfileStore;
 
+    /** @var ikeGatewayStore */
+    public $ikeGatewayStore;
+
+    /** @var vlanIfStore */
+    public $vlanIfStore;
+
+    /** @var tunnelIfStore */
+    public $tunnelIfStore;
+
+    /** @var virtualWireStore */
+    public $virtualWireStore;
+
     /** @var DOMElement|null */
     public $xmlroot = null;
 
@@ -164,15 +176,14 @@ class NetworkPropertiesContainer
             $ifs[$if->name()] = $if;
 
         foreach( $this->tmpInterfaceStore->getInterfaces() as $if )
-            if( $if->name() == $if )
-                return $if;
+            $ifs[$if->name()] = $if;
 
         return $ifs;
     }
 
     /**
      * @param string $interfaceName
-     * @return EthernetInterface|IPsecTunnel|TmpInterface|VlanInterface|TunnelInterface|null
+     * @return EthernetInterface|IPsecTunnel|TmpInterface|VlanInterface|TunnelInterface|LoopbackInterface|null
      */
     function findInterface( $interfaceName )
     {
