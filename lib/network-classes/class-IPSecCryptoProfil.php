@@ -218,7 +218,7 @@ class IPSecCryptoProfil
                 $dhgroup = "no-pfs";
             else
                 $dhgroup = "group".$dhgroup;
-            print " *** new group name: ".$dhgroup."\n";
+            #print " *** new group name: ".$dhgroup."\n";
         }
 
         if( $this->dhgroup == $dhgroup )
