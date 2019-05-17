@@ -357,10 +357,21 @@ class EthernetInterface
                 derr("objectname: " . $ip . " not found. Can not be added to interface.\n", $this);
         }
 
+        $mapping_new = new IP4Map();
+        $mapping_new->addMap(IP4Map::mapFromText($ip));
         foreach( $this->getLayer3IPv4Addresses() as $IPv4Address )
         {
             if( $IPv4Address == $ip )
                 return true;
+
+            //avoid overlapping subnet
+            $mapping = new IP4Map();
+            $mapping->addMap(IP4Map::mapFromText($IPv4Address));
+            if( $mapping->includesOtherMap($mapping_new) !== 0 )
+            {
+                $ip_array = explode( "/", $ip );
+                $ip = $ip_array[0]."/32";
+            }
         }
 
         $this->l3ipv4Addresses[] = $ip;
@@ -510,7 +521,7 @@ class EthernetInterface
      * @return EthernetInterface
      * @param string $ip
      */
-    public function addSubInterface( $tag )
+    public function addSubInterface( $tag, $name = "" )
     {
         if( $this->type != 'layer3' && $this->type != 'layer2' && $this->type != 'virtual-wire')
             derr('cannot be requested from a '.$this->type().' Interface');
@@ -533,8 +544,13 @@ class EthernetInterface
         $newInterface->load_sub_from_domxml($xmlElement);
         $this->subInterfaces[] = $newInterface;
 
-
-        $newInterface->setName( $this->name.".".$tag );
+        if( $name != "" )
+        {
+            #$newInterface->setName( $this->name.".".$tag );
+            $newInterface->setName( $name );
+        }
+        else
+            $newInterface->setName( $this->name.".".$tag );
         $newInterface->setTag( $tag );
 
         $unit->appendChild( $xmlElement );
