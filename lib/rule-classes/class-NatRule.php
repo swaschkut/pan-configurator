@@ -530,6 +530,8 @@ class NatRule extends Rule
 	{
 	    if( $newtype == 'static-ip' )
 	        $this->snattype = $newtype;
+        elseif( $newtype == 'dynamic-ip-and-port' )
+            $this->snattype = $newtype;
         else
 		    derr('not supported yet');
 		
