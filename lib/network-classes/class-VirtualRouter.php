@@ -57,7 +57,18 @@ class VirtualRouter
 
         $this->attachedInterfaces->load_from_domxml($node);
 
-        $node = DH::findXPath('/routing-table/ip/static-route/entry',$xml);
+        $node = false;
+        $tmp_routing_table = DH::findFirstElement('routing-table', $xml);
+        if( $tmp_routing_table !== false )
+        {
+            $tmp_ip = DH::findFirstElement('ip', $tmp_routing_table);
+            if( $tmp_ip !== false )
+            {
+                $tmp_static_route = DH::findFirstElement('static-route', $tmp_ip);
+                if( $tmp_static_route !== false )
+                    $node = DH::findXPath('/entry', $tmp_static_route );
+            }
+        }
 
         if( $node !== false )
         {
@@ -70,6 +81,22 @@ class VirtualRouter
         }
     }
 
+    /**
+     * return true if change was successful false if not
+     * @return bool
+     * @param string $name new name for the VirtualRouter
+     */
+    public function setName($name)
+    {
+        if( $this->name == $name )
+            return true;
+
+        $this->name = $name;
+
+        $this->xmlroot->setAttribute('name', $name);
+
+        return true;
+    }
 
     /**
      * @return StaticRoute[]
@@ -77,6 +104,13 @@ class VirtualRouter
     public function staticRoutes()
     {
         return $this->_staticRoutes;
+    }
+
+    public function addstaticRoute( $staticRoute )
+    {
+        $this->_staticRoutes[] = $staticRoute;
+
+        return true;
     }
 
     /**
@@ -342,5 +376,17 @@ class VirtualRouter
         return $result;
     }
 
+    /**
+     * @return string
+     */
+    public function &getXPath()
+    {
+        $str = $this->owner->getvirtualRouterStoreXPath()."/entry[@name='".$this->name."']";
+
+        return $str;
+    }
+
+    static public $templatexml = '<entry name="**temporarynamechangeme**"><routing-table></routing-table></entry>';
+    #static public $templatexml = '<entry name="**temporarynamechangeme**"><routing-table><ip><static-route><entry></entry></static-route></ip></routing-table></entry>';
 
 }
