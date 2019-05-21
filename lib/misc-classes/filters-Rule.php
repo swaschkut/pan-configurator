@@ -454,6 +454,24 @@ RQuery::$defaultFilters['rule']['dst-interface']['operators']['is.set'] = Array(
 );
 
 //                                              //
+//                DNAT Based Actions            //
+//                                              //
+RQuery::$defaultFilters['rule']['dnat']['operators']['is.set'] = Array(
+    'Function' => function(RuleRQueryContext $context )
+    {
+        if( !$context->object->isNatRule() ) return false;
+        if( !$context->object->destinationNatIsEnabled() ) return false;
+
+        return true;
+    },
+    'arg' => false,
+    'ci' => Array(
+        'fString' => '(%PROP%)',
+        'input' => 'input/panorama-8.0.xml'
+    )
+);
+
+//                                              //
 //                Dst/Src Based Actions            //
 //                                              //
 
