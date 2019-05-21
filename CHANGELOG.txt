@@ -12,6 +12,8 @@ UTILS:
 BUGFIX:
 - fix for pa_rule-edit 'filter=(rule is.unused.fast)' for PAN-OS version detection if connection is going through Panorama
 - fix for pa_rule-merge if NEGATION of original Rule and RuleToCompare differ
+- fix for different classes are made
+- fix class-NatRule | rewriteSNAT_XML() fix rewrite of IP-Address now value() is used
 
 ------------------------------------------------------------------------------------------------------------------------
 

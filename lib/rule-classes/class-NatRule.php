@@ -448,9 +448,9 @@ class NatRule extends Rule
                 if( count($snatIP) > 0)
                 {
                     if( $this->_snatUsesFloatingIP )
-                        DH::createOrResetElement($subsubroot, 'floating-ip', reset($snatIP)->name() );
+                        DH::createOrResetElement($subsubroot, 'floating-ip', reset($snatIP)->value() );
                     else
-                        DH::createOrResetElement($subsubroot, 'ip', reset($snatIP)->name() );
+                        DH::createOrResetElement($subsubroot, 'ip', reset($snatIP)->value() );
                 }
 				
 			}
