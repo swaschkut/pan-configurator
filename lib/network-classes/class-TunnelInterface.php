@@ -60,6 +60,14 @@ class TunnelInterface
         }
     }
 
+    /**
+     * @return string
+     */
+    public function type()
+    {
+        return $this->type;
+    }
+
     public function getIPv4Addresses()
     {
         return $this->_ipv4Addresses;
