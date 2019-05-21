@@ -582,6 +582,9 @@ class NatRule extends Rule
 		if( $host === null )
 			derr(" Host cannot be NULL");
 
+		if( !is_object($host) )
+		    derr( "Host must be an address object" );
+
         if( $host === $this->dnathost && $ports === $this->dnatports )
             return false;
 
@@ -593,6 +596,12 @@ class NatRule extends Rule
 
         $this->dnathost = $host;
         $host->addReference($this);
+
+		if( is_numeric( $ports ) && $ports > 0 && $ports < 65535 )
+            $this->dnatports = $ports;
+		elseif( $ports != "" )
+            mwarning( "port: ".$ports." can not be set" );
+
 
 		$this->rewriteDNAT();
 
@@ -794,7 +803,13 @@ class NatRule extends Rule
         if( $this->dnathost === null )
             print $padding."  DNAT: none\n";
         else
-            print $padding."  DNAT: ".$this->dnathost->name()."\n";
+        {
+            print $padding."  DNAT: ".$this->dnathost->name();
+            if( $this->dnatports != "" )
+                print " dport: ".$this->dnatports;
+            print "\n";
+        }
+
 
 		print $padding."    Tags:  ".$this->tags->toString_inline()."\n";
 
