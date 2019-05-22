@@ -6,6 +6,7 @@ CHANGELOG
 GENERAL:
 * update predefined.xml to 8122-5298
 * trait-PathableName.php | improve function toString() to display alternativeName of VSYS
+* class-LoopbackInterface | introduce function type()
 
 UTILS:
 

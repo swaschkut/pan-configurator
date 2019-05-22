@@ -39,6 +39,14 @@ class LoopbackInterface
         return true;
     }
 
+    /**
+     * @return string
+     */
+    public function type()
+    {
+        return $this->type;
+    }
+
     public function load_from_domxml( DOMElement $xml )
     {
         $this->xmlroot = $xml;
