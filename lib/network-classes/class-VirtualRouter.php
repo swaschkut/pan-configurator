@@ -108,9 +108,47 @@ class VirtualRouter
 
     public function addstaticRoute( $staticRoute )
     {
+
+
+        if( !is_object($staticRoute) )
+            derr('this function only accepts staticRoute class objects');
+
+        #if( $staticRoute->owner !== null )
+        #    derr('Trying to add a virtualRouter that has a owner already !');
+
         $this->_staticRoutes[] = $staticRoute;
 
-        return true;
+        $ser = spl_object_hash($staticRoute);
+
+        if (!isset($this->fastMemToIndex[$ser]))
+        {
+            $staticRoute->owner = $this;
+
+            $this->fastMemToIndex[$ser] = $staticRoute;
+            $this->fastNameToIndex[$staticRoute->name()] = $staticRoute;
+
+            if( $this->xmlroot === null )
+                $this->createXmlRoot();
+
+            $tmp_routing_table = DH::findFirstElementOrCreate('routing-table', $this->xmlroot);
+            if( $tmp_routing_table !== false )
+            {
+                $tmp_ip = DH::findFirstElementOrCreate('ip', $tmp_routing_table);
+                if( $tmp_ip !== false )
+                {
+                    $tmp_static_route = DH::findFirstElementOrCreate('static-route', $tmp_ip);
+                    if( $tmp_static_route !== false )
+                        #$node = DH::findXPath('/entry', $tmp_static_route );//find routing/table -> static route
+                        $tmp_static_route->appendChild($staticRoute->xmlroot);
+                }
+            }
+
+
+            return true;
+        } else
+            derr('You cannot add a virtualRouter that is already here :)');
+
+        return false;
     }
 
     /**
