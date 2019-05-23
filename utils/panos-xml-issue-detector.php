@@ -105,6 +105,9 @@ $totalServiceGroupsSubGroupFixed = 0;
 $countDuplicateAddressObjects = 0;
 $countDuplicateServiceObjects = 0;
 
+$countDuplicateSecRuleObjects = 0;
+$countDuplicateNATRuleObjects = 0;
+
 $countMissconfiguredAddressObjects = 0;
 $countMissconfiguredServiceObjects = 0;
 $countEmptyAddressGroup = 0;
@@ -138,6 +141,11 @@ foreach( $locationNodes as $locationName => $locationNode)
     $serviceObjects = Array();
     $serviceGroups = Array();
     $serviceIndex = Array();
+
+    $secRules = Array();
+    $secRuleIndex = Array();
+    $natRules = Array();
+    $natRuleIndex = Array();
 
     $zoneObjects = Array();
     $zoneIndex = Array();
@@ -325,27 +333,39 @@ foreach( $locationNodes as $locationName => $locationNode)
         foreach( $objectNodes['regular'] as $objectNode )
         {
             $ip_netmaskNode = DH::findFirstElement('ip-netmask', $objectNode);
-            if( $ip_netmaskNode === FALSE )
+            $ip_fqdnNode = DH::findFirstElement('fqdn', $objectNode);
+            if( $ip_netmaskNode !== FALSE )
+            {
+                /** @var DOMElement $objectNode */
+                print "       - type 'Address' value: '".$ip_netmaskNode->nodeValue."' at XML line #{$objectNode->getLineNo()}";
+
+                //Todo: check if address object value is same, then delete it
+                //TODO: VALIDATION needed if working as expected
+
+                if( !isset($tmp_addr_array[$ip_netmaskNode->nodeValue]) )
+                    $tmp_addr_array[$ip_netmaskNode->nodeValue] = $ip_netmaskNode->nodeValue;
+                else
+                {
+                    $objectNode->parentNode->removeChild( $objectNode );
+                    print PH::boldText(" (removed)");
+                    $countDuplicateAddressObjects--;
+                }
+
+                print "\n";
+
+                $countDuplicateAddressObjects++;
+            }
+            elseif( $ip_fqdnNode !== FALSE )
+            {
+                /** @var DOMElement $objectNode */
+                print "       - type 'Address' value: '".$ip_fqdnNode->nodeValue."' at XML line #{$objectNode->getLineNo()}";
+                print "\n";
+
+                $countDuplicateAddressObjects++;
+            }
+            else
                 continue;
 
-            /** @var DOMElement $objectNode */
-            print "       - type 'Address' value: '".$ip_netmaskNode->nodeValue."' at XML line #{$objectNode->getLineNo()}";
-
-            //Todo: check if address object value is same, then delete it
-            //TODO: VALIDATION needed if working as expected
-
-            if( !isset($tmp_addr_array[$ip_netmaskNode->nodeValue]) )
-                $tmp_addr_array[$ip_netmaskNode->nodeValue] = $ip_netmaskNode->nodeValue;
-            else
-            {
-                $objectNode->parentNode->removeChild( $objectNode );
-                print PH::boldText(" (removed)");
-                $countDuplicateAddressObjects--;
-            }
-            
-            print "\n";
-
-            $countDuplicateAddressObjects++;
         }
 
         $tmp_srv_array = array();
@@ -619,6 +639,154 @@ foreach( $locationNodes as $locationName => $locationNode)
     }
 
 
+    //
+    //
+    //
+    //
+    //
+    //
+
+
+    $objectTypeNode_rulebase = DH::findFirstElement('rulebase', $locationNode);
+
+    if( $objectTypeNode_rulebase !== false )
+    {
+        print "\n\n";
+        print "#####     #####     #####     #####     #####     #####     #####     #####     #####     #####     #####\n";
+
+        foreach( $objectTypeNode_rulebase->childNodes as $objectNode_ruletype )
+        {
+            if( $objectNode_ruletype->nodeName == "security" )
+            {
+                $objectTypeNode = DH::findFirstElement('rules', $objectNode_ruletype);
+                if( $objectTypeNode !== false )
+                {
+                    foreach( $objectTypeNode->childNodes as $objectNode )
+                    {
+                        /** @var DOMElement $objectNode */
+                        if( $objectNode->nodeType != XML_ELEMENT_NODE )
+                            continue;
+
+                        $objectName = $objectNode->getAttribute('name');
+
+
+                        $secRules[$objectName][] = $objectNode;
+
+                        if( !isset($secRuleIndex[$objectName]) )
+                            $secRuleIndex[$objectName] = Array( 'regular' => Array(), 'group' => Array());
+
+                        $secRuleIndex[$objectName]['regular'][] = $objectNode;
+                    }
+
+                }
+
+                print " - parsed ".count($secRules)." Security Rules\n";
+                print "\n";
+            }
+
+            elseif( $objectNode_ruletype->nodeName == "nat" )
+            {
+
+                $objectTypeNode = DH::findFirstElement('rules', $objectNode_ruletype);
+                if( $objectTypeNode !== false )
+                {
+                    foreach( $objectTypeNode->childNodes as $objectNode )
+                    {
+                        /** @var DOMElement $objectNode */
+                        if( $objectNode->nodeType != XML_ELEMENT_NODE )
+                            continue;
+
+                        $objectName = $objectNode->getAttribute('name');
+
+
+                        $natRules[$objectName][] = $objectNode;
+
+                        if( !isset($natRuleIndex[$objectName]) )
+                            $natRuleIndex[$objectName] = Array( 'regular' => Array(), 'group' => Array());
+
+                        $natRuleIndex[$objectName]['regular'][] = $objectNode;
+                    }
+
+                }
+
+
+                print " - parsed ".count($natRules)." NAT Rules\n";
+                print "\n";
+            }
+
+        }
+    }
+
+
+    print "\n - Scanning for duplicate Security Rules...\n";
+    foreach($secRuleIndex as $objectName => $objectNodes )
+    {
+        $dupCount = count($objectNodes['regular']) + count($objectNodes['group']);
+
+        if( $dupCount < 2 )
+            continue;
+
+        print "   - found Security Rule named '{$objectName}' that exists ".$dupCount." time:\n";
+
+        $tmp_secrule_array = array();
+        foreach( $objectNodes['regular'] as $objectNode )
+        {
+
+            /** @var DOMElement $objectNode */
+            print "       - type 'Security Rules' at XML line #{$objectNode->getLineNo()}";
+
+            $newName = $key.$objectNode->getAttribute( 'name');
+            if( !isset( $secRuleIndex[ $newName ] ) )
+            {
+                $objectNode->setAttribute( 'name', $newName );
+                print PH::bold( " - new name: ".$newName." (fixed)\n" );
+            }
+            else
+                print " - Rulename can not be fixed: '".$newName."' is also available\n";
+
+            $countDuplicateSecRuleObjects++;
+        }
+    }
+
+    print "\n - Scanning for duplicate NAT Rules...\n";
+    foreach($natRuleIndex as $objectName => $objectNodes )
+    {
+        $dupCount = count($objectNodes['regular']) + count($objectNodes['group']);
+
+        if( $dupCount < 2 )
+            continue;
+
+        print "   - found NAT Rule named '{$objectName}' that exists ".$dupCount." time:\n";
+        $tmp_natrule_array = array();
+        foreach( $objectNodes['regular'] as $key => $objectNode )
+        {
+
+            /** @var DOMElement $objectNode */
+            print "       - type 'NAT Rules' at XML line #{$objectNode->getLineNo()}";
+
+
+            $newName = $key.$objectNode->getAttribute( 'name');
+            if( !isset( $natRuleIndex[ $newName ] ) )
+            {
+                $objectNode->setAttribute( 'name', $newName );
+                print PH::boldText( " - new name: ".$newName." (fixed)\n" );
+            }
+            else
+                print " - Rulename can not be fixed: '".$newName."' is also available\n";
+
+            $countDuplicateNATRuleObjects++;
+        }
+    }
+
+
+    //
+    //
+    //
+    //
+    //
+    //
+
+
     $objectTypeNode = DH::findFirstElement('zone', $locationNode);
     if( $objectTypeNode !== false )
     {
@@ -688,13 +856,18 @@ echo " - FIXED: duplicate address-group members: {$totalAddressGroupsFixed}\n";
 echo " - FIXED: duplicate service-group members: {$totalServiceGroupsFixed}\n";
 echo " - FIXED: own address-group as subgroup member: {$totalAddressGroupsSubGroupFixed}\n";
 echo " - FIXED: own service-group as subgroup members: {$totalServiceGroupsSubGroupFixed}\n";
+
 echo "\n\nIssues that could not be fixed (look in logs for FIX_MANUALLY keyword):\n";
 echo " - FIX_MANUALLY: duplicate address objects: {$countDuplicateAddressObjects} (look in the logs )\n";
 echo " - FIX_MANUALLY: duplicate service objects: {$countDuplicateServiceObjects} (look in the logs)\n\n";
+
 echo " - FIX_MANUALLY: missconfigured address objects: {$countMissconfiguredAddressObjects} (look in the logs)\n";
 echo " - FIX_MANUALLY: empty address-group: {$countEmptyAddressGroup} (look in the logs)\n\n";
 echo " - FIX_MANUALLY: missconfigured service objects: {$countMissconfiguredServiceObjects} (look in the logs)\n";
-echo " - FIX_MANUALLY: empty service-group: {$countEmptyServiceGroup} (look in the logs)\n";
+echo " - FIX_MANUALLY: empty service-group: {$countEmptyServiceGroup} (look in the logs)\n\n";
+
+echo " - FIX_MANUALLY: duplicate Security Rules: {$countDuplicateSecRuleObjects} (look in the logs )\n";
+echo " - FIX_MANUALLY: duplicate NAT Rules: {$countDuplicateNATRuleObjects} (look in the logs )\n";
 
 if ( $configInput['type'] == 'api'  )
     echo "\n\nINPUT mode API detected: FIX is ONLY saved in offline file.\n";
