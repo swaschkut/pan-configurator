@@ -473,7 +473,8 @@ class PanAPIConnector
             $connector->testConnectivity();
             if( !$wrongLogin )
                 self::$savedConnectors[] = $connector;
-            self::saveConnectorsToUserHome();
+            if( PH::$saveAPIkey )
+                self::saveConnectorsToUserHome();
         }
 
         return $connector;
