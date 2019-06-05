@@ -420,7 +420,7 @@ if( $dupAlg == 'sameports' || $dupAlg == 'samedstsrcports' )
                         if( !$object->srcPortMapping()->equals($ancestor->srcPortMapping()) && $dupAlg == 'samedstsrcports' )
                         {
                             echo "    - object '{$object->name()}' cannot be merged because of different SRC port information";
-                            echo "  value: ".$object->srcPortMapping()->mappingToText()." | ".$ancestor->srcPortMapping()->mappingToText()."\n";
+                            echo "  object value: ".$object->srcPortMapping()->mappingToText()." | pickedObject value: ".$ancestor->srcPortMapping()->mappingToText()."\n";
                             continue;
                         }
                         echo "    - object '{$object->name()}' merged with its ancestor, deleting this one... ";
