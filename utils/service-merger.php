@@ -28,7 +28,7 @@ $supportedArguments[] = Array('niceName' => 'out', 'shortHelp' => 'output file t
 $supportedArguments[] = Array('niceName' => 'Location', 'shortHelp' => 'specify if you want to limit your query to a VSYS/DG. By default location=shared for Panorama, =vsys1 for PANOS. ie: location=any or location=vsys2,vsys1', 'argDesc' => 'sub1[,sub2]');
 $supportedArguments[] = Array(    'niceName' => 'DupAlgorithm',
                                                 'shortHelp' => "Specifies how to detect duplicates:\n".
-                                                    "  - SamePorts: objects with same ports will be replaced by the one picked (default)\n".
+                                                    "  - SamePorts: objects with same Dst ports will be replaced by the one picked (default)\n".
                                                     "  - SameDstSrcPorts: objects with same Dst and Src ports will be replaced by the one picked\n".
                                                     "  - WhereUsed: objects used exactly in the same location will be merged into 1 single object and all ports covered by these objects will be aggregated\n",
                                                 'argDesc'=> 'SamePorts|WhereUsed');
@@ -453,9 +453,20 @@ if( $dupAlg == 'sameports' || $dupAlg == 'samedstsrcports' )
 
                 continue;
             }
+            else
+            {
+                if( !$object->srcPortMapping()->equals($pickedObject->srcPortMapping()) && $dupAlg == 'samedstsrcports' )
+                {
+                    echo "    - object '{$object->name()}' cannot be merged because of different SRC port information";
+                    echo "  object value: ".$object->srcPortMapping()->mappingToText()." | pickedObject value: ".$pickedObject->srcPortMapping()->mappingToText()."\n";
+                    continue;
+                }
+            }
 
             if( $object === $pickedObject )
                 continue;
+
+
 
             echo "    - replacing '{$object->_PANC_shortName()}' ...\n";
             $object->__replaceWhereIamUsed($apiMode, $pickedObject, true, 5);
