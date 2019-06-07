@@ -55,5 +55,10 @@ trait XmlConvertible
         $con->sendEditRequest($xpath, $this->getXmlText_inline());
     }
 
+    public function set_node_attribute( $att_name, $message )
+    {
+        $this->xmlroot->setAttribute( $att_name, $message);
+    }
+
 }
 
