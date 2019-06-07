@@ -207,7 +207,7 @@ if( $location == 'any' || $location == 'all' )
             $location_array[$key]['childDeviceGroups'] = $childDeviceGroups;
         }
         else
-            $location_array[$key]['childDeviceGroups'] = null;
+            $location_array[$key]['childDeviceGroups'] = array();
 
     }
     $location_array[$key+1]['findLocation'] = 'shared';
@@ -297,17 +297,9 @@ foreach( $location_array as $tmp_location )
         echo " - location '{$findLocation->name()}' found\n";
     echo " - found {$store->countServices()} services\n";
     echo " - DupAlgorithm selected: {$dupAlg}\n";
-    echo " - computing address values database ... ";
+    echo " - computing service values database ... ";
     sleep(1);
 
-    /*
-echo " - upper level search status : ".boolYesNo($upperLevelSearch)."\n";
-echo " - location '{$location}' found\n";
-echo " - found {$store->countServices()} services\n";
-echo " - DupAlgorithm selected: {$dupAlg}\n";
-echo " - computing address values database ... ";
-sleep(1);
-*/
 
 //
 // Building a hash table of all service based on their REAL port mapping
@@ -657,7 +649,7 @@ sleep(1);
     else derr("unsupported use case");
 
 
-    echo "\n\nDuplicates removal is now done. Number is services after cleanup: '{$store->countServices()}' (removed {$countRemoved} services)\n\n";
+    echo "\n\nDuplicates removal is now done. Number of objects after cleanup: '{$store->countServices()}' (removed {$countRemoved} services)\n\n";
 
     echo "\n\n***********************************************\n\n";
 
