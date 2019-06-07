@@ -86,7 +86,7 @@ if( isset(PH::$args['dupalgorithm']) )
         display_error_usage_exit('unsupported value for dupAlgorithm: '.PH::$args['dupalgorithm']);
 }
 else
-    $dupAlg = 'samedststrcports';
+    $dupAlg = 'samedstsrcports';
 
 $location = PH::$args['location'];
 
@@ -178,31 +178,7 @@ if( !$apiMode )
         unlink($outputfile);
 }
 
-/*
-if( $location == 'shared' )
-{
-    $store = $panc->serviceStore;
-    $parentStore = null;
-}
-else
-{
-    $findLocation = $panc->findSubSystemByName($location);
-    if( $findLocation === null )
-        derr("cannot find DeviceGroup/VSYS named '{$location}', check case or syntax");
 
-    $store = $findLocation->serviceStore;
-    $parentStore = $findLocation->owner->serviceStore;
-
-}
-
-if( $panc->isPanorama() )
-{
-    if( $location == 'shared' )
-        $childDeviceGroups = $panc->deviceGroups;
-    else
-        $childDeviceGroups = $findLocation->childDeviceGroups(true);
-}
-*/
 
 $location_array = array();
 if( $location == 'any' || $location == 'all' )
