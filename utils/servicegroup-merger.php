@@ -172,6 +172,80 @@ if( !$apiMode )
 }
 
 
+$location_array = array();
+if( $location == 'any' || $location == 'all' )
+{
+    if( $panc->isPanorama() )
+        $alldevicegroup = $panc->deviceGroups;
+    else
+        $alldevicegroup = $panc->virtualSystems;
+
+    foreach( $alldevicegroup as $key => $tmp_location )
+    {
+        $location = $tmp_location->name();
+        $findLocation = $panc->findSubSystemByName($location);
+        if( $findLocation === null )
+            derr("cannot find DeviceGroup/VSYS named '{$location}', check case or syntax");
+
+        $store = $findLocation->serviceStore;
+        $parentStore = $findLocation->owner->serviceStore;
+
+        $location_array[$key]['findLocation'] = $findLocation;
+        $location_array[$key]['store'] = $store;
+        $location_array[$key]['parentStore'] = $parentStore;
+        if( $panc->isPanorama() )
+        {
+            $childDeviceGroups = $findLocation->childDeviceGroups(true);
+            $location_array[$key]['childDeviceGroups'] = $childDeviceGroups;
+        }
+        else
+            $location_array[$key]['childDeviceGroups'] = array();
+
+    }
+    $location_array[$key+1]['findLocation'] = 'shared';
+    $location_array[$key+1]['store'] = $panc->serviceStore;
+    $location_array[$key+1]['parentStore'] = null;
+    $location_array[$key+1]['childDeviceGroups'] = $alldevicegroup;
+
+}
+else
+{
+    if( $location == 'shared' )
+    {
+        $store = $panc->serviceStore;
+        $parentStore = null;
+        $location_array[0]['findLocation'] = $location;
+        $location_array[0]['store'] = $store;
+        $location_array[0]['parentStore'] = $parentStore;
+    }
+    else
+    {
+        $findLocation = $panc->findSubSystemByName($location);
+        if( $findLocation === null )
+            derr("cannot find DeviceGroup/VSYS named '{$location}', check case or syntax");
+
+        $store = $findLocation->serviceStore;
+        $parentStore = $findLocation->owner->serviceStore;
+
+        $location_array[0]['findLocation'] = $findLocation;
+        $location_array[0]['store'] = $store;
+        $location_array[0]['parentStore'] = $parentStore;
+    }
+
+    if( $panc->isPanorama() )
+    {
+        if( $location == 'shared' )
+            $childDeviceGroups = $panc->deviceGroups;
+        else
+            $childDeviceGroups = $findLocation->childDeviceGroups(true);
+        $location_array[0]['childDeviceGroups'] = $childDeviceGroups;
+    }
+    else
+        $location_array[0]['childDeviceGroups'] = array();
+}
+
+
+/*
 if( $location == 'shared' )
 {
     $store = $panc->serviceStore;
@@ -194,6 +268,7 @@ if( $panc->isPanorama() )
     else
         $childDeviceGroups = $findLocation->childDeviceGroups(true);
 }
+*/
 
 $pickFilter = null;
 if( isset(PH::$args['pickfilter']) )
@@ -232,310 +307,321 @@ if( isset(PH::$args['dupalgorithm']) )
 else
     $dupAlg = 'samemembers';
 
-echo " - upper level search status : ".boolYesNo($upperLevelSearch)."\n";
-echo " - location '{$location}' found\n";
-echo " - found {$store->count()} service Objects\n";
-echo " - DupAlgorithm selected: {$dupAlg}\n";
-echo " - computing ServiceGroup hash database ... ";
-sleep(1);
 
+foreach( $location_array as $tmp_location )
+{
+    $store = $tmp_location['store'];
+    $findLocation = $tmp_location['findLocation'];
+    $parentStore = $tmp_location['parentStore'];
+    $childDeviceGroups = $tmp_location['childDeviceGroups'];
 
-/**
- * @param ServiceGroup $object
- * @return string
- */
-if( $dupAlg == 'samemembers' )
-    $hashGenerator = function($object)
-    {
-        /** @var ServiceGroup $object */
-        $value = '';
+    echo " - upper level search status : " . boolYesNo($upperLevelSearch) . "\n";
+    if( is_string($findLocation) )
+        echo " - location 'shared' found\n";
+    else
+        echo " - location '{$findLocation->name()}' found\n";
+    echo " - found {$store->count()} services\n";
+    echo " - DupAlgorithm selected: {$dupAlg}\n";
+    echo " - computing ServiceGroup values database ... ";
+    sleep(1);
 
-        $members = $object->members();
-        usort($members, '__CmpObjName');
-
-        foreach( $members as $member )
+    /**
+     * @param ServiceGroup $object
+     * @return string
+     */
+    if( $dupAlg == 'samemembers' )
+        $hashGenerator = function ($object)
         {
-            $value .= './.'.$member->name();
-        }
+            /** @var ServiceGroup $object */
+            $value = '';
 
-        return $value;
-    };
-elseif( $dupAlg == 'sameportmapping' )
-    $hashGenerator = function($object)
-    {
-        /** @var ServiceGroup $object */
-        $value = '';
+            $members = $object->members();
+            usort($members, '__CmpObjName');
 
-        $mapping = $object->dstPortMapping();
+            foreach( $members as $member )
+            {
+                $value .= './.' . $member->name();
+            }
 
-        $value = $mapping->mappingToText();
-
-        if( count($mapping->unresolved) > 0 )
+            return $value;
+        };
+    elseif( $dupAlg == 'sameportmapping' )
+        $hashGenerator = function ($object)
         {
-            ksort($mapping->unresolved);
-            $value .= '//unresolved:/';
+            /** @var ServiceGroup $object */
+            $value = '';
 
-            foreach($mapping->unresolved as $unresolvedEntry)
-                $value .= $unresolvedEntry->name().'.%.';
-        }
+            $mapping = $object->dstPortMapping();
 
-        return $value;
-    };
-elseif( $dupAlg == 'whereused' )
-    $hashGenerator = function($object)
-    {
-        if( $object->countReferences() == 0 )
-            return null;
+            $value = $mapping->mappingToText();
 
-        /** @var ServiceGroup $object */
-        $value = $object->getRefHashComp();
+            if( count($mapping->unresolved) > 0 )
+            {
+                ksort($mapping->unresolved);
+                $value .= '//unresolved:/';
 
-        return $value;
-    };
-else
-    derr("unsupported dupAlgorithm");
+                foreach( $mapping->unresolved as $unresolvedEntry )
+                    $value .= $unresolvedEntry->name() . '.%.';
+            }
+
+            return $value;
+        };
+    elseif( $dupAlg == 'whereused' )
+        $hashGenerator = function ($object)
+        {
+            if( $object->countReferences() == 0 )
+                return null;
+
+            /** @var ServiceGroup $object */
+            $value = $object->getRefHashComp();
+
+            return $value;
+        };
+    else
+        derr("unsupported dupAlgorithm");
 
 //
 // Building a hash table of all service objects with same value
 //
-if( $upperLevelSearch)
-    $objectsToSearchThrough = $store->nestedPointOfView();
-else
-    $objectsToSearchThrough = $store->serviceGroups();
+    if( $upperLevelSearch )
+        $objectsToSearchThrough = $store->nestedPointOfView();
+    else
+        $objectsToSearchThrough = $store->serviceGroups();
 
-$hashMap = Array();
-$upperHashMap = Array();
-foreach( $objectsToSearchThrough as $object )
-{
-    if( !$object->isGroup() )
-        continue;
-
-    if( $excludeFilter !== null && $excludeFilter->matchSingleObject( Array('object' =>$object, 'nestedQueries'=>&$nestedQueries) ) )
-        continue;
-
-    $skipThisOne = false;
-
-    // Object with descendants in lower device groups should be excluded
-    if( $panc->isPanorama() )
+    $hashMap = Array();
+    $upperHashMap = Array();
+    foreach( $objectsToSearchThrough as $object )
     {
-        foreach( $childDeviceGroups as $dg )
+        if( !$object->isGroup() )
+            continue;
+
+        if( $excludeFilter !== null && $excludeFilter->matchSingleObject(Array('object' => $object, 'nestedQueries' => &$nestedQueries)) )
+            continue;
+
+        $skipThisOne = FALSE;
+
+        // Object with descendants in lower device groups should be excluded
+        if( $panc->isPanorama() )
         {
-            if( $dg->serviceStore->find($object->name(), null, FALSE) !== null )
+            foreach( $childDeviceGroups as $dg )
             {
-                $skipThisOne = true;
-                break;
+                if( $dg->serviceStore->find($object->name(), null, FALSE) !== null )
+                {
+                    $skipThisOne = TRUE;
+                    break;
+                }
+            }
+            if( $skipThisOne )
+                continue;
+        }
+
+        $value = $hashGenerator($object);
+        if( $value === null )
+            continue;
+
+        if( $object->owner === $store )
+        {
+            $hashMap[$value][] = $object;
+            if( $parentStore !== null )
+            {
+                $findAncestor = $parentStore->find($object->name(), null, TRUE);
+                if( $findAncestor !== null )
+                    $object->ancestor = $findAncestor;
             }
         }
-        if( $skipThisOne )
-            continue;
+        else
+            $upperHashMap[$value][] = $object;
     }
-
-    $value = $hashGenerator($object);
-    if( $value === null )
-        continue;
-
-    if( $object->owner === $store )
-    {
-        $hashMap[$value][] = $object;
-        if( $parentStore !== null )
-        {
-            $findAncestor = $parentStore->find($object->name(), null, true);
-            if( $findAncestor !== null )
-                $object->ancestor = $findAncestor;
-        }
-    }
-    else
-        $upperHashMap[$value][] = $object;
-}
 
 //
 // Hashes with single entries have no duplicate, let's remove them
 //
-$countConcernedObjects = 0;
-foreach( $hashMap as $index => &$hash )
-{
-    if( count($hash) == 1 && !isset($upperHashMap[$index]) && !isset(reset($hash)->ancestor) )
+    $countConcernedObjects = 0;
+    foreach( $hashMap as $index => &$hash )
     {
-        //echo "\nancestor not found for ".reset($hash)->name()."\n";
-        unset($hashMap[$index]);
-    }
-    else
-        $countConcernedObjects += count($hash);
-}
-unset($hash);
-echo "OK!\n";
-
-echo " - found ".count($hashMap)." duplicate values totalling {$countConcernedObjects} groups which are duplicate\n";
-
-echo "\n\nNow going after each duplicates for a replacement\n";
-
-$countRemoved = 0;
-foreach( $hashMap as $index => &$hash )
-{
-    echo "\n";
-
-    if( $dupAlg == 'sameportmapping')
-    {
-        echo " - value '{$index}'\n";
-    }
-
-    $setList = Array();
-    foreach( $hash as $object )
-    {
-        /** @var Service $object */
-        $setList[] = PH::getLocationString($object->owner->owner).'/'.$object->name();
-    }
-    echo " - duplicate set : '".PH::list_to_string($setList)."'\n";
-
-    $pickedObject = null;
-
-    if( $pickFilter !== null )
-    {
-        if( isset($upperHashMap[$index]) )
+        if( count($hash) == 1 && !isset($upperHashMap[$index]) && !isset(reset($hash)->ancestor) )
         {
-            foreach( $upperHashMap[$index] as $object )
-            {
-                if( $pickFilter->matchSingleObject( Array('object' =>$object, 'nestedQueries'=>&$nestedQueries) ) )
-                {
-                    $pickedObject = $object;
-                    break;
-                }
-            }
-            if( $pickedObject === null )
-                $pickedObject = reset($upperHashMap[$index]);
-
-            echo "   * using object from upper level : '{$pickedObject->name()}'\n";
+            //echo "\nancestor not found for ".reset($hash)->name()."\n";
+            unset($hashMap[$index]);
         }
         else
-        {
-            foreach( $hash as $object )
-            {
-                if( $pickFilter->matchSingleObject( Array('object' =>$object, 'nestedQueries'=>&$nestedQueries) ) )
-                {
-                    $pickedObject = $object;
-                    break;
-                }
-            }
-            if( $pickedObject === null )
-                $pickedObject = reset($hash);
-
-            echo "   * keeping object '{$pickedObject->name()}'\n";
-        }
+            $countConcernedObjects += count($hash);
     }
-    else
-    {
-        if( isset($upperHashMap[$index]) )
-        {
-            $pickedObject = reset($upperHashMap[$index]);
-            echo "   * using object from upper level : '{$pickedObject->name()}'\n";
-        }
-        else
-        {
-            $pickedObject = reset($hash);
-            echo "   * keeping object '{$pickedObject->name()}'\n";
-        }
-    }
+    unset($hash);
+    echo "OK!\n";
 
-    // Merging loop finally!
-    foreach( $hash as $object)
+    echo " - found " . count($hashMap) . " duplicate values totalling {$countConcernedObjects} groups which are duplicate\n";
+
+    echo "\n\nNow going after each duplicates for a replacement\n";
+
+    $countRemoved = 0;
+    foreach( $hashMap as $index => &$hash )
     {
-        /** @var ServiceGroup $object */
-        if( isset($object->ancestor) )
+        echo "\n";
+
+        if( $dupAlg == 'sameportmapping' )
         {
-            $ancestor = $object->ancestor;
-            /** @var ServiceGroup $ancestor */
-            if( $upperLevelSearch && $ancestor->isGroup() )
+            echo " - value '{$index}'\n";
+        }
+
+        $setList = Array();
+        foreach( $hash as $object )
+        {
+            /** @var Service $object */
+            $setList[] = PH::getLocationString($object->owner->owner) . '/' . $object->name();
+        }
+        echo " - duplicate set : '" . PH::list_to_string($setList) . "'\n";
+
+        $pickedObject = null;
+
+        if( $pickFilter !== null )
+        {
+            if( isset($upperHashMap[$index]) )
             {
-                if( $hashGenerator($object) == $hashGenerator($ancestor) )
+                foreach( $upperHashMap[$index] as $object )
                 {
-                    echo "    - group '{$object->name()}' merged with its ancestor, deleting this one... ";
-                    $object->replaceMeGlobally($ancestor);
-                    if( $apiMode )
-                        $object->owner->API_remove($object);
-                    else
-                        $object->owner->remove($object);
-
-                    echo "OK!\n";
-
-                    if( $pickedObject === $object )
-                        $pickedObject = $ancestor;
-
-                    $countRemoved++;
-                    if( $mergeCountLimit !== FALSE && $countRemoved >= $mergeCountLimit )
+                    if( $pickFilter->matchSingleObject(Array('object' => $object, 'nestedQueries' => &$nestedQueries)) )
                     {
-                        echo "\n *** STOPPING MERGE OPERATIONS NOW SINCE WE REACHED mergeCountLimit ({$mergeCountLimit})\n";
-                        break 2;
+                        $pickedObject = $object;
+                        break;
                     }
-                    continue;
                 }
-            }
-            echo "    - group '{$object->name()}' cannot be merged because it has an ancestor\n";
-            continue;
-        }
+                if( $pickedObject === null )
+                    $pickedObject = reset($upperHashMap[$index]);
 
-        if( $object === $pickedObject )
-            continue;
-
-        if( $dupAlg == 'whereused' )
-        {
-            echo "    - merging '{$object->name()}' members into '{$pickedObject->name()}': \n";
-            foreach( $object->members() as $member )
-            {
-                echo "     - adding member '{$member->name()}'... ";
-                if( $apiMode )
-                    $pickedObject->API_addMember($member);
-                else
-                    $pickedObject->addMember($member);
-                echo " OK!\n";
-            }
-            echo "    - now removing '{$object->name()} from where it's used\n";
-            if( $apiMode )
-            {
-                $object->API_removeWhereIamUsed(TRUE, 6);
-                echo "    - deleting '{$object->name()}'... ";
-                $object->owner->API_remove($object);
-                echo "OK!\n";
+                echo "   * using object from upper level : '{$pickedObject->name()}'\n";
             }
             else
             {
-                $object->removeWhereIamUsed(TRUE, 6);
-                echo "    - deleting '{$object->name()}'... ";
-                $object->owner->remove($object);
-                echo "OK!\n";
+                foreach( $hash as $object )
+                {
+                    if( $pickFilter->matchSingleObject(Array('object' => $object, 'nestedQueries' => &$nestedQueries)) )
+                    {
+                        $pickedObject = $object;
+                        break;
+                    }
+                }
+                if( $pickedObject === null )
+                    $pickedObject = reset($hash);
+
+                echo "   * keeping object '{$pickedObject->name()}'\n";
             }
         }
         else
         {
-            echo "    - replacing '{$object->_PANC_shortName()}' ...\n";
-            $object->__replaceWhereIamUsed($apiMode, $pickedObject, true, 5);
-
-            echo "    - deleting '{$object->_PANC_shortName()}'\n";
-            if( $apiMode )
+            if( isset($upperHashMap[$index]) )
             {
-                //true flag needed for nested groups in a specific constellation
-                $object->owner->API_remove($object, true);
+                $pickedObject = reset($upperHashMap[$index]);
+                echo "   * using object from upper level : '{$pickedObject->name()}'\n";
             }
             else
             {
-                $object->owner->remove($object, true);
+                $pickedObject = reset($hash);
+                echo "   * keeping object '{$pickedObject->name()}'\n";
             }
         }
 
-        $countRemoved++;
-
-        if( $mergeCountLimit !== FALSE && $countRemoved >= $mergeCountLimit )
+        // Merging loop finally!
+        foreach( $hash as $object )
         {
-            echo "\n *** STOPPING MERGE OPERATIONS NOW SINCE WE REACHED mergeCountLimit ({$mergeCountLimit})\n";
-            break 2;
+            /** @var ServiceGroup $object */
+            if( isset($object->ancestor) )
+            {
+                $ancestor = $object->ancestor;
+                /** @var ServiceGroup $ancestor */
+                if( $upperLevelSearch && $ancestor->isGroup() )
+                {
+                    if( $hashGenerator($object) == $hashGenerator($ancestor) )
+                    {
+                        echo "    - group '{$object->name()}' merged with its ancestor, deleting this one... ";
+                        $object->replaceMeGlobally($ancestor);
+                        if( $apiMode )
+                            $object->owner->API_remove($object);
+                        else
+                            $object->owner->remove($object);
+
+                        echo "OK!\n";
+
+                        if( $pickedObject === $object )
+                            $pickedObject = $ancestor;
+
+                        $countRemoved++;
+                        if( $mergeCountLimit !== FALSE && $countRemoved >= $mergeCountLimit )
+                        {
+                            echo "\n *** STOPPING MERGE OPERATIONS NOW SINCE WE REACHED mergeCountLimit ({$mergeCountLimit})\n";
+                            break 2;
+                        }
+                        continue;
+                    }
+                }
+                echo "    - group '{$object->name()}' cannot be merged because it has an ancestor\n";
+                continue;
+            }
+
+            if( $object === $pickedObject )
+                continue;
+
+            if( $dupAlg == 'whereused' )
+            {
+                echo "    - merging '{$object->name()}' members into '{$pickedObject->name()}': \n";
+                foreach( $object->members() as $member )
+                {
+                    echo "     - adding member '{$member->name()}'... ";
+                    if( $apiMode )
+                        $pickedObject->API_addMember($member);
+                    else
+                        $pickedObject->addMember($member);
+                    echo " OK!\n";
+                }
+                echo "    - now removing '{$object->name()} from where it's used\n";
+                if( $apiMode )
+                {
+                    $object->API_removeWhereIamUsed(TRUE, 6);
+                    echo "    - deleting '{$object->name()}'... ";
+                    $object->owner->API_remove($object);
+                    echo "OK!\n";
+                }
+                else
+                {
+                    $object->removeWhereIamUsed(TRUE, 6);
+                    echo "    - deleting '{$object->name()}'... ";
+                    $object->owner->remove($object);
+                    echo "OK!\n";
+                }
+            }
+            else
+            {
+                echo "    - replacing '{$object->_PANC_shortName()}' ...\n";
+                $object->__replaceWhereIamUsed($apiMode, $pickedObject, TRUE, 5);
+
+                echo "    - deleting '{$object->_PANC_shortName()}'\n";
+                if( $apiMode )
+                {
+                    //true flag needed for nested groups in a specific constellation
+                    $object->owner->API_remove($object, TRUE);
+                }
+                else
+                {
+                    $object->owner->remove($object, TRUE);
+                }
+            }
+
+            $countRemoved++;
+
+            if( $mergeCountLimit !== FALSE && $countRemoved >= $mergeCountLimit )
+            {
+                echo "\n *** STOPPING MERGE OPERATIONS NOW SINCE WE REACHED mergeCountLimit ({$mergeCountLimit})\n";
+                break 2;
+            }
         }
     }
+
+    echo "\n\nDuplicates removal is now done. Number of objects after cleanup: '{$store->countServiceGroups()}' (removed {$countRemoved} groups)\n\n";
+
+    echo "\n\n***********************************************\n\n";
+
+    echo "\n\n";
 }
-
-echo "\n\nDuplicates removal is now done. Number of objects after cleanup: '{$store->countServiceGroups()}' (removed {$countRemoved} groups)\n\n";
-
-echo "\n\n***********************************************\n\n";
-
-echo "\n\n";
 
 if( !$apiMode )
     $panc->save_to_file($outputfile);
