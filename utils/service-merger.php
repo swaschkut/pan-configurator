@@ -178,6 +178,7 @@ if( !$apiMode )
         unlink($outputfile);
 }
 
+/*
 if( $location == 'shared' )
 {
     $store = $panc->serviceStore;
@@ -201,6 +202,71 @@ if( $panc->isPanorama() )
     else
         $childDeviceGroups = $findLocation->childDeviceGroups(true);
 }
+*/
+
+$location_array = array();
+if( $location == 'any' || $location == 'all' )
+{
+    //Todo: what about all vsys??????
+    $alldevicegroup = $panc->deviceGroups;
+
+    foreach( $alldevicegroup as $key => $tmp_location )
+    {
+        $location = $tmp_location->name();
+        $findLocation = $panc->findSubSystemByName($location);
+        if( $findLocation === null )
+            derr("cannot find DeviceGroup/VSYS named '{$location}', check case or syntax");
+
+        $store = $findLocation->serviceStore;
+        $parentStore = $findLocation->owner->serviceStore;
+
+        $location_array[$key]['findLocation'] = $findLocation;
+        $location_array[$key]['store'] = $store;
+        $location_array[$key]['parentStore'] = $parentStore;
+        if( $panc->isPanorama() )
+        {
+            $childDeviceGroups = $findLocation->childDeviceGroups(true);
+            $location_array[$key]['childDeviceGroups'] = $childDeviceGroups;
+        }
+    }
+
+}
+else
+{
+    if( $location == 'shared' )
+    {
+        $store = $panc->serviceStore;
+        $parentStore = null;
+        $location_array[0]['findLocation'] = $location;
+        $location_array[0]['store'] = $store;
+        $location_array[0]['parentStore'] = $parentStore;
+    }
+    else
+    {
+        $findLocation = $panc->findSubSystemByName($location);
+        if( $findLocation === null )
+            derr("cannot find DeviceGroup/VSYS named '{$location}', check case or syntax");
+
+        $store = $findLocation->serviceStore;
+        $parentStore = $findLocation->owner->serviceStore;
+
+        $location_array[0]['findLocation'] = $findLocation;
+        $location_array[0]['store'] = $store;
+        $location_array[0]['parentStore'] = $parentStore;
+    }
+
+    if( $panc->isPanorama() )
+    {
+        if( $location == 'shared' )
+            $childDeviceGroups = $panc->deviceGroups;
+        else
+            $childDeviceGroups = $findLocation->childDeviceGroups(true);
+        $location_array[0]['childDeviceGroups'] = $childDeviceGroups;
+    }
+    else
+        $location_array[0]['childDeviceGroups'] = array();
+}
+
 
 $pickFilter = null;
 if( isset(PH::$args['pickfilter']) )
@@ -230,366 +296,387 @@ $upperLevelSearch = false;
 if( isset(PH::$args['allowmergingwithupperlevel']) )
     $upperLevelSearch = true;
 
+
+
+foreach( $location_array as $tmp_location )
+{
+    $store = $tmp_location['store'];
+    $findLocation = $tmp_location['findLocation'];
+    $parentStore = $tmp_location['parentStore'];
+    $childDeviceGroups = $tmp_location['childDeviceGroups'];
+
+    echo " - upper level search status : " . boolYesNo($upperLevelSearch) . "\n";
+    if( is_string($findLocation) )
+        echo " - location 'shared' found\n";
+    else
+        echo " - location '{$findLocation->name()}' found\n";
+    echo " - found {$store->countServices()} services\n";
+    echo " - DupAlgorithm selected: {$dupAlg}\n";
+    echo " - computing address values database ... ";
+    sleep(1);
+
+    /*
 echo " - upper level search status : ".boolYesNo($upperLevelSearch)."\n";
 echo " - location '{$location}' found\n";
 echo " - found {$store->countServices()} services\n";
 echo " - DupAlgorithm selected: {$dupAlg}\n";
 echo " - computing address values database ... ";
 sleep(1);
-
+*/
 
 //
 // Building a hash table of all service based on their REAL port mapping
 //
-if( $upperLevelSearch)
-    $objectsToSearchThrough = $store->nestedPointOfView();
-else
-    $objectsToSearchThrough = $store->serviceObjects();
+    if( $upperLevelSearch )
+        $objectsToSearchThrough = $store->nestedPointOfView();
+    else
+        $objectsToSearchThrough = $store->serviceObjects();
 
-$hashMap = Array();
-$upperHashMap = Array();
-if( $dupAlg == 'sameports' || $dupAlg == 'samedstsrcports' )
-    foreach( $objectsToSearchThrough as $object )
-    {
-        if( !$object->isService() )
-            continue;
-        if( $object->isTmpSrv() )
-            continue;
-
-        if( $excludeFilter !== null && $excludeFilter->matchSingleObject( Array('object' =>$object, 'nestedQueries'=>&$nestedQueries) ) )
-            continue;
-
-
-        $skipThisOne = FALSE;
-
-        // Object with descendants in lower device groups should be excluded
-        if( $panc->isPanorama() && $object->owner === $store )
+    $hashMap = Array();
+    $upperHashMap = Array();
+    if( $dupAlg == 'sameports' || $dupAlg == 'samedstsrcports' )
+        foreach( $objectsToSearchThrough as $object )
         {
-            foreach( $childDeviceGroups as $dg )
+            if( !$object->isService() )
+                continue;
+            if( $object->isTmpSrv() )
+                continue;
+
+            if( $excludeFilter !== null && $excludeFilter->matchSingleObject(Array('object' => $object, 'nestedQueries' => &$nestedQueries)) )
+                continue;
+
+
+            $skipThisOne = FALSE;
+
+            // Object with descendants in lower device groups should be excluded
+            if( $panc->isPanorama() && $object->owner === $store )
             {
-                if( $dg->serviceStore->find($object->name(), null, FALSE) !== null )
+                foreach( $childDeviceGroups as $dg )
                 {
-                    print "\n- object '".$object->name()."' skipped because of same object name available at lower level\n";
-                    $skipThisOne = TRUE;
-                    break;
+                    if( $dg->serviceStore->find($object->name(), null, FALSE) !== null )
+                    {
+                        print "\n- object '" . $object->name() . "' skipped because of same object name available at lower level\n";
+                        $skipThisOne = TRUE;
+                        break;
+                    }
+                }
+                if( $skipThisOne )
+                    continue;
+            }
+
+            $value = $object->dstPortMapping()->mappingToText();
+
+            if( $object->owner === $store )
+            {
+                $hashMap[$value][] = $object;
+                if( $parentStore !== null )
+                {
+                    $findAncestor = $parentStore->find($object->name(), null, TRUE);
+                    if( $findAncestor !== null )
+                        $object->ancestor = $findAncestor;
                 }
             }
-            if( $skipThisOne )
+            else
+                $upperHashMap[$value][] = $object;
+
+        }
+    elseif( $dupAlg == 'whereused' )
+        foreach( $objectsToSearchThrough as $object )
+        {
+            if( !$object->isService() )
                 continue;
-        }
+            if( $object->isTmpSrv() )
+                continue;
 
-        $value = $object->dstPortMapping()->mappingToText();
+            if( $object->countReferences() == 0 )
+                continue;
 
-        if( $object->owner === $store )
-        {
-            $hashMap[$value][] = $object;
-            if( $parentStore !== null )
+            if( $excludeFilter !== null && $excludeFilter->matchSingleObject(Array('object' => $object, 'nestedQueries' => &$nestedQueries)) )
+                continue;
+
+            $value = $object->getRefHashComp() . $object->protocol();
+            if( $object->owner === $store )
             {
-                $findAncestor = $parentStore->find($object->name(), null, true);
-                if( $findAncestor !== null )
-                    $object->ancestor = $findAncestor;
+                $hashMap[$value][] = $object;
+                if( $parentStore !== null )
+                {
+                    $findAncestor = $parentStore->find($object->name(), null, TRUE);
+                    if( $findAncestor !== null )
+                        $object->ancestor = $findAncestor;
+                }
             }
+            else
+                $upperHashMap[$value][] = $object;
         }
-        else
-            $upperHashMap[$value][] = $object;
-
-    }
-elseif( $dupAlg == 'whereused' )
-    foreach( $objectsToSearchThrough as $object )
-    {
-        if( !$object->isService() )
-            continue;
-        if( $object->isTmpSrv() )
-            continue;
-
-        if( $object->countReferences() == 0 )
-            continue;
-
-        if( $excludeFilter !== null && $excludeFilter->matchSingleObject( Array('object' =>$object, 'nestedQueries'=>&$nestedQueries) ) )
-            continue;
-
-        $value = $object->getRefHashComp().$object->protocol();
-        if( $object->owner === $store )
-        {
-            $hashMap[$value][] = $object;
-            if( $parentStore !== null )
-            {
-                $findAncestor = $parentStore->find($object->name(), null, true);
-                if( $findAncestor !== null )
-                    $object->ancestor = $findAncestor;
-            }
-        }
-        else
-            $upperHashMap[$value][] = $object;
-    }
-else derr("unsupported use case");
+    else derr("unsupported use case");
 
 //
 // Hashes with single entries have no duplicate, let's remove them
 //
-$countConcernedObjects = 0;
-foreach( $hashMap as $index => &$hash )
-{
-    if( count($hash) == 1 && !isset($upperHashMap[$index]) && !isset(reset($hash)->ancestor) )
-        unset($hashMap[$index]);
-    else
-        $countConcernedObjects += count($hash);
-}
-unset($hash);
-echo "OK!\n";
-
-echo " - found ".count($hashMap)." duplicates values totalling {$countConcernedObjects} service objects which are duplicate\n";
-
-echo "\n\nNow going after each duplicates for a replacement\n";
-
-$countRemoved = 0;
-if( $dupAlg == 'sameports' || $dupAlg == 'samedstsrcports' )
+    $countConcernedObjects = 0;
     foreach( $hashMap as $index => &$hash )
     {
-        echo "\n";
-        echo " - value '{$index}'\n";
-
-        $pickedObject = null;
-
-        if( $pickFilter !== null )
-        {
-            if( isset($upperHashMap[$index]) )
-            {
-                foreach( $upperHashMap[$index] as $object )
-                {
-                    if( $pickFilter->matchSingleObject( Array('object' =>$object, 'nestedQueries'=>&$nestedQueries) ) )
-                    {
-                        $pickedObject = $object;
-                        break;
-                    }
-                }
-                if( $pickedObject === null )
-                    $pickedObject = reset($upperHashMap[$index]);
-
-                echo "   * using object from upper level : '{$pickedObject->name()}'\n";
-            }
-            else
-            {
-                foreach( $hash as $object )
-                {
-                    if( $pickFilter->matchSingleObject( Array('object' =>$object, 'nestedQueries'=>&$nestedQueries) ) )
-                    {
-                        $pickedObject = $object;
-                        break;
-                    }
-                }
-                if( $pickedObject === null )
-                    $pickedObject = reset($hash);
-
-                echo "   * keeping object '{$pickedObject->name()}'\n";
-            }
-        }
+        if( count($hash) == 1 && !isset($upperHashMap[$index]) && !isset(reset($hash)->ancestor) )
+            unset($hashMap[$index]);
         else
+            $countConcernedObjects += count($hash);
+    }
+    unset($hash);
+    echo "OK!\n";
+
+    echo " - found " . count($hashMap) . " duplicates values totalling {$countConcernedObjects} service objects which are duplicate\n";
+
+    echo "\n\nNow going after each duplicates for a replacement\n";
+
+    $countRemoved = 0;
+    if( $dupAlg == 'sameports' || $dupAlg == 'samedstsrcports' )
+        foreach( $hashMap as $index => &$hash )
         {
-            if( isset($upperHashMap[$index]) )
+            echo "\n";
+            echo " - value '{$index}'\n";
+
+            $pickedObject = null;
+
+            if( $pickFilter !== null )
             {
-                $pickedObject = reset($upperHashMap[$index]);
-                echo "   * using object from upper level : '{$pickedObject->name()}'\n";
+                if( isset($upperHashMap[$index]) )
+                {
+                    foreach( $upperHashMap[$index] as $object )
+                    {
+                        if( $pickFilter->matchSingleObject(Array('object' => $object, 'nestedQueries' => &$nestedQueries)) )
+                        {
+                            $pickedObject = $object;
+                            break;
+                        }
+                    }
+                    if( $pickedObject === null )
+                        $pickedObject = reset($upperHashMap[$index]);
+
+                    echo "   * using object from upper level : '{$pickedObject->name()}'\n";
+                }
+                else
+                {
+                    foreach( $hash as $object )
+                    {
+                        if( $pickFilter->matchSingleObject(Array('object' => $object, 'nestedQueries' => &$nestedQueries)) )
+                        {
+                            $pickedObject = $object;
+                            break;
+                        }
+                    }
+                    if( $pickedObject === null )
+                        $pickedObject = reset($hash);
+
+                    echo "   * keeping object '{$pickedObject->name()}'\n";
+                }
             }
             else
             {
-                $pickedObject = reset($hash);
-                echo "   * keeping object '{$pickedObject->name()}'\n";
-            }
-        }
-
-        foreach( $hash as $object)
-        {
-            /** @var Service $object */
-
-            if( isset($object->ancestor) )
-            {
-                $ancestor = $object->ancestor;
-
-                if( !$ancestor->isService() )
+                if( isset($upperHashMap[$index]) )
                 {
-                    echo "    - SKIP: object name '{$object->name()}' as one ancestor is of type servicegroup\n";
-                    continue;
+                    $pickedObject = reset($upperHashMap[$index]);
+                    echo "   * using object from upper level : '{$pickedObject->name()}'\n";
                 }
-
-                /** @var Service $ancestor */
-                if( $upperLevelSearch && !$ancestor->isGroup() && !$ancestor->isTmpSrv()  )
+                else
                 {
-                    if( $object->dstPortMapping()->equals($ancestor->dstPortMapping()) )
+                    $pickedObject = reset($hash);
+                    echo "   * keeping object '{$pickedObject->name()}'\n";
+                }
+            }
+
+            foreach( $hash as $object )
+            {
+                /** @var Service $object */
+
+                if( isset($object->ancestor) )
+                {
+                    $ancestor = $object->ancestor;
+
+                    if( !$ancestor->isService() )
                     {
-                        if( !$object->srcPortMapping()->equals($ancestor->srcPortMapping()) && $dupAlg == 'samedstsrcports' )
+                        echo "    - SKIP: object name '{$object->name()}' as one ancestor is of type servicegroup\n";
+                        continue;
+                    }
+
+                    /** @var Service $ancestor */
+                    if( $upperLevelSearch && !$ancestor->isGroup() && !$ancestor->isTmpSrv() )
+                    {
+                        if( $object->dstPortMapping()->equals($ancestor->dstPortMapping()) )
                         {
-                            echo "    - object '{$object->name()}' cannot be merged because of different SRC port information";
-                            echo "  object value: ".$object->srcPortMapping()->mappingToText()." | pickedObject value: ".$ancestor->srcPortMapping()->mappingToText()."\n";
+                            if( !$object->srcPortMapping()->equals($ancestor->srcPortMapping()) && $dupAlg == 'samedstsrcports' )
+                            {
+                                echo "    - object '{$object->name()}' cannot be merged because of different SRC port information";
+                                echo "  object value: " . $object->srcPortMapping()->mappingToText() . " | pickedObject value: " . $ancestor->srcPortMapping()->mappingToText() . "\n";
+                                continue;
+                            }
+                            echo "    - object '{$object->name()}' merged with its ancestor, deleting this one... ";
+                            $object->replaceMeGlobally($ancestor);
+                            if( $apiMode )
+                                $object->owner->API_remove($object, TRUE);
+                            else
+                                $object->owner->remove($object, TRUE);
+
+                            echo "OK!\n";
+
+                            echo "         anchestor name: '{$ancestor->name()}' DG: ";
+                            if( $ancestor->owner->owner->name() == "" ) print "'shared'";
+                            else print "'{$ancestor->owner->owner->name()}'";
+                            print  "  value: '{$ancestor->getDestPort()}' \n";
+
+                            if( $pickedObject === $object )
+                                $pickedObject = $ancestor;
+
+                            $countRemoved++;
                             continue;
                         }
-                        echo "    - object '{$object->name()}' merged with its ancestor, deleting this one... ";
-                        $object->replaceMeGlobally($ancestor);
-                        if( $apiMode )
-                            $object->owner->API_remove($object, true);
-                        else
-                            $object->owner->remove($object, true);
+                    }
+                    echo "    - object '{$object->name()}' cannot be merged because it has an ancestor\n";
 
-                        echo "OK!\n";
+                    echo "         anchestor name: '{$ancestor->name()}' DG: ";
+                    if( $ancestor->owner->owner->name() == "" ) print "'shared'";
+                    else print "'{$ancestor->owner->owner->name()}'";
+                    print  "  value: '{$ancestor->getDestPort()}' \n";
 
-                        echo "         anchestor name: '{$ancestor->name()}' DG: ";
-                        if( $ancestor->owner->owner->name() == "" ) print "'shared'";
-                        else print "'{$ancestor->owner->owner->name()}'";
-                        print  "  value: '{$ancestor->getDestPort()}' \n";
-
-                        if( $pickedObject === $object )
-                            $pickedObject = $ancestor;
-
-                        $countRemoved++;
+                    continue;
+                }
+                else
+                {
+                    if( !$object->srcPortMapping()->equals($pickedObject->srcPortMapping()) && $dupAlg == 'samedstsrcports' )
+                    {
+                        echo "    - object '{$object->name()}' cannot be merged because of different SRC port information";
+                        echo "  object value: " . $object->srcPortMapping()->mappingToText() . " | pickedObject value: " . $pickedObject->srcPortMapping()->mappingToText() . "\n";
                         continue;
                     }
                 }
-                echo "    - object '{$object->name()}' cannot be merged because it has an ancestor\n";
 
-                echo "         anchestor name: '{$ancestor->name()}' DG: ";
-                if( $ancestor->owner->owner->name() == "" ) print "'shared'";
-                else print "'{$ancestor->owner->owner->name()}'";
-                print  "  value: '{$ancestor->getDestPort()}' \n";
+                if( $object === $pickedObject )
+                    continue;
 
-                continue;
-            }
-            else
-            {
-                if( !$object->srcPortMapping()->equals($pickedObject->srcPortMapping()) && $dupAlg == 'samedstsrcports' )
+
+                echo "    - replacing '{$object->_PANC_shortName()}' ...\n";
+                $object->__replaceWhereIamUsed($apiMode, $pickedObject, TRUE, 5);
+
+                echo "    - deleting '{$object->_PANC_shortName()}'\n";
+                if( $apiMode )
                 {
-                    echo "    - object '{$object->name()}' cannot be merged because of different SRC port information";
-                    echo "  object value: ".$object->srcPortMapping()->mappingToText()." | pickedObject value: ".$pickedObject->srcPortMapping()->mappingToText()."\n";
+                    $object->owner->API_remove($object, TRUE);
+                }
+                else
+                {
+                    $object->owner->remove($object, TRUE);
+                }
+
+                $countRemoved++;
+
+                if( $mergeCountLimit !== FALSE && $countRemoved >= $mergeCountLimit )
+                {
+                    echo "\n *** STOPPING MERGE OPERATIONS NOW SINCE WE REACHED mergeCountLimit ({$mergeCountLimit})\n";
+                    break 2;
+                }
+            }
+        }
+    elseif( $dupAlg == 'whereused' )
+        foreach( $hashMap as $index => &$hash )
+        {
+            echo "\n";
+
+            $setList = Array();
+            foreach( $hash as $object )
+            {
+                /** @var Service $object */
+                $setList[] = PH::getLocationString($object->owner->owner) . '/' . $object->name();
+            }
+            echo " - duplicate set : '" . PH::list_to_string($setList) . "'\n";
+
+            /** @var Service $pickedObject */
+            $pickedObject = null;
+
+            if( $pickFilter !== null )
+            {
+                foreach( $hash as $object )
+                {
+                    if( $pickFilter->matchSingleObject(Array('object' => $object, 'nestedQueries' => &$nestedQueries)) )
+                    {
+                        $pickedObject = $object;
+                        break;
+                    }
+                }
+            }
+
+            if( $pickedObject === null )
+                $pickedObject = reset($hash);
+
+            echo "   * keeping object '{$pickedObject->name()}'\n";
+
+            foreach( $hash as $object )
+            {
+                /** @var Service $object */
+
+                if( isset($object->ancestor) )
+                {
+                    $ancestor = $object->ancestor;
+                    /** @var Service $ancestor */
+                    echo "    - object '{$object->name()}' cannot be merged because it has an ancestor\n";
+
+                    echo "         anchestor name: '{$ancestor->name()}' DG: ";
+                    if( $ancestor->owner->owner->name() == "" ) print "'shared'";
+                    else print "'{$ancestor->owner->owner->name()}'";
+                    print  "  value: '{$ancestor->value()}' \n";
+
                     continue;
                 }
-            }
 
-            if( $object === $pickedObject )
-                continue;
+                if( $object === $pickedObject )
+                    continue;
 
+                $localMapping = $object->dstPortMapping();
+                echo "    - adding the following ports to first service: " . $localMapping->mappingToText() . "\n";
+                $localMapping->mergeWithMapping($pickedObject->dstPortMapping());
 
-
-            echo "    - replacing '{$object->_PANC_shortName()}' ...\n";
-            $object->__replaceWhereIamUsed($apiMode, $pickedObject, true, 5);
-
-            echo "    - deleting '{$object->_PANC_shortName()}'\n";
-            if( $apiMode )
-            {
-                $object->owner->API_remove($object, true);
-            }
-            else
-            {
-                $object->owner->remove($object, true);
-            }
-
-            $countRemoved++;
-
-            if( $mergeCountLimit !== FALSE && $countRemoved >= $mergeCountLimit )
-            {
-                echo "\n *** STOPPING MERGE OPERATIONS NOW SINCE WE REACHED mergeCountLimit ({$mergeCountLimit})\n";
-                break 2;
-            }
-        }
-    }
-elseif( $dupAlg == 'whereused' )
-    foreach( $hashMap as $index => &$hash )
-    {
-        echo "\n";
-
-        $setList = Array();
-        foreach( $hash as $object )
-        {
-            /** @var Service $object */
-            $setList[] = PH::getLocationString($object->owner->owner).'/'.$object->name();
-        }
-        echo " - duplicate set : '".PH::list_to_string($setList)."'\n";
-
-        /** @var Service $pickedObject */
-        $pickedObject = null;
-
-        if( $pickFilter !== null )
-        {
-            foreach( $hash as $object)
-            {
-                if( $pickFilter->matchSingleObject( Array('object' =>$object, 'nestedQueries'=>&$nestedQueries) ) )
+                if( $apiMode )
                 {
-                    $pickedObject = $object;
-                    break;
+                    if( $pickedObject->isTcp() )
+                        $pickedObject->API_setDestPort($localMapping->tcpMappingToText());
+                    else
+                        $pickedObject->API_setDestPort($localMapping->udpMappingToText());
+                    echo "    - removing '{$object->name()}' from places where it's used:\n";
+                    $object->API_removeWhereIamUsed(TRUE, 7);
+                    $object->owner->API_remove($object);
+                    $countRemoved++;
                 }
-            }
-        }
-
-        if( $pickedObject === null )
-            $pickedObject = reset($hash);
-
-        echo "   * keeping object '{$pickedObject->name()}'\n";
-
-        foreach( $hash as $object)
-        {
-            /** @var Service $object */
-
-            if( isset($object->ancestor) )
-            {
-                $ancestor = $object->ancestor;
-                /** @var Service $ancestor */
-                echo "    - object '{$object->name()}' cannot be merged because it has an ancestor\n";
-
-                echo "         anchestor name: '{$ancestor->name()}' DG: ";
-                if( $ancestor->owner->owner->name() == "" ) print "'shared'";
-                else print "'{$ancestor->owner->owner->name()}'";
-                print  "  value: '{$ancestor->value()}' \n";
-
-                continue;
-            }
-
-            if( $object === $pickedObject )
-                continue;
-
-            $localMapping = $object->dstPortMapping();
-            echo "    - adding the following ports to first service: ".$localMapping->mappingToText()."\n";
-            $localMapping->mergeWithMapping($pickedObject->dstPortMapping());
-
-            if( $apiMode )
-            {
-                if( $pickedObject->isTcp() )
-                    $pickedObject->API_setDestPort($localMapping->tcpMappingToText());
                 else
-                    $pickedObject->API_setDestPort($localMapping->udpMappingToText());
-                echo "    - removing '{$object->name()}' from places where it's used:\n";
-                $object->API_removeWhereIamUsed(true, 7);
-                $object->owner->API_remove($object);
-                $countRemoved++;
+                {
+                    if( $pickedObject->isTcp() )
+                        $pickedObject->setDestPort($localMapping->tcpMappingToText());
+                    else
+                        $pickedObject->setDestPort($localMapping->udpMappingToText());
+
+                    echo "    - removing '{$object->name()}' from places where it's used:\n";
+                    $object->removeWhereIamUsed(TRUE, 7);
+                    $object->owner->remove($object);
+                    $countRemoved++;
+                }
+
+
+                if( $mergeCountLimit !== FALSE && $countRemoved >= $mergeCountLimit )
+                {
+                    echo "\n *** STOPPING MERGE OPERATIONS NOW SINCE WE REACH mergeCountLimit ({$mergeCountLimit})\n";
+                    break 2;
+                }
+
             }
-            else
-            {
-                if( $pickedObject->isTcp() )
-                    $pickedObject->setDestPort($localMapping->tcpMappingToText());
-                else
-                    $pickedObject->setDestPort($localMapping->udpMappingToText());
+            echo "   * final mapping for service '{$pickedObject->name()}': {$pickedObject->getDestPort()}\n";
 
-                echo "    - removing '{$object->name()}' from places where it's used:\n";
-                $object->removeWhereIamUsed(true, 7);
-                $object->owner->remove($object);
-                $countRemoved++;
-            }
-
-
-            if( $mergeCountLimit !== FALSE && $countRemoved >= $mergeCountLimit )
-            {
-                echo "\n *** STOPPING MERGE OPERATIONS NOW SINCE WE REACH mergeCountLimit ({$mergeCountLimit})\n";
-                break 2;
-            }
-
+            echo "\n";
         }
-        echo "   * final mapping for service '{$pickedObject->name()}': {$pickedObject->getDestPort()}\n";
-        
-        echo "\n";
-    }
-else derr("unsupported use case");
+    else derr("unsupported use case");
 
 
-echo "\n\nDuplicates removal is now done. Number is services after cleanup: '{$store->countServices()}' (removed {$countRemoved} services)\n\n";
+    echo "\n\nDuplicates removal is now done. Number is services after cleanup: '{$store->countServices()}' (removed {$countRemoved} services)\n\n";
 
-echo "\n\n***********************************************\n\n";
+    echo "\n\n***********************************************\n\n";
+
+}
 
 echo "\n\n";
 

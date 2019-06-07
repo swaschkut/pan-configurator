@@ -12,7 +12,7 @@ GENERAL:
 * class-PH/-PanAPIConnector | introduce new argument shadow-ApiKeynoSave - which do not save the API key in the User Home file .panconfkeystore
 
 UTILS:
-
+service-merger: extend location=any - especially for Panorama DG to merge all DG objects with one single script run - also possible with argument allowmergingwithupperlevel
 
 BUGFIX:
 - fix for pa_rule-edit 'filter=(rule is.unused.fast)' for PAN-OS version detection if connection is going through Panorama
