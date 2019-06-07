@@ -21,7 +21,7 @@ BUGFIX:
 - fix for different classes are made
 - fix class-NatRule | rewriteSNAT_XML() fix rewrite of IP-Address now value() is used
 - fix service-merger | fix  algorithm=SameDstSrcPorts for single FW vsys
-
+- fix address-/service-merger | fix location=any - add also shared
 
 ------------------------------------------------------------------------------------------------------------------------
 

@@ -221,6 +221,13 @@ if( $location == 'any' || $location == 'all' )
             $location_array[$key]['childDeviceGroups'] = $childDeviceGroups;
         }
     }
+    $location_array[$key+1]['findLocation'] = 'shared';
+    $location_array[$key+1]['store'] = $panc->addressStore;
+    $location_array[$key+1]['parentStore'] = null;
+    if( $panc->isPanorama() )
+    {
+        $location_array[$key+1]['childDeviceGroups'] = $alldevicegroup;
+    }
 
 }
 else
