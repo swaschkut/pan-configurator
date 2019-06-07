@@ -199,12 +199,16 @@ if( !$apiMode )
 $location_array = array();
 if( $location == 'any' || $location == 'all' )
 {
-    //Todo: what about all vsys??????
-    $alldevicegroup = $panc->deviceGroups;
+    if( $panc->isPanorama() )
+        $alldevicegroup = $panc->deviceGroups;
+    else
+        $alldevicegroup = $panc->virtualSystems;
+
 
     foreach( $alldevicegroup as $key => $tmp_location )
     {
         $location = $tmp_location->name();
+        print "location: ".$location."\n";
         $findLocation = $panc->findSubSystemByName($location);
         if( $findLocation === null )
             derr("cannot find DeviceGroup/VSYS named '{$location}', check case or syntax");
@@ -220,14 +224,14 @@ if( $location == 'any' || $location == 'all' )
             $childDeviceGroups = $findLocation->childDeviceGroups(true);
             $location_array[$key]['childDeviceGroups'] = $childDeviceGroups;
         }
+        else
+            $location_array[$key]['childDeviceGroups'] = null;
+
     }
     $location_array[$key+1]['findLocation'] = 'shared';
     $location_array[$key+1]['store'] = $panc->addressStore;
     $location_array[$key+1]['parentStore'] = null;
-    if( $panc->isPanorama() )
-    {
-        $location_array[$key+1]['childDeviceGroups'] = $alldevicegroup;
-    }
+    $location_array[$key+1]['childDeviceGroups'] = $alldevicegroup;
 
 }
 else
