@@ -55,7 +55,7 @@ trait ObjectWithDescription
         }
         else
         {
-            $newDescription = utf8_decode( $newDescription );
+            $newDescription = utf8_encode( $newDescription );
             if( $this->_description == $newDescription )
                 return false;
             $this->_description = $newDescription;
