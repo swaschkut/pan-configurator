@@ -283,4 +283,9 @@ class EthernetIfStore extends ObjStore
                 $this->xmlroot->appendChild($o->xmlroot);
         }
     }
+
+    public function addSubinterfaceToStore( $subinterface )
+    {
+        $this->add( $subinterface );
+    }
 }

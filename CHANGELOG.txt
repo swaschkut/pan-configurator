@@ -10,6 +10,7 @@ GENERAL:
 * class-VirtualRouter | extend function addstaticRouter to create correct XML output
 * panos-xml-issue-detector | add validation/fix for duplicate sec/nat rule names
 * class-PH/-PanAPIConnector | introduce new argument shadow-ApiKeynoSave - which do not save the API key in the User Home file .panconfkeystore
+* class-EthernetIfStore/-EthernetInterface | introduce function addSubintefaceToStore( $subinterface )
 
 UTILS:
 service-merger: extend location=any - especially for Panorama DG to merge all DG objects with one single script run - also possible with argument allowmergingwithupperlevel

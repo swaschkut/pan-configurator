@@ -544,6 +544,9 @@ class EthernetInterface
         $newInterface->load_sub_from_domxml($xmlElement);
         $this->subInterfaces[] = $newInterface;
 
+
+
+
         if( $name != "" )
         {
             #$newInterface->setName( $this->name.".".$tag );
@@ -554,6 +557,9 @@ class EthernetInterface
         $newInterface->setTag( $tag );
 
         $unit->appendChild( $xmlElement );
+
+        $newInterface->owner = null;
+        $this->owner->addSubinterfaceToStore( $newInterface );
 
         return $newInterface;
     }
