@@ -11,12 +11,14 @@ GENERAL:
 * panos-xml-issue-detector | add validation/fix for duplicate sec/nat rule names
 * class-PH/-PanAPIConnector | introduce new argument shadow-ApiKeynoSave - which do not save the API key in the User Home file .panconfkeystore
 * class-EthernetIfStore/-EthernetInterface | introduce function addSubintefaceToStore( $subinterface )
+* class-SecurityRule | implement scheduler
 
 UTILS:
 service-merger: extend location=any - especially for Panorama DG to merge all DG objects with one single script run - also possible with argument allowmergingwithupperlevel
 service-merger: change default DupAlgorithm from sameport (which focus only on Dst port) to sameDstSrcport
 address-/service-merger:  extend location=any to run successful against firewall with vsys/multi-vsys
 addressgroup-/servicegroup-merger: introduce location=any for Panorama DG and Firewall vsys
+
 
 BUGFIX:
 - fix for pa_rule-edit 'filter=(rule is.unused.fast)' for PAN-OS version detection if connection is going through Panorama

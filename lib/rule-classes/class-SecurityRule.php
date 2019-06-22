@@ -27,6 +27,8 @@ class SecurityRule extends RuleWithUserID
 
 	protected $logSetting = false;
 
+    protected $schedule = null;
+
 	/** @var null|DOMElement  */
     protected $categoryroot = null;
 
@@ -199,6 +201,10 @@ class SecurityRule extends RuleWithUserID
                         }
                     }
                 }
+            }
+            elseif( $node->nodeName == 'schedule' )
+            {
+                $this->schedule = $node->textContent;
             }
         }
 
@@ -994,6 +1000,9 @@ class SecurityRule extends RuleWithUserID
         if( $this->dsri )
             print $padding."  DSRI: disabled\n";
 
+        if( strlen($this->schedule) > 0 )
+            print $padding."  Schedule:  ".$this->schedule."\n";
+
 		print "\n";
 	}
 
@@ -1536,6 +1545,15 @@ class SecurityRule extends RuleWithUserID
         }
 
         return $ret;
+    }
+
+    /**
+     * return schedule txt if rule has scheduler set
+     * @return null
+     */
+    public function schedule()
+    {
+        return $this->schedule;
     }
 
     static public $templatexml = '<entry name="**temporarynamechangeme**"><option><disable-server-response-inspection>no</disable-server-response-inspection></option><from><member>any</member></from><to><member>any</member></to>
