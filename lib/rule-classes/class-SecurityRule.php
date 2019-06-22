@@ -1556,6 +1556,60 @@ class SecurityRule extends RuleWithUserID
         return $this->schedule;
     }
 
+    /**
+     * @param null|string $newSchedule  empty or null description will erase existing one
+     * @return bool false if no update was made to description (already had same value)
+     */
+    function setSchedule( $newSchedule=null )
+    {
+        if( $newSchedule === null || strlen($newSchedule) < 1)
+        {
+            if($this->schedule === null )
+                return false;
+
+            $this->schedule = null;
+            $tmpRoot = DH::findFirstElement('schedule', $this->xmlroot);
+
+            if( $tmpRoot === false )
+                return true;
+
+            $this->xmlroot->removeChild($tmpRoot);
+        }
+        else
+        {
+            $newSchedule = utf8_encode( $newSchedule );
+            if( $this->schedule == $newSchedule )
+                return false;
+            $this->schedule = $newSchedule;
+            $tmpRoot = DH::findFirstElementOrCreate('schedule', $this->xmlroot);
+            DH::setDomNodeText( $tmpRoot, $this->schedule );
+        }
+
+        return true;
+    }
+
+    /**
+     * @param string $newSchedule
+     * @return bool true if value was changed
+     */
+    public function API_setSchedule($newSchedule)
+    {
+        $ret = $this->setSchedule($newSchedule);
+        if( $ret )
+        {
+            $xpath = $this->getXPath().'/schedule';
+            $con = findConnectorOrDie($this);
+
+            if( strlen($this->schedule) < 1 )
+                $con->sendDeleteRequest($xpath);
+            else
+                $con->sendSetRequest($this->getXPath(), '<schedule>'.htmlspecialchars($this->schedule).'</schedule>');
+
+        }
+
+        return $ret;
+    }
+
     static public $templatexml = '<entry name="**temporarynamechangeme**"><option><disable-server-response-inspection>no</disable-server-response-inspection></option><from><member>any</member></from><to><member>any</member></to>
 <source><member>any</member></source><destination><member>any</member></destination><source-user><member>any</member></source-user><category><member>any</member></category><application><member>any</member></application><service><member>any</member>
 </service><hip-profiles><member>any</member></hip-profiles><action>allow</action><log-start>no</log-start><log-end>yes</log-end><negate-source>no</negate-source><negate-destination>no</negate-destination><tag/><description/><disabled>no</disabled></entry>';

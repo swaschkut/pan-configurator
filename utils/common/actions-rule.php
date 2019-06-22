@@ -3308,6 +3308,30 @@ RuleCallContext::$supportedActions[] = Array(
     'args' => Array( 'HipProfile' => Array( 'type' => 'string', 'default' => '*nodefault*' ) )
 );
 
+
+//                                                   //
+//                SCHEDULER Based Actions     //
+//                                                   //
+RuleCallContext::$supportedActions[] = Array(
+    'name' => 'schedule-Set',
+    'MainFunction' =>  function(RuleCallContext $context)
+    {
+        $rule = $context->object;
+
+        if( !$rule->isSecurityRule() )
+        {
+            print $context->padding."  - SKIPPED : this is not a Security rule\n";
+            return;
+        }
+
+        if( $context->isAPI )
+            $rule->API_setSchedule($context->arguments['Schedule']);
+        else
+            $rule->setSchedule($context->arguments['Schedule']);
+    },
+    'args' => Array( 'Schedule' => Array( 'type' => 'string', 'default' => '*nodefault*' ) )
+);
+
 // </editor-fold>
 /************************************ */
 
