@@ -3089,5 +3089,25 @@ RQuery::$defaultFilters['rule']['app']['operators']['has.missing.dependencies'] 
     'arg' => false
 );
 
+RQuery::$defaultFilters['rule']['schedule']['operators']['is'] = Array(
+    'Function' => function(RuleRQueryContext $context )
+    {
+        $rule = $context->object;
+        if( !$rule->isSecurityRule() )
+            return false;
+
+        $schedule = $rule->schedule();
+
+        if( $schedule !== null )
+        {
+            if( $schedule == $context->value )
+                return true;
+        }
+
+        return false;
+    },
+    'arg' => true,
+);
+
 // </editor-fold>
 
