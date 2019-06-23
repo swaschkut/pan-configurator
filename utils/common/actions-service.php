@@ -351,6 +351,12 @@ ServiceCallContext::$supportedActions[] = Array(
 
         if( $localLocation != 'shared' && $targetLocation != 'shared' )
         {
+            if( $context->baseObject->isFirewall() )
+            {
+                echo $context->padding."   * SKIPPED : moving between VSYS is not supported\n";
+                return;
+            }
+
             print $context->padding."   * SKIPPED : moving between 2 VSYS/DG is not supported yet\n";
             return;
         }

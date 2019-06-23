@@ -20,6 +20,7 @@ address-/service-merger:  extend location=any to run successful against firewall
 addressgroup-/servicegroup-merger: introduce location=any for Panorama DG and Firewall vsys
 rule-edit: introduce 'filter=( schedule is [scheduler-name] )'
 rule-edit: introduce actions=schedule-set:[schedule-name]
+service-edit | actions=move - extend output if firewall is multivsys
 
 BUGFIX:
 - fix for pa_rule-edit 'filter=(rule is.unused.fast)' for PAN-OS version detection if connection is going through Panorama
