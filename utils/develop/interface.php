@@ -398,6 +398,17 @@ foreach( $template_array as $template)
                                     print $ip_address." ({$object->value()}) ,";
                                 }
                             }
+                            print " ipv6-addresse(s): ";
+                            foreach( $interface->getLayer3IPv6Addresses() as $ip_address )
+                            {
+                                if( strpos( $ip_address, "." ) !== false || strpos( $ip_address, ":" ) !== false )
+                                    print $ip_address . ",";
+                                else
+                                {
+                                    $object = $sub->addressStore->find( $ip_address );
+                                    print $ip_address." ({$object->value()}) ,";
+                                }
+                            }
                         }
                         elseif( $interface->type == "tunnel" || $interface->type == "loopback" || $interface->type == "vlan"  )
                         {

@@ -51,6 +51,7 @@ class EthernetInterface
     protected $ae = null;
 
     protected $l3ipv4Addresses;
+    protected $l3ipv6Addresses;
 
     static public $supportedTypes = Array( 'layer3', 'layer2', 'virtual-wire', 'tap', 'ha', 'aggregate-group', 'log-card', 'decrypt-mirror', 'empty' );
 
@@ -113,6 +114,23 @@ class EthernetInterface
                         continue;
 
                     $this->l3ipv4Addresses[] = $l3ipNode->getAttribute('name');
+                }
+            }
+
+            $this->l3ipv6Addresses = Array();
+            $ipNode = DH::findFirstElement('ipv6', $this->typeRoot);
+            if( $ipNode !== false )
+            {
+                $ipNode = DH::findFirstElement('address', $ipNode);
+                if( $ipNode !== false )
+                {
+                    foreach( $ipNode->childNodes as $l3ipNode )
+                    {
+                        if( $l3ipNode->nodeType != XML_ELEMENT_NODE )
+                            continue;
+
+                        $this->l3ipv6Addresses[] = $l3ipNode->getAttribute('name');
+                    }
                 }
             }
         }
@@ -196,6 +214,23 @@ class EthernetInterface
                     $this->l3ipv4Addresses[] = $l3ipNode->getAttribute('name');
                 }
             }
+
+            $this->l3ipv6Addresses = Array();
+            $ipNode = DH::findFirstElement('ipv6', $xml);
+            if( $ipNode !== false )
+            {
+                $ipNode = DH::findFirstElement('address', $ipNode);
+                if( $ipNode !== false )
+                {
+                    foreach( $ipNode->childNodes as $l3ipNode )
+                    {
+                        if( $l3ipNode->nodeType != XML_ELEMENT_NODE )
+                            continue;
+
+                        $this->l3ipv6Addresses[] = $l3ipNode->getAttribute('name');
+                    }
+                }
+            }
         }
     }
 
@@ -256,6 +291,17 @@ class EthernetInterface
             return Array();
 
         return $this->l3ipv4Addresses;
+    }
+
+    public function getLayer3IPv6Addresses()
+    {
+        if( $this->type != 'layer3' )
+            derr('cannot be requested from a non Layer3 Interface');
+
+        if( $this->l3ipv6Addresses === null )
+            return Array();
+
+        return $this->l3ipv6Addresses;
     }
 
     public function countSubInterfaces()
@@ -514,6 +560,82 @@ class EthernetInterface
         }
 
         return $ret;
+    }
+
+
+    /**
+     * return true if change was successful false if not (duplicate ipaddress?)
+     * @return bool
+     * @param string $ip
+     */
+    public function addIPv6Address($ip)
+    {
+        if( $this->type != 'layer3' )
+            derr('cannot be requested from a non Layer3 Interface');
+
+        if( strpos($ip, "/") === FALSE )
+        {
+            $tmp_vsys = $this->owner->owner->network->findVsysInterfaceOwner($this->name());
+            if( is_object($tmp_vsys) )
+                $object = $tmp_vsys->addressStore->find($ip);
+            else
+                derr("vsys for interface: " . $this->name() . " not found. \n", $this);
+
+            if( is_object($object) )
+                $object->addReference($this);
+            else
+                derr("objectname: " . $ip . " not found. Can not be added to interface.\n", $this);
+        }
+
+        /*
+        $mapping_new = new IP4Map();
+        $mapping_new->addMap(IP4Map::mapFromText($ip));
+        foreach( $this->getLayer3IPv4Addresses() as $IPv4Address )
+        {
+            if( $IPv4Address == $ip )
+                return true;
+
+            //avoid overlapping subnet
+            $mapping = new IP4Map();
+            $mapping->addMap(IP4Map::mapFromText($IPv4Address));
+            if( $mapping->includesOtherMap($mapping_new) !== 0 )
+            {
+                $ip_array = explode( "/", $ip );
+                $ip = $ip_array[0]."/32";
+            }
+        }
+        */
+
+        $this->l3ipv6Addresses[] = $ip;
+
+        if( $this->isSubInterface() )
+            $tmp_xmlroot = $this->parentInterface->xmlroot;
+        else
+            $tmp_xmlroot = $this->xmlroot;
+
+        $layer3Node = DH::findFirstElementOrCreate('layer3', $tmp_xmlroot);
+
+        if( $this->isSubInterface() )
+        {
+            $tmp_units = DH::findFirstElementOrCreate('units', $layer3Node);
+            $tmp_entry = DH::findFirstElementByNameAttrOrDie( 'entry', $this->name() , $tmp_units );
+            $ipNode = DH::findFirstElementOrCreate('ipv6', $tmp_entry);
+            $ipNode = DH::findFirstElementOrCreate('address', $ipNode);
+        }
+        else
+        {
+            $ipNode = DH::findFirstElementOrCreate('ipv6', $layer3Node);
+            $ipNode = DH::findFirstElementOrCreate('address', $ipNode);
+        }
+
+
+
+        $tmp_ipaddress = DH::createElement($ipNode, 'entry', "" );
+        $tmp_ipaddress->setAttribute( 'name', $ip );
+
+        $ipNode->appendChild( $tmp_ipaddress );
+
+        return true;
     }
 
     /**

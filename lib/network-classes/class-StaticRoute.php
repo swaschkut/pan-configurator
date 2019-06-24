@@ -80,6 +80,13 @@ class StaticRoute
                 $this->_nexthopIP = $fhTypeNode->textContent;
                 return;
             }
+            $fhTypeNode = DH::findFirstElement('ipv6-address', $fhNode);
+            if( $fhTypeNode !== false )
+            {
+                $this->_nexthopType = 'ipv6-address';
+                $this->_nexthopIP = $fhTypeNode->textContent;
+                return;
+            }
             $fhTypeNode = DH::findFirstElement('next-vr', $fhNode);
             if( $fhTypeNode !== false )
             {
@@ -89,6 +96,14 @@ class StaticRoute
             }
 
         }
+    }
+
+    function create_staticroute_from_xml( $xmlString )
+    {
+        $xmlElement = DH::importXmlStringOrDie( $this->owner->owner->xmlroot->ownerDocument, $xmlString );
+        $this->load_from_xml($xmlElement);
+
+        return $this;
     }
 
     /**

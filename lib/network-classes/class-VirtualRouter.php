@@ -67,9 +67,38 @@ class VirtualRouter
                 $tmp_static_route = DH::findFirstElement('static-route', $tmp_ip);
                 if( $tmp_static_route !== false )
                     $node = DH::findXPath('/entry', $tmp_static_route );
+
+                if( $node !== false )
+                {
+                    for( $i=0; $i < $node->length; $i++ )
+                    {
+                        $newRoute = new StaticRoute('***tmp**', $this);
+                        $newRoute->load_from_xml($node->item($i));
+                        $this->_staticRoutes[] = $newRoute;
+                    }
+                }
+            }
+
+            $tmp_ipv6 = DH::findFirstElement('ipv6', $tmp_routing_table);
+            if( $tmp_ipv6 !== false )
+            {
+                $tmp_static_route = DH::findFirstElement('static-route', $tmp_ipv6);
+                if( $tmp_static_route !== false )
+                    $node = DH::findXPath('/entry', $tmp_static_route );
+
+                if( $node !== false )
+                {
+                    for( $i=0; $i < $node->length; $i++ )
+                    {
+                        $newRoute = new StaticRoute('***tmp**', $this);
+                        $newRoute->load_from_xml($node->item($i));
+                        $this->_staticRoutes[] = $newRoute;
+                    }
+                }
             }
         }
 
+        /*
         if( $node !== false )
         {
             for( $i=0; $i < $node->length; $i++ )
@@ -79,6 +108,7 @@ class VirtualRouter
                 $this->_staticRoutes[] = $newRoute;
             }
         }
+        */
     }
 
     /**
@@ -106,7 +136,7 @@ class VirtualRouter
         return $this->_staticRoutes;
     }
 
-    public function addstaticRoute( $staticRoute )
+    public function addstaticRoute( $staticRoute, $version = 'ip' )
     {
 
 
@@ -133,7 +163,7 @@ class VirtualRouter
             $tmp_routing_table = DH::findFirstElementOrCreate('routing-table', $this->xmlroot);
             if( $tmp_routing_table !== false )
             {
-                $tmp_ip = DH::findFirstElementOrCreate('ip', $tmp_routing_table);
+                $tmp_ip = DH::findFirstElementOrCreate($version, $tmp_routing_table);
                 if( $tmp_ip !== false )
                 {
                     $tmp_static_route = DH::findFirstElementOrCreate('static-route', $tmp_ip);
