@@ -22,6 +22,7 @@ addressgroup-/servicegroup-merger: introduce location=any for Panorama DG and Fi
 rule-edit: introduce 'filter=( schedule is [scheduler-name] )'
 rule-edit: introduce actions=schedule-set:[schedule-name]
 service-edit | actions=move - extend output if firewall is multivsys
+service-edit | introduce 'filter=(value is.single.port / is.port.range / is.comma.separated)'
 
 BUGFIX:
 - fix for pa_rule-edit 'filter=(rule is.unused.fast)' for PAN-OS version detection if connection is going through Panorama

@@ -185,6 +185,7 @@ RQuery::$defaultFilters['service']['object']['operators']['is.tmp'] = Array(
         'input' => 'input/panorama-8.0.xml'
     )
 );
+
 RQuery::$defaultFilters['service']['name']['operators']['eq'] = Array(
     'Function' => function(ServiceRQueryContext $context )
     {
@@ -624,6 +625,81 @@ RQuery::$defaultFilters['service']['value']['operators']['string.eq'] = Array(
         'input' => 'input/panorama-8.0.xml'
     )
 );
+RQuery::$defaultFilters['service']['value']['operators']['>,<,=,!'] = Array(
+    'eval' => '!$object->isGroup() && $object->getDestPort() !operator! !value!',
+    'arg' => true,
+    'ci' => Array(
+        'fString' => '(%PROP% 1)',
+        'input' => 'input/panorama-8.0.xml'
+    )
+);
+RQuery::$defaultFilters['service']['value']['operators']['is.single.port'] = Array(
+    'Function' => function(ServiceRQueryContext $context )
+    {
+        $object = $context->object;
+        if( $object->isTmpSrv() )
+            return false;
+
+        if( $object->isGroup() )
+            return false;
+
+        if( strpos( $object->getDestPort(), ","  ) !== false )
+            return false;
+
+        if( strpos( $object->getDestPort(), "-" ) !== false )
+            return false;
+
+        return true;
+    },
+    'arg' => false,
+    'ci' => Array(
+        'fString' => '(%PROP%)',
+        'input' => 'input/panorama-8.0.xml'
+    )
+);
+RQuery::$defaultFilters['service']['value']['operators']['is.port.range'] = Array(
+    'Function' => function(ServiceRQueryContext $context )
+    {
+        $object = $context->object;
+        if( $object->isTmpSrv() )
+            return false;
+
+        if( $object->isGroup() )
+            return false;
+
+        if( strpos( $object->getDestPort(), "-" ) !== false )
+            return true;
+
+        return false;
+    },
+    'arg' => false,
+    'ci' => Array(
+        'fString' => '(%PROP%)',
+        'input' => 'input/panorama-8.0.xml'
+    )
+);
+RQuery::$defaultFilters['service']['value']['operators']['is.comma.separated'] = Array(
+    'Function' => function(ServiceRQueryContext $context )
+    {
+        $object = $context->object;
+        if( $object->isTmpSrv() )
+            return false;
+
+        if( $object->isGroup() )
+            return false;
+
+        if( strpos( $object->getDestPort(), "," ) !== false )
+            return true;
+
+        return false;
+    },
+    'arg' => false,
+    'ci' => Array(
+        'fString' => '(%PROP%)',
+        'input' => 'input/panorama-8.0.xml'
+    )
+);
+
 RQuery::$defaultFilters['service']['object']['operators']['overrides.upper.level'] = Array(
     'Function' => function(ServiceRQueryContext $context )
     {
