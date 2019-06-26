@@ -23,6 +23,7 @@ rule-edit: introduce 'filter=( schedule is [scheduler-name] )'
 rule-edit: introduce actions=schedule-set:[schedule-name]
 service-edit | actions=move - extend output if firewall is multivsys
 service-edit | introduce 'filter=(value is.single.port / is.port.range / is.comma.separated)'
+rule-edit | introduce new actions=actions=service-remove-objects-matching-filter:subquery1,[forceAny] 'subquery=( [all available service filter are possible] )'
 
 BUGFIX:
 - fix for pa_rule-edit 'filter=(rule is.unused.fast)' for PAN-OS version detection if connection is going through Panorama

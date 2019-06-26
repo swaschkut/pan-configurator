@@ -1037,7 +1037,62 @@ RuleCallContext::$supportedActions[] = Array(
     ),
     'help' => "this action will go through all objects and see if they match the query you input and then remove them if it's the case."
 );
+RuleCallContext::$supportedActions[] = Array(
+    'name' => 'service-Remove-Objects-Matching-Filter',
+    'MainFunction' => function(RuleCallContext $context)
+    {
+        $rule = $context->object;
 
+        if( $rule->services->count() < 1 )
+            return;
+
+        $queryName = $context->arguments['filterName'];
+        $forceAny = $context->arguments['forceAny'];
+
+        if( !isset($context->nestedQueries[$queryName]) )
+        {
+            derr("cannot find query filter called '{$queryName}'");
+        }
+
+        $rQuery = new RQuery('service');
+        $errorMessage = '';
+        if( !$rQuery->parseFromString($context->nestedQueries[$queryName], $errorMessage) )
+            derr("error while parsing query: {$context->nestedQueries[$queryName]}\nError Message is: {$errorMessage}\n");
+
+
+        foreach( $rule->services->members() as $member )
+        {
+            if( $rQuery->matchSingleObject($member) )
+            {
+                echo $context->padding."  - removing object '{$member->name()}'... ";
+                if( $context->isAPI )
+                    $rule->services->API_remove($member, true, $forceAny);
+                else
+                    $rule->services->remove($member, true, $forceAny);
+                echo "OK\n";
+            }
+        }
+
+        if( $rule->services->count() < 1 )
+        {
+            echo $context->padding." * no objects remaining so the Rule will be disabled...";
+            if( $context->isAPI )
+                $rule->API_setDisabled(true);
+            else
+                $rule->setDisabled(true);
+            echo "OK\n";
+        }
+
+
+
+    },
+    'args' => Array(
+        'filterName' => Array( 'type' => 'string', 'default' => '*nodefault*',
+            'help' => 'specify the query that will be used to filter the objects to be removed' ),
+        'forceAny' => Array( 'type' => 'bool', 'default' => 'false'),
+    ),
+    'help' => "this action will go through all objects and see if they match the query you input and then remove them if it's the case."
+);
 
 
 RuleCallContext::$supportedActions[] = Array(
