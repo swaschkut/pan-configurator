@@ -1088,7 +1088,8 @@ RuleCallContext::$supportedActions[] = Array(
     },
     'args' => Array(
         'filterName' => Array( 'type' => 'string', 'default' => '*nodefault*',
-            'help' => 'specify the query that will be used to filter the objects to be removed' ),
+            'help' => 'specify the query that will be used to filter the objects to be removed - 
+example: \'actions=service-remove-objects-matching-filter:subquery1,true\' \'subquery1=(value > 600) && (object is.udp) && (value is.single.port)\'' ),
         'forceAny' => Array( 'type' => 'bool', 'default' => 'false'),
     ),
     'help' => "this action will go through all objects and see if they match the query you input and then remove them if it's the case."
