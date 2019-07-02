@@ -497,7 +497,7 @@ function mdeb($msg)
     if( !isset($PANC_DEBUG) || $PANC_DEBUG != 1 )
         return;
 
-    print("\n*DEBUG*".$msg."\n");
+    fwrite(STDERR,"\n*DEBUG*".$msg."\n");
 
     //debug_print_backtrace();
 
@@ -577,7 +577,7 @@ function mwarning($msg, $object = null)
     {
         if( $skip >= 0 )
         {
-            print "$count ****\n";
+            fwrite(STDERR, "$count ****\n");
             if( isset($l['object']) && method_exists($l['object'], 'toString'))
             {
                 fwrite(STDERR,'   '.$l['object']->toString()."\n");
