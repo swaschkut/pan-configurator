@@ -329,7 +329,7 @@ foreach( $template_array as $template)
                 {
                     $zone_array[$zone->name()][$template->name()]['vsys'] = $sub->name();
 
-                    //Todo: extend pan-c with template-stack and check templatestack membership and also other template members
+                    //Todo: extend PANOS-PHP-FRAMEWORK with template-stack and check templatestack membership and also other template members
                     #$zone_array[$zone->name()][$template->name()]['parent'] = $template->
                 }
                 else

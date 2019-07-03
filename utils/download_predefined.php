@@ -319,7 +319,7 @@ elseif( intval( $pan_c_appid[0] ) ==  intval( $external_appid[0] ) )
 }
 else
 {
-    print "\n\n - pan-c has an old app-id version '".$panc_version."' available. Device App-ID version: ".$exernal_version."\n";
+    print "\n\n - PANOS-PHP-FRAMEWORK has an old app-id version '".$panc_version."' available. Device App-ID version: ".$exernal_version."\n";
 
     $predefined_path = '/../lib/object-classes/predefined.xml';
 
