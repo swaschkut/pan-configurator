@@ -835,6 +835,23 @@ class ServiceStore
         }
     }
 
+    public function findByProtocolDstSrcPort( $protocol, $destinationPort, $sourcePort = "")
+    {
+        foreach( $this->_serviceObjects as $service )
+        {
+            if( $service->protocol() == $protocol )
+            {
+                if( $service->getDestPort() == $destinationPort )
+                {
+                    if( $service->getSourcePort() == $sourcePort )
+                        return $service;
+                }
+            }
+        }
+
+        return null;
+    }
+
 	
 }
 
