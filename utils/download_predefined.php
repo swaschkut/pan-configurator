@@ -11,7 +11,7 @@ print "\n***********************************************\n";
 print "************ DOWNLOAD predefined.xml UTILITY ****************\n\n";
 
 
-require_once("lib/panconfigurator.php");
+require_once("lib/panos_php_framework.php");
 
 
 
@@ -311,7 +311,7 @@ $pan_c_appid = explode( "-", $panc_version );
 
 if( intval( $pan_c_appid[0] ) >  intval( $external_appid[0] ) )
 {
-    print "\n\n - pan-configurator has already a newer APP-id version '".$panc_version."' installed. Device App-ID version: ".$exernal_version."\n";
+    print "\n\n - PANOS-PHP-FRAMEWORK has already a newer APP-id version '".$panc_version."' installed. Device App-ID version: ".$exernal_version."\n";
 }
 elseif( intval( $pan_c_appid[0] ) ==  intval( $external_appid[0] ) )
 {

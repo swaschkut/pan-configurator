@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright (c) 2014-2017 Christophe Painchaud <shellescape _AT_ gmail.com>
+ * Copyright (c) 2014-2019 Christophe Painchaud <shellescape _AT_ gmail.com>                      and Sven Waschkut <pan-c _AT_ waschkut.net>
  *
  * Permission to use, copy, modify, and distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -22,7 +22,7 @@ print   "*********** TAG-EDIT UTILITY **************\n\n";
 
 
 set_include_path( dirname(__FILE__).'/../'. PATH_SEPARATOR . get_include_path() );
-require_once("lib/panconfigurator.php");
+require_once("lib/panos_php_framework.php");
 require_once("common/actions.php");
 
 
@@ -459,7 +459,7 @@ if( $objectsFilter !== null )
 //
 // load the config
 //
-print " - Loading configuration through PAN-Configurator library... ";
+print " - Loading configuration through PANOS-PHP-FRAMEWORK library... ";
 $loadStartMem = memory_get_usage(true);
 $loadStartTime = microtime(true);
 $pan->load_from_domxml($xmlDoc);

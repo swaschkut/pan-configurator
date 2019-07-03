@@ -10,8 +10,8 @@
 *
 *****************************************************************************/
 
-// load PAN-Configurator library
-require_once("../lib/panconfigurator.php");
+// load PANOS-PHP-FRAMEWORK library
+require_once("../lib/panos_php_framework.php");
 
 // input and output files
 $origfile = "sample-configs/policy-best-practices.xml";

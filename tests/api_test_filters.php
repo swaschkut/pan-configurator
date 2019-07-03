@@ -3,7 +3,7 @@
 echo "\n*************************************************\n";
 echo   "**************** FILTER TESTERS *****************\n\n";
 
-require_once '../lib/panconfigurator.php';
+require_once '../lib/panos_php_framework.php';
 
 PH::processCliArgs();
 

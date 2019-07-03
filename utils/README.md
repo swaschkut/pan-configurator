@@ -1,4 +1,4 @@
-PAN-Configurator 'utils' directory contains scripts which can run out of the box and are based on PAN-Configurator classes.
+PANOS-PHP-FRAMEWORK 'utils' directory contains scripts which can run out of the box and are based on PANOS-PHP-FRAMEWORK classes.
 
 Index of scripts:
 

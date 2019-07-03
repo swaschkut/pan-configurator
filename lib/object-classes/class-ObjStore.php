@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright (c) 2014-2017 Christophe Painchaud <shellescape _AT_ gmail.com>
+ * Copyright (c) 2014-2019 Christophe Painchaud <shellescape _AT_ gmail.com>                      and Sven Waschkut <pan-c _AT_ waschkut.net>
  *
  * Permission to use, copy, modify, and distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above

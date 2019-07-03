@@ -2,15 +2,15 @@
 
 /*****************************************************************************
 *
-*	 This script is doing basic use PAN-Configurator API.
+*	 This script is doing basic use PANOS-PHP-FRAMEWORK API.
 *		
 *	It will load a sample PANOS config and make some rules and object 
 *	editing.
 *
 *****************************************************************************/
 
-// load PAN-Configurator library
-require_once("../lib/panconfigurator.php");
+// load PANOS-PHP-FRAMEWORK library
+require_once("../lib/panos_php_framework.php");
 
 // input and output files
 $origfile = "sample-configs/policy-best-practices.xml";

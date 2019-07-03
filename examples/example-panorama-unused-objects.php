@@ -1,7 +1,7 @@
 <?php
 
 // load 'PAN Configurator' library
-require_once("../lib/panconfigurator.php");
+require_once("../lib/panos_php_framework.php");
 
 /***************************************************************
 

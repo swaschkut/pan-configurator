@@ -2,8 +2,8 @@
 
 print "\n*********** START OF SCRIPT ".basename(__FILE__)." ************\n\n";
 
-// load PAN-Configurator library
-require_once("lib/panconfigurator.php");
+// load PANOS-PHP-FRAMEWORK library
+require_once("lib/panos_php_framework.php");
 
 PH::processCliArgs();
 
@@ -103,7 +103,7 @@ print "\n\n    **********     **********\n\n";
  * * $location : string with location name or undefined if not provided on CLI
  * * $sub : DeviceGroup or VirtualSystem found after looking from cli 'location' argument
  * * $apiMode : if config file was downloaded from API directly
- * * PH::$args : array with all CLI arguments processed by PAN-Configurator
+ * * PH::$args : array with all CLI arguments processed by PANOS-PHP-FRAMEWORK
  * *
  */
 

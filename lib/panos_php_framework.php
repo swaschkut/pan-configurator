@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright (c) 2014-2017 Christophe Painchaud <shellescape _AT_ gmail.com>
+ * Copyright (c) 2014-2019 Christophe Painchaud <shellescape _AT_ gmail.com>                      and Sven Waschkut <pan-c _AT_ waschkut.net>
  *
  * Permission to use, copy, modify, and distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -17,7 +17,7 @@
 */
 
 if( PHP_MAJOR_VERSION <= 5 && PHP_MINOR_VERSION <= 4 )
-    die("\n*** ERROR **** PAN-Configurator requires PHP version >= 5.5\n");
+    die("\n*** ERROR **** PANOS-PHP-FRAMEWORK requires PHP version >= 5.5\n");
 
 set_time_limit ( 0 );
 ini_set("memory_limit","14512M");
