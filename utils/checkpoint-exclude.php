@@ -18,7 +18,7 @@
 ******************************************************************************/
 
 set_include_path( get_include_path() . PATH_SEPARATOR . dirname(__FILE__).'/../');
-require_once("lib/panos_php_framework.php");
+require_once("lib/pan_php_framework.php");
 
 
 function display_usage_and_exit()

@@ -10,7 +10,7 @@
 *****************************************************************************/
 
 // load PAN-PHP-FRAMEWORK library
-require_once("../lib/panos_php_framework.php");
+require_once("../lib/pan_php_framework.php");
 
 // input and output files
 $origfile = "sample-configs/panos-example-2.xml";

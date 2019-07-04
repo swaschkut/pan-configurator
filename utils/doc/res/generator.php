@@ -19,7 +19,7 @@
 echo "\n***********************************************\n";
 echo   "************ DOC GENERATOR  **************\n\n";
 
-require_once("../../../lib/panos_php_framework.php");
+require_once("../../../lib/pan_php_framework.php");
 require_once("../../common/actions.php");
 
 $dataFile = __DIR__.'/data.js';
