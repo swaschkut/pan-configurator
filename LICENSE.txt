@@ -1,4 +1,4 @@
-PANOS-PHP-FRAMEWORK is distributed with an ISC license:
+PAN-PHP-FRAMEWORK is distributed with an ISC license:
 
   Copyright (c) 2014-2019 Christophe Painchaud <shellescape _AT_ gmail.com>
                       and Sven Waschkut <pan-c _AT_ waschkut.net>

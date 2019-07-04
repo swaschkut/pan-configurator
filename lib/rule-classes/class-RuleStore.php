@@ -152,7 +152,7 @@ class RuleStore
                 {
                     if( isset($nameIndex[$nr->name()]) )
                     {
-                        mwarning("rule named '{$nr->name()}' is present twice on the config and was cleaned by PANOS-PHP-FRAMEWORK");
+                        mwarning("rule named '{$nr->name()}' is present twice on the config and was cleaned by PAN-PHP-FRAMEWORK");
                         $duplicatesRemoval[] = $node;
                         continue;
                     }
@@ -183,7 +183,7 @@ class RuleStore
                 {
                     if( isset($nameIndex[$nr->name()]) )
                     {
-                        mwarning("rule named '{$nr->name()}' is present twice on the config and was cleaned by PANOS-PHP-FRAMEWORK");
+                        mwarning("rule named '{$nr->name()}' is present twice on the config and was cleaned by PAN-PHP-FRAMEWORK");
                         $duplicatesRemoval[] = $node;
                         continue;
                     }

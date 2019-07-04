@@ -549,7 +549,7 @@ if( $rulesFilter !== null )
 //
 // load the config
 //
-print " - Loading configuration through PANOS-PHP-FRAMEWORK library... ";
+print " - Loading configuration through PAN-PHP-FRAMEWORK library... ";
 $loadStartMem = memory_get_usage(true);
 $loadStartTime = microtime(true);
 $pan->load_from_domxml($xmlDoc);

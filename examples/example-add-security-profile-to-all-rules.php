@@ -10,7 +10,7 @@
 *
 *****************************************************************************/
 
-// load PANOS-PHP-FRAMEWORK library
+// load PAN-PHP-FRAMEWORK library
 require_once("../lib/panos_php_framework.php");
 
 // input and output files

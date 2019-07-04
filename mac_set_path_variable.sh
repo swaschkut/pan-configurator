@@ -13,7 +13,7 @@ echo "START \"set path variables\"" \
 && echo "" \
 && echo "" \
 && echo "check if everyting is successfully installed" \
-&& php -r "require('lib/panos_php_framework.php');print \"PANOS-PHP-FRAMEWORK LIBRARY - OK INSTALL SUCCESSFUL\n\";" \
+&& php -r "require('lib/panos_php_framework.php');print \"PAN-PHP-FRAMEWORK LIBRARY - OK INSTALL SUCCESSFUL\n\";" \
 && echo "" \
 && echo "" \
 && echo "set user bash profile"   \

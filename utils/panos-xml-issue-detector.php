@@ -2,7 +2,7 @@
 
 print "\n*********** START OF SCRIPT ".basename(__FILE__)." ************\n\n";
 
-// load PANOS-PHP-FRAMEWORK library
+// load PAN-PHP-FRAMEWORK library
 require_once("lib/panos_php_framework.php");
 
 PH::processCliArgs();

@@ -1,7 +1,7 @@
-PANOS-PHP-FRAMEWORK
+PAN-PHP-FRAMEWORK
 ================
 
-PANOS-PHP-FRAMEWORK is a PHP library aimed at making PANOS config changes easy (and XML free ;), maintainable and allowing complex scenarios like rule merging, unused object tracking, conversion of checkpoint exclusion groups, massive rule editing, AppID conversion … to name the ones I do on a regular basis and which are not offered by our GUI. It will work seamlessly on local config file or API.
+PAN-PHP-FRAMEWORK is a PHP library aimed at making PANOS config changes easy (and XML free ;), maintainable and allowing complex scenarios like rule merging, unused object tracking, conversion of checkpoint exclusion groups, massive rule editing, AppID conversion … to name the ones I do on a regular basis and which are not offered by our GUI. It will work seamlessly on local config file or API.
 
 **Homepage** : download latest sources on [GitHub](https://github.com/swaschkut/pan-configurator). Windows package with PHP binaries here: [dev.zip](https://app.box.com/v/pan-configurator)
 

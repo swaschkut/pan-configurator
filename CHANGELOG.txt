@@ -14,7 +14,7 @@ GENERAL:
 * class-SecurityRule | implement scheduler
 * class-EthernetInterface/-StaticRouter/-VirtualRouter/ utils interface - add support for IPv6 Addresses
 * class-ServiceStore | introduce function findbyProtocolDstSrcPort
-* rename to PANOS-PHP-FRAMEWORK
+* rename to PAN-PHP-FRAMEWORK
 
 UTILS:
 service-merger: extend location=any - especially for Panorama DG to merge all DG objects with one single script run - also possible with argument allowmergingwithupperlevel
@@ -51,7 +51,7 @@ BUGFIX:
 * class-VirtualWire/VirtualWireStore - extend validation
 * class-InterfaceContainer - extend validation for addInterface - improve API_addInterface
 * class-EthernetInterface/EthernetIfStore - extend with ae information - extend validation
-* class-Zone - reduce warning if not yet supported in PANOS-PHP-FRAMEWORK
+* class-Zone - reduce warning if not yet supported in PAN-PHP-FRAMEWORK
 * class-Zone - extend with type: tap, layer2, tunnel
 * update predefined.xml to 8070-5032
 * class-Address - introduce address object of type ip-wildcard
@@ -550,7 +550,7 @@ version 1.1.0
 * added script utils/checkpoint-exclude.php to process checkpoint exclusion groups into static objects
 * added script utils/grp-static-to-dynamic.php to convert static groups into dynamic based groups with Tags
 * added script utils/secrules-edit.php to mass edit rules
-* added class PH (PANOS-PHP-FRAMEWORK Helper) to gather utility functions
+* added class PH (PAN-PHP-FRAMEWORK Helper) to gather utility functions
 * better support for V6 configs
 * implemented ZoneStore->has(Zone)
 * RQuery class created to parse & match rule filters

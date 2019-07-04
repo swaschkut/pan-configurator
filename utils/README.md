@@ -1,4 +1,4 @@
-PANOS-PHP-FRAMEWORK 'utils' directory contains scripts which can run out of the box and are based on PANOS-PHP-FRAMEWORK classes.
+PAN-PHP-FRAMEWORK 'utils' directory contains scripts which can run out of the box and are based on PAN-PHP-FRAMEWORK classes.
 
 Index of scripts:
 

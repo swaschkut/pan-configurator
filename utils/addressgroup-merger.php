@@ -145,7 +145,7 @@ if( $configInput['type'] == 'api' )
 //
 // load the config
 //
-echo " - Loading configuration through PANOS-PHP-FRAMEWORK library... ";
+echo " - Loading configuration through PAN-PHP-FRAMEWORK library... ";
 $loadStartMem = memory_get_usage(true);
 $loadStartTime = microtime(true);
 $panc->load_from_domxml($xmlDoc);
