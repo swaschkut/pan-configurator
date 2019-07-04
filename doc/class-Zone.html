@@ -6,8 +6,8 @@
 
 	<title>Class Zone | PAN-PHP-FRAMEWORK</title>
 
-	<script type="text/javascript" src="resources/combined.js?772778653"></script>
-	<script type="text/javascript" src="elementlist.js?4105871058"></script>
+	<script type="text/javascript" src="resources/combined.js?1588816152"></script>
+	<script type="text/javascript" src="elementlist.js?4215409147"></script>
 	<link rel="stylesheet" type="text/css" media="all" href="resources/style.css?3505392360" />
 
 </head>
@@ -44,6 +44,7 @@
 				<li><a href="class-AppOverrideRule.html">AppOverrideRule</a></li>
 				<li><a href="class-AppRuleContainer.html">AppRuleContainer</a></li>
 				<li><a href="class-AppStore.html">AppStore</a></li>
+				<li><a href="class-AuthenticationRule.html">AuthenticationRule</a></li>
 				<li><a href="class-CaptivePortalRule.html">CaptivePortalRule</a></li>
 				<li><a href="class-cidr.html">cidr</a></li>
 				<li><a href="class-CsvParser.html">CsvParser</a></li>
@@ -53,13 +54,20 @@
 				<li><a href="class-DoSRule.html">DoSRule</a></li>
 				<li><a href="class-EthernetIfStore.html">EthernetIfStore</a></li>
 				<li><a href="class-EthernetInterface.html">EthernetInterface</a></li>
+				<li><a href="class-IkeCryptoProfil.html">IkeCryptoProfil</a></li>
+				<li><a href="class-IkeCryptoProfileStore.html">IkeCryptoProfileStore</a></li>
+				<li><a href="class-IKEGateway.html">IKEGateway</a></li>
+				<li><a href="class-IKEGatewayStore.html">IKEGatewayStore</a></li>
 				<li><a href="class-InterfaceContainer.html">InterfaceContainer</a></li>
 				<li><a href="class-IP4Map.html">IP4Map</a></li>
+				<li><a href="class-IPSecCryptoProfil.html">IPSecCryptoProfil</a></li>
+				<li><a href="class-IPSecCryptoProfileStore.html">IPSecCryptoProfileStore</a></li>
 				<li><a href="class-IPsecTunnel.html">IPsecTunnel</a></li>
 				<li><a href="class-IPsecTunnelStore.html">IPsecTunnelStore</a></li>
 				<li><a href="class-LoopbackIfStore.html">LoopbackIfStore</a></li>
 				<li><a href="class-LoopbackInterface.html">LoopbackInterface</a></li>
 				<li><a href="class-ManagedDevice.html">ManagedDevice</a></li>
+				<li><a href="class-ManagedDeviceStore.html">ManagedDeviceStore</a></li>
 				<li><a href="class-NatRule.html">NatRule</a></li>
 				<li><a href="class-NetworkPropertiesContainer.html">NetworkPropertiesContainer</a></li>
 				<li><a href="class-ObjRuleContainer.html">ObjRuleContainer</a></li>
@@ -79,17 +87,25 @@
 				<li><a href="class-ServiceDstPortMapping.html">ServiceDstPortMapping</a></li>
 				<li><a href="class-ServiceGroup.html">ServiceGroup</a></li>
 				<li><a href="class-ServiceRuleContainer.html">ServiceRuleContainer</a></li>
+				<li><a href="class-ServiceSrcPortMapping.html">ServiceSrcPortMapping</a></li>
 				<li><a href="class-ServiceStore.html">ServiceStore</a></li>
 				<li><a href="class-StaticRoute.html">StaticRoute</a></li>
 				<li><a href="class-Tag.html">Tag</a></li>
 				<li><a href="class-TagRuleContainer.html">TagRuleContainer</a></li>
 				<li><a href="class-TagStore.html">TagStore</a></li>
 				<li><a href="class-Template.html">Template</a></li>
+				<li><a href="class-TemplateStack.html">TemplateStack</a></li>
 				<li><a href="class-TmpInterface.html">TmpInterface</a></li>
 				<li><a href="class-TmpInterfaceStore.html">TmpInterfaceStore</a></li>
+				<li><a href="class-TunnelIfStore.html">TunnelIfStore</a></li>
+				<li><a href="class-TunnelInterface.html">TunnelInterface</a></li>
 				<li><a href="class-VirtualRouter.html">VirtualRouter</a></li>
 				<li><a href="class-VirtualRouterStore.html">VirtualRouterStore</a></li>
 				<li><a href="class-VirtualSystem.html">VirtualSystem</a></li>
+				<li><a href="class-VirtualWire.html">VirtualWire</a></li>
+				<li><a href="class-VirtualWireStore.html">VirtualWireStore</a></li>
+				<li><a href="class-VlanIfStore.html">VlanIfStore</a></li>
+				<li><a href="class-VlanInterface.html">VlanInterface</a></li>
 				<li class="active"><a href="class-Zone.html">Zone</a></li>
 				<li><a href="class-ZoneRuleContainer.html">ZoneRuleContainer</a></li>
 				<li><a href="class-ZoneStore.html">ZoneStore</a></li>
@@ -223,7 +239,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#___construct">#</a>
-		<code><b>__construct</b>( <span>string <var>$name</var></span>, <span><code><a href="class-ZoneStore.html">ZoneStore</a></code> <var>$owner</var></span>, <span>mixed <var>$fromXmlTemplate</var> = <span class="php-keyword1">false</span></span> )</code>
+		<code>__construct( <span>string <var>$name</var></span>, <span><code><a href="class-ZoneStore.html">ZoneStore</a></code> <var>$owner</var></span>, <span>mixed <var>$fromXmlTemplate</var> = <span class="php-keyword1">false</span></span>, <span>mixed <var>$type</var> = <span class="php-quote">'layer3'</span></span> )</code>
 
 		<div class="description short">
 			
@@ -240,6 +256,8 @@
 					<dt><var>$owner</var></dt>
 					<dd><code><code><a href="class-ZoneStore.html">ZoneStore</a></code></code><br>$owner</dd>
 					<dt><var>$fromXmlTemplate</var></dt>
+					<dd></dd>
+					<dt><var>$type</var></dt>
 					<dd></dd>
 				</dl></div>
 
@@ -261,7 +279,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_setName">#</a>
-		<code><b>setName</b>( <span>string <var>$newName</var></span> )</code>
+		<code>setName( <span>string <var>$newName</var></span> )</code>
 
 		<div class="description short">
 			
@@ -299,7 +317,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_isTmp">#</a>
-		<code><b>isTmp</b>( )</code>
+		<code>isTmp( )</code>
 
 		<div class="description short">
 			
@@ -328,7 +346,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_type">#</a>
-		<code><b>type</b>( )</code>
+		<code>type( )</code>
 
 		<div class="description short">
 			
@@ -357,7 +375,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_load_from_domxml">#</a>
-		<code><b>load_from_domxml</b>( <span><code><a href="class-DOMElement.html">DOMElement</a></code> <var>$xml</var></span> )</code>
+		<code>load_from_domxml( <span><code><a href="class-DOMElement.html">DOMElement</a></code> <var>$xml</var></span> )</code>
 
 		<div class="description short">
 			
@@ -386,7 +404,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_addObjectWhereIamUsed">#</a>
-		<code><b>addObjectWhereIamUsed</b>( <span>mixed <var>$objectToAdd</var></span>, <span>mixed <var>$displayOutput</var> = <span class="php-keyword1">false</span></span>, <span>mixed <var>$outputPadding</var> = <span class="php-quote">''</span></span>, <span>mixed <var>$skipIfConflict</var> = <span class="php-keyword1">false</span></span> )</code>
+		<code>addObjectWhereIamUsed( <span>mixed <var>$objectToAdd</var></span>, <span>mixed <var>$displayOutput</var> = <span class="php-keyword1">false</span></span>, <span>mixed <var>$outputPadding</var> = <span class="php-quote">''</span></span>, <span>mixed <var>$skipIfConflict</var> = <span class="php-keyword1">false</span></span> )</code>
 
 		<div class="description short">
 			
@@ -426,7 +444,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_API_setName">#</a>
-		<code><b>API_setName</b>( <span>mixed <var>$newname</var></span> )</code>
+		<code>API_setName( <span>mixed <var>$newname</var></span> )</code>
 
 		<div class="description short">
 			
@@ -455,7 +473,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_getXPath">#</a>
-		<code><b>getXPath</b>( )</code>
+		<code>getXPath( )</code>
 
 		<div class="description short">
 			
@@ -480,26 +498,26 @@
 	<caption>Methods used from <a href="class-ReferencableObject.html#methods">ReferencableObject</a></caption>
 	<tr>
 		<td><code>
-			<a href="class-ReferencableObject.html#_API_addObjectWhereIamUsed"><b>API_addObjectWhereIamUsed()</b></a>, 
-			<a href="class-ReferencableObject.html#_ReferencesStoreValidation"><b>ReferencesStoreValidation()</b></a>, 
-			<a href="class-ReferencableObject.html#_ReferencesTypeValidation"><b>ReferencesTypeValidation()</b></a>, 
-			<a href="class-ReferencableObject.html#_addReference"><b>addReference()</b></a>, 
-			<a href="class-ReferencableObject.html#_broadcastMyNameChange"><b>broadcastMyNameChange()</b></a>, 
-			<a href="class-ReferencableObject.html#_countReferences"><b>countReferences()</b></a>, 
-			<a href="class-ReferencableObject.html#_display_references"><b>display_references()</b></a>, 
-			<a href="class-ReferencableObject.html#_findAssociatedRule_byType"><b>findAssociatedRule_byType()</b></a>, 
-			<a href="class-ReferencableObject.html#_findAssociatedSecurityRules"><b>findAssociatedSecurityRules()</b></a>, 
-			<a href="class-ReferencableObject.html#_findReferencesWithClass"><b>findReferencesWithClass()</b></a>, 
-			<a href="class-ReferencableObject.html#_generateRefHashComp"><b>generateRefHashComp()</b></a>, 
-			<a href="class-ReferencableObject.html#_getRefHashComp"><b>getRefHashComp()</b></a>, 
-			<a href="class-ReferencableObject.html#_getReferences"><b>getReferences()</b></a>, 
-			<a href="class-ReferencableObject.html#_getReferencesLocation"><b>getReferencesLocation()</b></a>, 
-			<a href="class-ReferencableObject.html#_getReferencesStore"><b>getReferencesStore()</b></a>, 
-			<a href="class-ReferencableObject.html#_getReferencesType"><b>getReferencesType()</b></a>, 
-			<a href="class-ReferencableObject.html#_name"><b>name()</b></a>, 
-			<a href="class-ReferencableObject.html#_removeReference"><b>removeReference()</b></a>, 
-			<a href="class-ReferencableObject.html#_replaceMeGlobally"><b>replaceMeGlobally()</b></a>, 
-			<a href="class-ReferencableObject.html#_setRefName"><b>setRefName()</b></a>
+			<a href="class-ReferencableObject.html#_API_addObjectWhereIamUsed">API_addObjectWhereIamUsedo()</a>, 
+			<a href="class-ReferencableObject.html#_ReferencesStoreValidation">ReferencesStoreValidationo()</a>, 
+			<a href="class-ReferencableObject.html#_ReferencesTypeValidation">ReferencesTypeValidationo()</a>, 
+			<a href="class-ReferencableObject.html#_addReference">addReferenceo()</a>, 
+			<a href="class-ReferencableObject.html#_broadcastMyNameChange">broadcastMyNameChangeo()</a>, 
+			<a href="class-ReferencableObject.html#_countReferences">countReferenceso()</a>, 
+			<a href="class-ReferencableObject.html#_display_references">display_referenceso()</a>, 
+			<a href="class-ReferencableObject.html#_findAssociatedRule_byType">findAssociatedRule_byTypeo()</a>, 
+			<a href="class-ReferencableObject.html#_findAssociatedSecurityRules">findAssociatedSecurityRuleso()</a>, 
+			<a href="class-ReferencableObject.html#_findReferencesWithClass">findReferencesWithClasso()</a>, 
+			<a href="class-ReferencableObject.html#_generateRefHashComp">generateRefHashCompo()</a>, 
+			<a href="class-ReferencableObject.html#_getRefHashComp">getRefHashCompo()</a>, 
+			<a href="class-ReferencableObject.html#_getReferences">getReferenceso()</a>, 
+			<a href="class-ReferencableObject.html#_getReferencesLocation">getReferencesLocationo()</a>, 
+			<a href="class-ReferencableObject.html#_getReferencesStore">getReferencesStoreo()</a>, 
+			<a href="class-ReferencableObject.html#_getReferencesType">getReferencesTypeo()</a>, 
+			<a href="class-ReferencableObject.html#_name">nameo()</a>, 
+			<a href="class-ReferencableObject.html#_removeReference">removeReferenceo()</a>, 
+			<a href="class-ReferencableObject.html#_replaceMeGlobally">replaceMeGloballyo()</a>, 
+			<a href="class-ReferencableObject.html#_setRefName">setRefNameo()</a>
 		</code></td>
 	</tr>
 	</table>
@@ -507,9 +525,9 @@
 	<caption>Methods used from <a href="class-PathableName.html#methods">PathableName</a></caption>
 	<tr>
 		<td><code>
-			<a href="class-PathableName.html#__PANC_shortName"><b>_PANC_shortName()</b></a>, 
-			<a href="class-PathableName.html#_getLocationString"><b>getLocationString()</b></a>, 
-			<a href="class-PathableName.html#_toString"><b>toString()</b></a>
+			<a href="class-PathableName.html#__PANC_shortName">_PANC_shortNameo()</a>, 
+			<a href="class-PathableName.html#_getLocationString">getLocationStringo()</a>, 
+			<a href="class-PathableName.html#_toString">toStringo()</a>
 		</code></td>
 	</tr>
 	</table>
@@ -517,10 +535,11 @@
 	<caption>Methods used from <a href="class-XmlConvertible.html#methods">XmlConvertible</a></caption>
 	<tr>
 		<td><code>
-			<a href="class-XmlConvertible.html#_API_sync"><b>API_sync()</b></a>, 
-			<a href="class-XmlConvertible.html#_getChildXmlText_inline"><b>getChildXmlText_inline()</b></a>, 
-			<a href="class-XmlConvertible.html#_getXmlText"><b>getXmlText()</b></a>, 
-			<a href="class-XmlConvertible.html#_getXmlText_inline"><b>getXmlText_inline()</b></a>
+			<a href="class-XmlConvertible.html#_API_sync">API_synco()</a>, 
+			<a href="class-XmlConvertible.html#_getChildXmlText_inline">getChildXmlText_inlineo()</a>, 
+			<a href="class-XmlConvertible.html#_getXmlText">getXmlTexto()</a>, 
+			<a href="class-XmlConvertible.html#_getXmlText_inline">getXmlText_inlineo()</a>, 
+			<a href="class-XmlConvertible.html#_set_node_attribute">set_node_attributeo()</a>
 		</code></td>
 	</tr>
 	</table>
@@ -578,6 +597,82 @@
 		<td class="value"><code><span class="php-num">2</span></code></td>
 		<td class="description"><div>
 			<a href="#TypeExternal" class="anchor">#</a>
+
+			<div class="description short">
+				
+			</div>
+
+			<div class="description detailed hidden">
+				
+
+			</div>
+		</div></td>
+	</tr>
+	<tr data-order="TypeVirtualWire" id="TypeVirtualWire">
+
+		<td class="attributes"><code>integer</code></td>
+		<td class="name"><code>
+<b>TypeVirtualWire</b>		</code></td>
+		<td class="value"><code><span class="php-num">3</span></code></td>
+		<td class="description"><div>
+			<a href="#TypeVirtualWire" class="anchor">#</a>
+
+			<div class="description short">
+				
+			</div>
+
+			<div class="description detailed hidden">
+				
+
+			</div>
+		</div></td>
+	</tr>
+	<tr data-order="TypeTap" id="TypeTap">
+
+		<td class="attributes"><code>integer</code></td>
+		<td class="name"><code>
+<b>TypeTap</b>		</code></td>
+		<td class="value"><code><span class="php-num">4</span></code></td>
+		<td class="description"><div>
+			<a href="#TypeTap" class="anchor">#</a>
+
+			<div class="description short">
+				
+			</div>
+
+			<div class="description detailed hidden">
+				
+
+			</div>
+		</div></td>
+	</tr>
+	<tr data-order="TypeLayer2" id="TypeLayer2">
+
+		<td class="attributes"><code>integer</code></td>
+		<td class="name"><code>
+<b>TypeLayer2</b>		</code></td>
+		<td class="value"><code><span class="php-num">5</span></code></td>
+		<td class="description"><div>
+			<a href="#TypeLayer2" class="anchor">#</a>
+
+			<div class="description short">
+				
+			</div>
+
+			<div class="description detailed hidden">
+				
+
+			</div>
+		</div></td>
+	</tr>
+	<tr data-order="TypeTunnel" id="TypeTunnel">
+
+		<td class="attributes"><code>integer</code></td>
+		<td class="name"><code>
+<b>TypeTunnel</b>		</code></td>
+		<td class="value"><code><span class="php-num">6</span></code></td>
+		<td class="description"><div>
+			<a href="#TypeTunnel" class="anchor">#</a>
 
 			<div class="description short">
 				
@@ -692,9 +787,53 @@
 
 		<td class="name">
 <var>$templatexml</var>		</td>
-		<td class="value"><code><span class="php-quote">'&lt;entry name=&quot;**temporarynamechangeme**&quot;&gt;&lt;network&gt;&lt;layer3&gt;&lt;/layer3&gt;&lt;/network&gt;&lt;/entry&gt;'</span></code></td>
+		<td class="value"><code><span class="php-quote">'&lt;entry name=&quot;**temporarynamechangemeL3**&quot;&gt;&lt;network&gt;&lt;layer3&gt;&lt;/layer3&gt;&lt;/network&gt;&lt;/entry&gt;'</span></code></td>
 		<td class="description"><div>
 			<a href="#$templatexml" class="anchor">#</a>
+
+			<div class="description short">
+				
+			</div>
+
+			<div class="description detailed hidden">
+				
+
+			</div>
+		</div></td>
+	</tr>
+	<tr data-order="templatexmlvw" id="$templatexmlvw">
+		<td class="attributes"><code>
+			protected static 
+			string
+		</code></td>
+
+		<td class="name">
+<var>$templatexmlvw</var>		</td>
+		<td class="value"><code><span class="php-quote">'&lt;entry name=&quot;**temporarynamechangemeVW**&quot;&gt;&lt;network&gt;&lt;virtual-wire&gt;&lt;/virtual-wire&gt;&lt;/network&gt;&lt;/entry&gt;'</span></code></td>
+		<td class="description"><div>
+			<a href="#$templatexmlvw" class="anchor">#</a>
+
+			<div class="description short">
+				
+			</div>
+
+			<div class="description detailed hidden">
+				
+
+			</div>
+		</div></td>
+	</tr>
+	<tr data-order="templatexmll2" id="$templatexmll2">
+		<td class="attributes"><code>
+			protected static 
+			string
+		</code></td>
+
+		<td class="name">
+<var>$templatexmll2</var>		</td>
+		<td class="value"><code><span class="php-quote">'&lt;entry name=&quot;**temporarynamechangemeL2**&quot;&gt;&lt;network&gt;&lt;layer2&gt;&lt;/layer2&gt;&lt;/network&gt;&lt;/entry&gt;'</span></code></td>
+		<td class="description"><div>
+			<a href="#$templatexmll2" class="anchor">#</a>
 
 			<div class="description short">
 				

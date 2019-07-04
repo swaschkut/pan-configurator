@@ -6,8 +6,8 @@
 
 	<title>Class IP4Map | PAN-PHP-FRAMEWORK</title>
 
-	<script type="text/javascript" src="resources/combined.js?772778653"></script>
-	<script type="text/javascript" src="elementlist.js?4105871058"></script>
+	<script type="text/javascript" src="resources/combined.js?1588816152"></script>
+	<script type="text/javascript" src="elementlist.js?4215409147"></script>
 	<link rel="stylesheet" type="text/css" media="all" href="resources/style.css?3505392360" />
 
 </head>
@@ -44,6 +44,7 @@
 				<li><a href="class-AppOverrideRule.html">AppOverrideRule</a></li>
 				<li><a href="class-AppRuleContainer.html">AppRuleContainer</a></li>
 				<li><a href="class-AppStore.html">AppStore</a></li>
+				<li><a href="class-AuthenticationRule.html">AuthenticationRule</a></li>
 				<li><a href="class-CaptivePortalRule.html">CaptivePortalRule</a></li>
 				<li><a href="class-cidr.html">cidr</a></li>
 				<li><a href="class-CsvParser.html">CsvParser</a></li>
@@ -53,13 +54,20 @@
 				<li><a href="class-DoSRule.html">DoSRule</a></li>
 				<li><a href="class-EthernetIfStore.html">EthernetIfStore</a></li>
 				<li><a href="class-EthernetInterface.html">EthernetInterface</a></li>
+				<li><a href="class-IkeCryptoProfil.html">IkeCryptoProfil</a></li>
+				<li><a href="class-IkeCryptoProfileStore.html">IkeCryptoProfileStore</a></li>
+				<li><a href="class-IKEGateway.html">IKEGateway</a></li>
+				<li><a href="class-IKEGatewayStore.html">IKEGatewayStore</a></li>
 				<li><a href="class-InterfaceContainer.html">InterfaceContainer</a></li>
 				<li class="active"><a href="class-IP4Map.html">IP4Map</a></li>
+				<li><a href="class-IPSecCryptoProfil.html">IPSecCryptoProfil</a></li>
+				<li><a href="class-IPSecCryptoProfileStore.html">IPSecCryptoProfileStore</a></li>
 				<li><a href="class-IPsecTunnel.html">IPsecTunnel</a></li>
 				<li><a href="class-IPsecTunnelStore.html">IPsecTunnelStore</a></li>
 				<li><a href="class-LoopbackIfStore.html">LoopbackIfStore</a></li>
 				<li><a href="class-LoopbackInterface.html">LoopbackInterface</a></li>
 				<li><a href="class-ManagedDevice.html">ManagedDevice</a></li>
+				<li><a href="class-ManagedDeviceStore.html">ManagedDeviceStore</a></li>
 				<li><a href="class-NatRule.html">NatRule</a></li>
 				<li><a href="class-NetworkPropertiesContainer.html">NetworkPropertiesContainer</a></li>
 				<li><a href="class-ObjRuleContainer.html">ObjRuleContainer</a></li>
@@ -79,17 +87,25 @@
 				<li><a href="class-ServiceDstPortMapping.html">ServiceDstPortMapping</a></li>
 				<li><a href="class-ServiceGroup.html">ServiceGroup</a></li>
 				<li><a href="class-ServiceRuleContainer.html">ServiceRuleContainer</a></li>
+				<li><a href="class-ServiceSrcPortMapping.html">ServiceSrcPortMapping</a></li>
 				<li><a href="class-ServiceStore.html">ServiceStore</a></li>
 				<li><a href="class-StaticRoute.html">StaticRoute</a></li>
 				<li><a href="class-Tag.html">Tag</a></li>
 				<li><a href="class-TagRuleContainer.html">TagRuleContainer</a></li>
 				<li><a href="class-TagStore.html">TagStore</a></li>
 				<li><a href="class-Template.html">Template</a></li>
+				<li><a href="class-TemplateStack.html">TemplateStack</a></li>
 				<li><a href="class-TmpInterface.html">TmpInterface</a></li>
 				<li><a href="class-TmpInterfaceStore.html">TmpInterfaceStore</a></li>
+				<li><a href="class-TunnelIfStore.html">TunnelIfStore</a></li>
+				<li><a href="class-TunnelInterface.html">TunnelInterface</a></li>
 				<li><a href="class-VirtualRouter.html">VirtualRouter</a></li>
 				<li><a href="class-VirtualRouterStore.html">VirtualRouterStore</a></li>
 				<li><a href="class-VirtualSystem.html">VirtualSystem</a></li>
+				<li><a href="class-VirtualWire.html">VirtualWire</a></li>
+				<li><a href="class-VirtualWireStore.html">VirtualWireStore</a></li>
+				<li><a href="class-VlanIfStore.html">VlanIfStore</a></li>
+				<li><a href="class-VlanInterface.html">VlanInterface</a></li>
 				<li><a href="class-Zone.html">Zone</a></li>
 				<li><a href="class-ZoneRuleContainer.html">ZoneRuleContainer</a></li>
 				<li><a href="class-ZoneStore.html">ZoneStore</a></li>
@@ -210,7 +226,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_getMapArray">#</a>
-		<code><b>getMapArray</b>( )</code>
+		<code>getMapArray( )</code>
 
 		<div class="description short">
 			
@@ -239,7 +255,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_getMapArrayPointer">#</a>
-		<code><b>getMapArrayPointer</b>( )</code>
+		<code>getMapArrayPointer( )</code>
 
 		<div class="description short">
 			
@@ -268,7 +284,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_mapFromText">#</a>
-		<code><b>mapFromText</b>( <span>mixed <var>$text</var></span> )</code>
+		<code>mapFromText( <span>mixed <var>$text</var></span> )</code>
 
 		<div class="description short">
 			
@@ -306,7 +322,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_equals">#</a>
-		<code><b>equals</b>( <span><code><a href="class-IP4Map.html">IP4Map</a></code> <var>$other</var></span> )</code>
+		<code>equals( <span><code><a href="class-IP4Map.html">IP4Map</a></code> <var>$other</var></span> )</code>
 
 		<div class="description short">
 			
@@ -335,7 +351,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_substract">#</a>
-		<code><b>substract</b>( <span><code><a href="class-IP4Map.html">IP4Map</a></code> <var>$substractedMap</var></span> )</code>
+		<code>substract( <span><code><a href="class-IP4Map.html">IP4Map</a></code> <var>$substractedMap</var></span> )</code>
 
 		<div class="description short">
 			
@@ -364,7 +380,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_intersection">#</a>
-		<code><b>intersection</b>( <span><code><a href="class-IP4Map.html">IP4Map</a></code> <var>$otherMap</var></span> )</code>
+		<code>intersection( <span><code><a href="class-IP4Map.html">IP4Map</a></code> <var>$otherMap</var></span> )</code>
 
 		<div class="description short">
 			
@@ -393,7 +409,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_substractSingleIP4Entry">#</a>
-		<code><b>substractSingleIP4Entry</b>( <span>mixed <var>&amp; $subEntry</var></span> )</code>
+		<code>substractSingleIP4Entry( <span>mixed <var>&amp; $subEntry</var></span> )</code>
 
 		<div class="description short">
 			
@@ -422,7 +438,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_mapDiff">#</a>
-		<code><b>mapDiff</b>( <span><code><a href="class-IP4Map.html">IP4Map</a></code> <var>$other</var></span> )</code>
+		<code>mapDiff( <span><code><a href="class-IP4Map.html">IP4Map</a></code> <var>$other</var></span> )</code>
 
 		<div class="description short">
 			
@@ -451,7 +467,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_includesOtherMap">#</a>
-		<code><b>includesOtherMap</b>( <span><code><a href="class-IP4Map.html">IP4Map</a></code> <var>$other</var></span> )</code>
+		<code>includesOtherMap( <span><code><a href="class-IP4Map.html">IP4Map</a></code> <var>$other</var></span> )</code>
 
 		<div class="description short">
 			
@@ -489,7 +505,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_includedInOtherMap">#</a>
-		<code><b>includedInOtherMap</b>( <span><code><a href="class-IP4Map.html">IP4Map</a></code> <var>$other</var></span> )</code>
+		<code>includedInOtherMap( <span><code><a href="class-IP4Map.html">IP4Map</a></code> <var>$other</var></span> )</code>
 
 		<div class="description short">
 			
@@ -527,7 +543,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_dumpToString">#</a>
-		<code><b>dumpToString</b>( <span>string <var>$separator</var> = <span class="php-quote">','</span></span> )</code>
+		<code>dumpToString( <span>string <var>$separator</var> = <span class="php-quote">','</span></span> )</code>
 
 		<div class="description short">
 			
@@ -565,7 +581,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_addMap">#</a>
-		<code><b>addMap</b>( <span><code><a href="class-IP4Map.html">IP4Map</a></code> <var>$other</var></span>, <span>mixed <var>$skipRecalculation</var> = <span class="php-keyword1">false</span></span> )</code>
+		<code>addMap( <span><code><a href="class-IP4Map.html">IP4Map</a></code> <var>$other</var></span>, <span>mixed <var>$skipRecalculation</var> = <span class="php-keyword1">false</span></span> )</code>
 
 		<div class="description short">
 			
@@ -594,7 +610,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_sortAndRecalculate">#</a>
-		<code><b>sortAndRecalculate</b>( )</code>
+		<code>sortAndRecalculate( )</code>
 
 		<div class="description short">
 			
@@ -627,7 +643,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_count">#</a>
-		<code><b>count</b>( )</code>
+		<code>count( )</code>
 
 		<div class="description short">
 			
@@ -656,7 +672,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_getFirstMapEntry">#</a>
-		<code><b>getFirstMapEntry</b>( )</code>
+		<code>getFirstMapEntry( )</code>
 
 		<div class="description short">
 			

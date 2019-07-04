@@ -6,8 +6,8 @@
 
 	<title>Class Tag | PAN-PHP-FRAMEWORK</title>
 
-	<script type="text/javascript" src="resources/combined.js?772778653"></script>
-	<script type="text/javascript" src="elementlist.js?4105871058"></script>
+	<script type="text/javascript" src="resources/combined.js?1588816152"></script>
+	<script type="text/javascript" src="elementlist.js?4215409147"></script>
 	<link rel="stylesheet" type="text/css" media="all" href="resources/style.css?3505392360" />
 
 </head>
@@ -44,6 +44,7 @@
 				<li><a href="class-AppOverrideRule.html">AppOverrideRule</a></li>
 				<li><a href="class-AppRuleContainer.html">AppRuleContainer</a></li>
 				<li><a href="class-AppStore.html">AppStore</a></li>
+				<li><a href="class-AuthenticationRule.html">AuthenticationRule</a></li>
 				<li><a href="class-CaptivePortalRule.html">CaptivePortalRule</a></li>
 				<li><a href="class-cidr.html">cidr</a></li>
 				<li><a href="class-CsvParser.html">CsvParser</a></li>
@@ -53,13 +54,20 @@
 				<li><a href="class-DoSRule.html">DoSRule</a></li>
 				<li><a href="class-EthernetIfStore.html">EthernetIfStore</a></li>
 				<li><a href="class-EthernetInterface.html">EthernetInterface</a></li>
+				<li><a href="class-IkeCryptoProfil.html">IkeCryptoProfil</a></li>
+				<li><a href="class-IkeCryptoProfileStore.html">IkeCryptoProfileStore</a></li>
+				<li><a href="class-IKEGateway.html">IKEGateway</a></li>
+				<li><a href="class-IKEGatewayStore.html">IKEGatewayStore</a></li>
 				<li><a href="class-InterfaceContainer.html">InterfaceContainer</a></li>
 				<li><a href="class-IP4Map.html">IP4Map</a></li>
+				<li><a href="class-IPSecCryptoProfil.html">IPSecCryptoProfil</a></li>
+				<li><a href="class-IPSecCryptoProfileStore.html">IPSecCryptoProfileStore</a></li>
 				<li><a href="class-IPsecTunnel.html">IPsecTunnel</a></li>
 				<li><a href="class-IPsecTunnelStore.html">IPsecTunnelStore</a></li>
 				<li><a href="class-LoopbackIfStore.html">LoopbackIfStore</a></li>
 				<li><a href="class-LoopbackInterface.html">LoopbackInterface</a></li>
 				<li><a href="class-ManagedDevice.html">ManagedDevice</a></li>
+				<li><a href="class-ManagedDeviceStore.html">ManagedDeviceStore</a></li>
 				<li><a href="class-NatRule.html">NatRule</a></li>
 				<li><a href="class-NetworkPropertiesContainer.html">NetworkPropertiesContainer</a></li>
 				<li><a href="class-ObjRuleContainer.html">ObjRuleContainer</a></li>
@@ -79,17 +87,25 @@
 				<li><a href="class-ServiceDstPortMapping.html">ServiceDstPortMapping</a></li>
 				<li><a href="class-ServiceGroup.html">ServiceGroup</a></li>
 				<li><a href="class-ServiceRuleContainer.html">ServiceRuleContainer</a></li>
+				<li><a href="class-ServiceSrcPortMapping.html">ServiceSrcPortMapping</a></li>
 				<li><a href="class-ServiceStore.html">ServiceStore</a></li>
 				<li><a href="class-StaticRoute.html">StaticRoute</a></li>
 				<li class="active"><a href="class-Tag.html">Tag</a></li>
 				<li><a href="class-TagRuleContainer.html">TagRuleContainer</a></li>
 				<li><a href="class-TagStore.html">TagStore</a></li>
 				<li><a href="class-Template.html">Template</a></li>
+				<li><a href="class-TemplateStack.html">TemplateStack</a></li>
 				<li><a href="class-TmpInterface.html">TmpInterface</a></li>
 				<li><a href="class-TmpInterfaceStore.html">TmpInterfaceStore</a></li>
+				<li><a href="class-TunnelIfStore.html">TunnelIfStore</a></li>
+				<li><a href="class-TunnelInterface.html">TunnelInterface</a></li>
 				<li><a href="class-VirtualRouter.html">VirtualRouter</a></li>
 				<li><a href="class-VirtualRouterStore.html">VirtualRouterStore</a></li>
 				<li><a href="class-VirtualSystem.html">VirtualSystem</a></li>
+				<li><a href="class-VirtualWire.html">VirtualWire</a></li>
+				<li><a href="class-VirtualWireStore.html">VirtualWireStore</a></li>
+				<li><a href="class-VlanIfStore.html">VlanIfStore</a></li>
+				<li><a href="class-VlanInterface.html">VlanInterface</a></li>
 				<li><a href="class-Zone.html">Zone</a></li>
 				<li><a href="class-ZoneRuleContainer.html">ZoneRuleContainer</a></li>
 				<li><a href="class-ZoneStore.html">ZoneStore</a></li>
@@ -223,7 +239,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#___construct">#</a>
-		<code><b>__construct</b>( <span>string <var>$name</var></span>, <span><code><a href="class-TagStore.html">TagStore</a></code>|null <var>$owner</var></span>, <span>boolean <var>$fromXmlTemplate</var> = <span class="php-keyword1">false</span> </span> )</code>
+		<code>__construct( <span>string <var>$name</var></span>, <span><code><a href="class-TagStore.html">TagStore</a></code>|null <var>$owner</var></span>, <span>boolean <var>$fromXmlTemplate</var> = <span class="php-keyword1">false</span> </span> )</code>
 
 		<div class="description short">
 			
@@ -261,7 +277,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_setName">#</a>
-		<code><b>setName</b>( <span>string <var>$newName</var></span> )</code>
+		<code>setName( <span>string <var>$newName</var></span> )</code>
 
 		<div class="description short">
 			
@@ -299,7 +315,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_API_setName">#</a>
-		<code><b>API_setName</b>( <span>string <var>$newName</var></span> )</code>
+		<code>API_setName( <span>string <var>$newName</var></span> )</code>
 
 		<div class="description short">
 			
@@ -333,7 +349,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_setColor">#</a>
-		<code><b>setColor</b>( <span>string <var>$newColor</var></span>, <span>boolean <var>$rewriteXml</var> = <span class="php-keyword1">true</span> </span> )</code>
+		<code>setColor( <span>string <var>$newColor</var></span>, <span>boolean <var>$rewriteXml</var> = <span class="php-keyword1">true</span> </span> )</code>
 
 		<div class="description short">
 			
@@ -373,7 +389,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_API_setColor">#</a>
-		<code><b>API_setColor</b>( <span>string <var>$newColor</var></span> )</code>
+		<code>API_setColor( <span>string <var>$newColor</var></span> )</code>
 
 		<div class="description short">
 			
@@ -411,7 +427,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_availableColors">#</a>
-		<code><b>availableColors</b>( )</code>
+		<code>availableColors( )</code>
 
 		<div class="description short">
 			
@@ -444,7 +460,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_getXPath">#</a>
-		<code><b>getXPath</b>( )</code>
+		<code>getXPath( )</code>
 
 		<div class="description short">
 			
@@ -477,7 +493,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_isTmp">#</a>
-		<code><b>isTmp</b>( )</code>
+		<code>isTmp( )</code>
 
 		<div class="description short">
 			
@@ -506,7 +522,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_load_from_domxml">#</a>
-		<code><b>load_from_domxml</b>( <span><code><a href="class-DOMElement.html">DOMElement</a></code> <var>$xml</var></span> )</code>
+		<code>load_from_domxml( <span><code><a href="class-DOMElement.html">DOMElement</a></code> <var>$xml</var></span> )</code>
 
 		<div class="description short">
 			
@@ -535,7 +551,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_getColor">#</a>
-		<code><b>getColor</b>( )</code>
+		<code>getColor( )</code>
 
 		<div class="description short">
 			
@@ -568,7 +584,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_getComments">#</a>
-		<code><b>getComments</b>( )</code>
+		<code>getComments( )</code>
 
 		<div class="description short">
 			
@@ -601,7 +617,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_addComments">#</a>
-		<code><b>addComments</b>( <span>mixed <var>$newComment</var></span>, <span>mixed <var>$rewriteXml</var> = <span class="php-keyword1">true</span> </span> )</code>
+		<code>addComments( <span>mixed <var>$newComment</var></span>, <span>mixed <var>$rewriteXml</var> = <span class="php-keyword1">true</span> </span> )</code>
 
 		<div class="description short">
 			
@@ -646,7 +662,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_API_addComments">#</a>
-		<code><b>API_addComments</b>( <span>string <var>$newComment</var></span> )</code>
+		<code>API_addComments( <span>string <var>$newComment</var></span> )</code>
 
 		<div class="description short">
 			
@@ -684,7 +700,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_deleteComments">#</a>
-		<code><b>deleteComments</b>( )</code>
+		<code>deleteComments( )</code>
 
 		<div class="description short">
 			
@@ -717,7 +733,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_API_deleteComments">#</a>
-		<code><b>API_deleteComments</b>( )</code>
+		<code>API_deleteComments( )</code>
 
 		<div class="description short">
 			
@@ -750,7 +766,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_isTag">#</a>
-		<code><b>isTag</b>( )</code>
+		<code>isTag( )</code>
 
 		<div class="description short">
 			
@@ -779,7 +795,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_equals">#</a>
-		<code><b>equals</b>( <span>mixed <var>$otherObject</var></span> )</code>
+		<code>equals( <span>mixed <var>$otherObject</var></span> )</code>
 
 		<div class="description short">
 			
@@ -817,7 +833,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_sameValue">#</a>
-		<code><b>sameValue</b>( <span><code><a href="class-Tag.html">Tag</a></code> <var>$otherObject</var></span> )</code>
+		<code>sameValue( <span><code><a href="class-Tag.html">Tag</a></code> <var>$otherObject</var></span> )</code>
 
 		<div class="description short">
 			
@@ -842,27 +858,27 @@
 	<caption>Methods used from <a href="class-ReferencableObject.html#methods">ReferencableObject</a></caption>
 	<tr>
 		<td><code>
-			<a href="class-ReferencableObject.html#_API_addObjectWhereIamUsed"><b>API_addObjectWhereIamUsed()</b></a>, 
-			<a href="class-ReferencableObject.html#_ReferencesStoreValidation"><b>ReferencesStoreValidation()</b></a>, 
-			<a href="class-ReferencableObject.html#_ReferencesTypeValidation"><b>ReferencesTypeValidation()</b></a>, 
-			<a href="class-ReferencableObject.html#_addObjectWhereIamUsed"><b>addObjectWhereIamUsed()</b></a>, 
-			<a href="class-ReferencableObject.html#_addReference"><b>addReference()</b></a>, 
-			<a href="class-ReferencableObject.html#_broadcastMyNameChange"><b>broadcastMyNameChange()</b></a>, 
-			<a href="class-ReferencableObject.html#_countReferences"><b>countReferences()</b></a>, 
-			<a href="class-ReferencableObject.html#_display_references"><b>display_references()</b></a>, 
-			<a href="class-ReferencableObject.html#_findAssociatedRule_byType"><b>findAssociatedRule_byType()</b></a>, 
-			<a href="class-ReferencableObject.html#_findAssociatedSecurityRules"><b>findAssociatedSecurityRules()</b></a>, 
-			<a href="class-ReferencableObject.html#_findReferencesWithClass"><b>findReferencesWithClass()</b></a>, 
-			<a href="class-ReferencableObject.html#_generateRefHashComp"><b>generateRefHashComp()</b></a>, 
-			<a href="class-ReferencableObject.html#_getRefHashComp"><b>getRefHashComp()</b></a>, 
-			<a href="class-ReferencableObject.html#_getReferences"><b>getReferences()</b></a>, 
-			<a href="class-ReferencableObject.html#_getReferencesLocation"><b>getReferencesLocation()</b></a>, 
-			<a href="class-ReferencableObject.html#_getReferencesStore"><b>getReferencesStore()</b></a>, 
-			<a href="class-ReferencableObject.html#_getReferencesType"><b>getReferencesType()</b></a>, 
-			<a href="class-ReferencableObject.html#_name"><b>name()</b></a>, 
-			<a href="class-ReferencableObject.html#_removeReference"><b>removeReference()</b></a>, 
-			<a href="class-ReferencableObject.html#_replaceMeGlobally"><b>replaceMeGlobally()</b></a>, 
-			<a href="class-ReferencableObject.html#_setRefName"><b>setRefName()</b></a>
+			<a href="class-ReferencableObject.html#_API_addObjectWhereIamUsed">API_addObjectWhereIamUsedo()</a>, 
+			<a href="class-ReferencableObject.html#_ReferencesStoreValidation">ReferencesStoreValidationo()</a>, 
+			<a href="class-ReferencableObject.html#_ReferencesTypeValidation">ReferencesTypeValidationo()</a>, 
+			<a href="class-ReferencableObject.html#_addObjectWhereIamUsed">addObjectWhereIamUsedo()</a>, 
+			<a href="class-ReferencableObject.html#_addReference">addReferenceo()</a>, 
+			<a href="class-ReferencableObject.html#_broadcastMyNameChange">broadcastMyNameChangeo()</a>, 
+			<a href="class-ReferencableObject.html#_countReferences">countReferenceso()</a>, 
+			<a href="class-ReferencableObject.html#_display_references">display_referenceso()</a>, 
+			<a href="class-ReferencableObject.html#_findAssociatedRule_byType">findAssociatedRule_byTypeo()</a>, 
+			<a href="class-ReferencableObject.html#_findAssociatedSecurityRules">findAssociatedSecurityRuleso()</a>, 
+			<a href="class-ReferencableObject.html#_findReferencesWithClass">findReferencesWithClasso()</a>, 
+			<a href="class-ReferencableObject.html#_generateRefHashComp">generateRefHashCompo()</a>, 
+			<a href="class-ReferencableObject.html#_getRefHashComp">getRefHashCompo()</a>, 
+			<a href="class-ReferencableObject.html#_getReferences">getReferenceso()</a>, 
+			<a href="class-ReferencableObject.html#_getReferencesLocation">getReferencesLocationo()</a>, 
+			<a href="class-ReferencableObject.html#_getReferencesStore">getReferencesStoreo()</a>, 
+			<a href="class-ReferencableObject.html#_getReferencesType">getReferencesTypeo()</a>, 
+			<a href="class-ReferencableObject.html#_name">nameo()</a>, 
+			<a href="class-ReferencableObject.html#_removeReference">removeReferenceo()</a>, 
+			<a href="class-ReferencableObject.html#_replaceMeGlobally">replaceMeGloballyo()</a>, 
+			<a href="class-ReferencableObject.html#_setRefName">setRefNameo()</a>
 		</code></td>
 	</tr>
 	</table>
@@ -870,9 +886,9 @@
 	<caption>Methods used from <a href="class-PathableName.html#methods">PathableName</a></caption>
 	<tr>
 		<td><code>
-			<a href="class-PathableName.html#__PANC_shortName"><b>_PANC_shortName()</b></a>, 
-			<a href="class-PathableName.html#_getLocationString"><b>getLocationString()</b></a>, 
-			<a href="class-PathableName.html#_toString"><b>toString()</b></a>
+			<a href="class-PathableName.html#__PANC_shortName">_PANC_shortNameo()</a>, 
+			<a href="class-PathableName.html#_getLocationString">getLocationStringo()</a>, 
+			<a href="class-PathableName.html#_toString">toStringo()</a>
 		</code></td>
 	</tr>
 	</table>
@@ -880,10 +896,11 @@
 	<caption>Methods used from <a href="class-XmlConvertible.html#methods">XmlConvertible</a></caption>
 	<tr>
 		<td><code>
-			<a href="class-XmlConvertible.html#_API_sync"><b>API_sync()</b></a>, 
-			<a href="class-XmlConvertible.html#_getChildXmlText_inline"><b>getChildXmlText_inline()</b></a>, 
-			<a href="class-XmlConvertible.html#_getXmlText"><b>getXmlText()</b></a>, 
-			<a href="class-XmlConvertible.html#_getXmlText_inline"><b>getXmlText_inline()</b></a>
+			<a href="class-XmlConvertible.html#_API_sync">API_synco()</a>, 
+			<a href="class-XmlConvertible.html#_getChildXmlText_inline">getChildXmlText_inlineo()</a>, 
+			<a href="class-XmlConvertible.html#_getXmlText">getXmlTexto()</a>, 
+			<a href="class-XmlConvertible.html#_getXmlText_inline">getXmlText_inlineo()</a>, 
+			<a href="class-XmlConvertible.html#_set_node_attribute">set_node_attributeo()</a>
 		</code></td>
 	</tr>
 	</table>
@@ -1237,6 +1254,462 @@
 			</div>
 		</div></td>
 	</tr>
+	<tr data-order="color19" id="color19">
+
+		<td class="attributes"><code>string</code></td>
+		<td class="name"><code>
+<b>color19</b>		</code></td>
+		<td class="value"><code><span class="php-quote">'Maroon'</span></code></td>
+		<td class="description"><div>
+			<a href="#color19" class="anchor">#</a>
+
+			<div class="description short">
+				
+			</div>
+
+			<div class="description detailed hidden">
+				
+
+			</div>
+		</div></td>
+	</tr>
+	<tr data-order="color20" id="color20">
+
+		<td class="attributes"><code>string</code></td>
+		<td class="name"><code>
+<b>color20</b>		</code></td>
+		<td class="value"><code><span class="php-quote">'Red-Orange'</span></code></td>
+		<td class="description"><div>
+			<a href="#color20" class="anchor">#</a>
+
+			<div class="description short">
+				
+			</div>
+
+			<div class="description detailed hidden">
+				
+
+			</div>
+		</div></td>
+	</tr>
+	<tr data-order="color21" id="color21">
+
+		<td class="attributes"><code>string</code></td>
+		<td class="name"><code>
+<b>color21</b>		</code></td>
+		<td class="value"><code><span class="php-quote">'Yellow-Orange'</span></code></td>
+		<td class="description"><div>
+			<a href="#color21" class="anchor">#</a>
+
+			<div class="description short">
+				
+			</div>
+
+			<div class="description detailed hidden">
+				
+
+			</div>
+		</div></td>
+	</tr>
+	<tr data-order="color22" id="color22">
+
+		<td class="attributes"><code>string</code></td>
+		<td class="name"><code>
+<b>color22</b>		</code></td>
+		<td class="value"><code><span class="php-quote">'Forest Green'</span></code></td>
+		<td class="description"><div>
+			<a href="#color22" class="anchor">#</a>
+
+			<div class="description short">
+				
+			</div>
+
+			<div class="description detailed hidden">
+				
+
+			</div>
+		</div></td>
+	</tr>
+	<tr data-order="color23" id="color23">
+
+		<td class="attributes"><code>string</code></td>
+		<td class="name"><code>
+<b>color23</b>		</code></td>
+		<td class="value"><code><span class="php-quote">'Turquoise Blue'</span></code></td>
+		<td class="description"><div>
+			<a href="#color23" class="anchor">#</a>
+
+			<div class="description short">
+				
+			</div>
+
+			<div class="description detailed hidden">
+				
+
+			</div>
+		</div></td>
+	</tr>
+	<tr data-order="color24" id="color24">
+
+		<td class="attributes"><code>string</code></td>
+		<td class="name"><code>
+<b>color24</b>		</code></td>
+		<td class="value"><code><span class="php-quote">'Azure Blue'</span></code></td>
+		<td class="description"><div>
+			<a href="#color24" class="anchor">#</a>
+
+			<div class="description short">
+				
+			</div>
+
+			<div class="description detailed hidden">
+				
+
+			</div>
+		</div></td>
+	</tr>
+	<tr data-order="color25" id="color25">
+
+		<td class="attributes"><code>string</code></td>
+		<td class="name"><code>
+<b>color25</b>		</code></td>
+		<td class="value"><code><span class="php-quote">'Cerulean Blue'</span></code></td>
+		<td class="description"><div>
+			<a href="#color25" class="anchor">#</a>
+
+			<div class="description short">
+				
+			</div>
+
+			<div class="description detailed hidden">
+				
+
+			</div>
+		</div></td>
+	</tr>
+	<tr data-order="color26" id="color26">
+
+		<td class="attributes"><code>string</code></td>
+		<td class="name"><code>
+<b>color26</b>		</code></td>
+		<td class="value"><code><span class="php-quote">'Midnight Blue'</span></code></td>
+		<td class="description"><div>
+			<a href="#color26" class="anchor">#</a>
+
+			<div class="description short">
+				
+			</div>
+
+			<div class="description detailed hidden">
+				
+
+			</div>
+		</div></td>
+	</tr>
+	<tr data-order="color27" id="color27">
+
+		<td class="attributes"><code>string</code></td>
+		<td class="name"><code>
+<b>color27</b>		</code></td>
+		<td class="value"><code><span class="php-quote">'Medium Blue'</span></code></td>
+		<td class="description"><div>
+			<a href="#color27" class="anchor">#</a>
+
+			<div class="description short">
+				
+			</div>
+
+			<div class="description detailed hidden">
+				
+
+			</div>
+		</div></td>
+	</tr>
+	<tr data-order="color28" id="color28">
+
+		<td class="attributes"><code>string</code></td>
+		<td class="name"><code>
+<b>color28</b>		</code></td>
+		<td class="value"><code><span class="php-quote">'Cobalt Blue'</span></code></td>
+		<td class="description"><div>
+			<a href="#color28" class="anchor">#</a>
+
+			<div class="description short">
+				
+			</div>
+
+			<div class="description detailed hidden">
+				
+
+			</div>
+		</div></td>
+	</tr>
+	<tr data-order="color29" id="color29">
+
+		<td class="attributes"><code>string</code></td>
+		<td class="name"><code>
+<b>color29</b>		</code></td>
+		<td class="value"><code><span class="php-quote">'Violet Blue'</span></code></td>
+		<td class="description"><div>
+			<a href="#color29" class="anchor">#</a>
+
+			<div class="description short">
+				
+			</div>
+
+			<div class="description detailed hidden">
+				
+
+			</div>
+		</div></td>
+	</tr>
+	<tr data-order="color30" id="color30">
+
+		<td class="attributes"><code>string</code></td>
+		<td class="name"><code>
+<b>color30</b>		</code></td>
+		<td class="value"><code><span class="php-quote">'Blue Violet'</span></code></td>
+		<td class="description"><div>
+			<a href="#color30" class="anchor">#</a>
+
+			<div class="description short">
+				
+			</div>
+
+			<div class="description detailed hidden">
+				
+
+			</div>
+		</div></td>
+	</tr>
+	<tr data-order="color31" id="color31">
+
+		<td class="attributes"><code>string</code></td>
+		<td class="name"><code>
+<b>color31</b>		</code></td>
+		<td class="value"><code><span class="php-quote">'Medium Violet'</span></code></td>
+		<td class="description"><div>
+			<a href="#color31" class="anchor">#</a>
+
+			<div class="description short">
+				
+			</div>
+
+			<div class="description detailed hidden">
+				
+
+			</div>
+		</div></td>
+	</tr>
+	<tr data-order="color32" id="color32">
+
+		<td class="attributes"><code>string</code></td>
+		<td class="name"><code>
+<b>color32</b>		</code></td>
+		<td class="value"><code><span class="php-quote">'Medium Rose'</span></code></td>
+		<td class="description"><div>
+			<a href="#color32" class="anchor">#</a>
+
+			<div class="description short">
+				
+			</div>
+
+			<div class="description detailed hidden">
+				
+
+			</div>
+		</div></td>
+	</tr>
+	<tr data-order="color33" id="color33">
+
+		<td class="attributes"><code>string</code></td>
+		<td class="name"><code>
+<b>color33</b>		</code></td>
+		<td class="value"><code><span class="php-quote">'Lavender'</span></code></td>
+		<td class="description"><div>
+			<a href="#color33" class="anchor">#</a>
+
+			<div class="description short">
+				
+			</div>
+
+			<div class="description detailed hidden">
+				
+
+			</div>
+		</div></td>
+	</tr>
+	<tr data-order="color34" id="color34">
+
+		<td class="attributes"><code>string</code></td>
+		<td class="name"><code>
+<b>color34</b>		</code></td>
+		<td class="value"><code><span class="php-quote">'Orchid'</span></code></td>
+		<td class="description"><div>
+			<a href="#color34" class="anchor">#</a>
+
+			<div class="description short">
+				
+			</div>
+
+			<div class="description detailed hidden">
+				
+
+			</div>
+		</div></td>
+	</tr>
+	<tr data-order="color35" id="color35">
+
+		<td class="attributes"><code>string</code></td>
+		<td class="name"><code>
+<b>color35</b>		</code></td>
+		<td class="value"><code><span class="php-quote">'Thistle'</span></code></td>
+		<td class="description"><div>
+			<a href="#color35" class="anchor">#</a>
+
+			<div class="description short">
+				
+			</div>
+
+			<div class="description detailed hidden">
+				
+
+			</div>
+		</div></td>
+	</tr>
+	<tr data-order="color36" id="color36">
+
+		<td class="attributes"><code>string</code></td>
+		<td class="name"><code>
+<b>color36</b>		</code></td>
+		<td class="value"><code><span class="php-quote">'Peach'</span></code></td>
+		<td class="description"><div>
+			<a href="#color36" class="anchor">#</a>
+
+			<div class="description short">
+				
+			</div>
+
+			<div class="description detailed hidden">
+				
+
+			</div>
+		</div></td>
+	</tr>
+	<tr data-order="color37" id="color37">
+
+		<td class="attributes"><code>string</code></td>
+		<td class="name"><code>
+<b>color37</b>		</code></td>
+		<td class="value"><code><span class="php-quote">'Salmon'</span></code></td>
+		<td class="description"><div>
+			<a href="#color37" class="anchor">#</a>
+
+			<div class="description short">
+				
+			</div>
+
+			<div class="description detailed hidden">
+				
+
+			</div>
+		</div></td>
+	</tr>
+	<tr data-order="color38" id="color38">
+
+		<td class="attributes"><code>string</code></td>
+		<td class="name"><code>
+<b>color38</b>		</code></td>
+		<td class="value"><code><span class="php-quote">'Magenta'</span></code></td>
+		<td class="description"><div>
+			<a href="#color38" class="anchor">#</a>
+
+			<div class="description short">
+				
+			</div>
+
+			<div class="description detailed hidden">
+				
+
+			</div>
+		</div></td>
+	</tr>
+	<tr data-order="color39" id="color39">
+
+		<td class="attributes"><code>string</code></td>
+		<td class="name"><code>
+<b>color39</b>		</code></td>
+		<td class="value"><code><span class="php-quote">'Red Violet'</span></code></td>
+		<td class="description"><div>
+			<a href="#color39" class="anchor">#</a>
+
+			<div class="description short">
+				
+			</div>
+
+			<div class="description detailed hidden">
+				
+
+			</div>
+		</div></td>
+	</tr>
+	<tr data-order="color40" id="color40">
+
+		<td class="attributes"><code>string</code></td>
+		<td class="name"><code>
+<b>color40</b>		</code></td>
+		<td class="value"><code><span class="php-quote">'Mahogany'</span></code></td>
+		<td class="description"><div>
+			<a href="#color40" class="anchor">#</a>
+
+			<div class="description short">
+				
+			</div>
+
+			<div class="description detailed hidden">
+				
+
+			</div>
+		</div></td>
+	</tr>
+	<tr data-order="color41" id="color41">
+
+		<td class="attributes"><code>string</code></td>
+		<td class="name"><code>
+<b>color41</b>		</code></td>
+		<td class="value"><code><span class="php-quote">'Burnt Sienna'</span></code></td>
+		<td class="description"><div>
+			<a href="#color41" class="anchor">#</a>
+
+			<div class="description short">
+				
+			</div>
+
+			<div class="description detailed hidden">
+				
+
+			</div>
+		</div></td>
+	</tr>
+	<tr data-order="color42" id="color42">
+
+		<td class="attributes"><code>string</code></td>
+		<td class="name"><code>
+<b>color42</b>		</code></td>
+		<td class="value"><code><span class="php-quote">'Chestnut'</span></code></td>
+		<td class="description"><div>
+			<a href="#color42" class="anchor">#</a>
+
+			<div class="description short">
+				
+			</div>
+
+			<div class="description detailed hidden">
+				
+
+			</div>
+		</div></td>
+	</tr>
 	</table>
 
 
@@ -1329,6 +1802,7 @@
                                     self::color7 =&gt; <span class="php-quote">'color7'</span>,
                                     self::color8 =&gt; <span class="php-quote">'color8'</span>,
                                     self::color9 =&gt; <span class="php-quote">'color9'</span>,
+
                                     self::color10 =&gt; <span class="php-quote">'color10'</span>,
                                     self::color11 =&gt; <span class="php-quote">'color11'</span>,
                                     self::color12 =&gt; <span class="php-quote">'color12'</span>,
@@ -1336,7 +1810,35 @@
                                     self::color14 =&gt; <span class="php-quote">'color14'</span>,
                                     self::color15 =&gt; <span class="php-quote">'color15'</span>,
                                     self::color16 =&gt; <span class="php-quote">'color16'</span>,
-                                    self::color17 =&gt; <span class="php-quote">'color17'</span>
+                                    self::color17 =&gt; <span class="php-quote">'color17'</span>,
+                                    <span class="php-comment">//color18 not defined in PAN-OS</span>
+                                    self::color19 =&gt; <span class="php-quote">'color19'</span>,
+
+                                    self::color20 =&gt; <span class="php-quote">'color20'</span>,
+                                    self::color21 =&gt; <span class="php-quote">'color21'</span>,
+                                    self::color22 =&gt; <span class="php-quote">'color22'</span>,
+                                    self::color23 =&gt; <span class="php-quote">'color23'</span>,
+                                    self::color24 =&gt; <span class="php-quote">'color24'</span>,
+                                    self::color25 =&gt; <span class="php-quote">'color25'</span>,
+                                    self::color26 =&gt; <span class="php-quote">'color26'</span>,
+                                    self::color27 =&gt; <span class="php-quote">'color27'</span>,
+                                    self::color28 =&gt; <span class="php-quote">'color28'</span>,
+                                    self::color29 =&gt; <span class="php-quote">'color29'</span>,
+
+                                    self::color30 =&gt; <span class="php-quote">'color30'</span>,
+                                    self::color31 =&gt; <span class="php-quote">'color31'</span>,
+                                    self::color32 =&gt; <span class="php-quote">'color32'</span>,
+                                    self::color33 =&gt; <span class="php-quote">'color33'</span>,
+                                    self::color34 =&gt; <span class="php-quote">'color34'</span>,
+                                    self::color35 =&gt; <span class="php-quote">'color35'</span>,
+                                    self::color36 =&gt; <span class="php-quote">'color36'</span>,
+                                    self::color37 =&gt; <span class="php-quote">'color37'</span>,
+                                    self::color38 =&gt; <span class="php-quote">'color38'</span>,
+                                    self::color39 =&gt; <span class="php-quote">'color39'</span>,
+
+                                    self::color40 =&gt; <span class="php-quote">'color40'</span>,
+                                    self::color41 =&gt; <span class="php-quote">'color41'</span>,
+                                    self::color42 =&gt; <span class="php-quote">'color42'</span>
                                 )</code></td>
 		<td class="description"><div>
 			<a href="#$TagColors" class="anchor">#</a>

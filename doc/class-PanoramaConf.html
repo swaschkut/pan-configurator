@@ -6,8 +6,8 @@
 
 	<title>Class PanoramaConf | PAN-PHP-FRAMEWORK</title>
 
-	<script type="text/javascript" src="resources/combined.js?772778653"></script>
-	<script type="text/javascript" src="elementlist.js?4105871058"></script>
+	<script type="text/javascript" src="resources/combined.js?1588816152"></script>
+	<script type="text/javascript" src="elementlist.js?4215409147"></script>
 	<link rel="stylesheet" type="text/css" media="all" href="resources/style.css?3505392360" />
 
 </head>
@@ -44,6 +44,7 @@
 				<li><a href="class-AppOverrideRule.html">AppOverrideRule</a></li>
 				<li><a href="class-AppRuleContainer.html">AppRuleContainer</a></li>
 				<li><a href="class-AppStore.html">AppStore</a></li>
+				<li><a href="class-AuthenticationRule.html">AuthenticationRule</a></li>
 				<li><a href="class-CaptivePortalRule.html">CaptivePortalRule</a></li>
 				<li><a href="class-cidr.html">cidr</a></li>
 				<li><a href="class-CsvParser.html">CsvParser</a></li>
@@ -53,13 +54,20 @@
 				<li><a href="class-DoSRule.html">DoSRule</a></li>
 				<li><a href="class-EthernetIfStore.html">EthernetIfStore</a></li>
 				<li><a href="class-EthernetInterface.html">EthernetInterface</a></li>
+				<li><a href="class-IkeCryptoProfil.html">IkeCryptoProfil</a></li>
+				<li><a href="class-IkeCryptoProfileStore.html">IkeCryptoProfileStore</a></li>
+				<li><a href="class-IKEGateway.html">IKEGateway</a></li>
+				<li><a href="class-IKEGatewayStore.html">IKEGatewayStore</a></li>
 				<li><a href="class-InterfaceContainer.html">InterfaceContainer</a></li>
 				<li><a href="class-IP4Map.html">IP4Map</a></li>
+				<li><a href="class-IPSecCryptoProfil.html">IPSecCryptoProfil</a></li>
+				<li><a href="class-IPSecCryptoProfileStore.html">IPSecCryptoProfileStore</a></li>
 				<li><a href="class-IPsecTunnel.html">IPsecTunnel</a></li>
 				<li><a href="class-IPsecTunnelStore.html">IPsecTunnelStore</a></li>
 				<li><a href="class-LoopbackIfStore.html">LoopbackIfStore</a></li>
 				<li><a href="class-LoopbackInterface.html">LoopbackInterface</a></li>
 				<li><a href="class-ManagedDevice.html">ManagedDevice</a></li>
+				<li><a href="class-ManagedDeviceStore.html">ManagedDeviceStore</a></li>
 				<li><a href="class-NatRule.html">NatRule</a></li>
 				<li><a href="class-NetworkPropertiesContainer.html">NetworkPropertiesContainer</a></li>
 				<li><a href="class-ObjRuleContainer.html">ObjRuleContainer</a></li>
@@ -79,17 +87,25 @@
 				<li><a href="class-ServiceDstPortMapping.html">ServiceDstPortMapping</a></li>
 				<li><a href="class-ServiceGroup.html">ServiceGroup</a></li>
 				<li><a href="class-ServiceRuleContainer.html">ServiceRuleContainer</a></li>
+				<li><a href="class-ServiceSrcPortMapping.html">ServiceSrcPortMapping</a></li>
 				<li><a href="class-ServiceStore.html">ServiceStore</a></li>
 				<li><a href="class-StaticRoute.html">StaticRoute</a></li>
 				<li><a href="class-Tag.html">Tag</a></li>
 				<li><a href="class-TagRuleContainer.html">TagRuleContainer</a></li>
 				<li><a href="class-TagStore.html">TagStore</a></li>
 				<li><a href="class-Template.html">Template</a></li>
+				<li><a href="class-TemplateStack.html">TemplateStack</a></li>
 				<li><a href="class-TmpInterface.html">TmpInterface</a></li>
 				<li><a href="class-TmpInterfaceStore.html">TmpInterfaceStore</a></li>
+				<li><a href="class-TunnelIfStore.html">TunnelIfStore</a></li>
+				<li><a href="class-TunnelInterface.html">TunnelInterface</a></li>
 				<li><a href="class-VirtualRouter.html">VirtualRouter</a></li>
 				<li><a href="class-VirtualRouterStore.html">VirtualRouterStore</a></li>
 				<li><a href="class-VirtualSystem.html">VirtualSystem</a></li>
+				<li><a href="class-VirtualWire.html">VirtualWire</a></li>
+				<li><a href="class-VirtualWireStore.html">VirtualWireStore</a></li>
+				<li><a href="class-VlanIfStore.html">VlanIfStore</a></li>
+				<li><a href="class-VlanInterface.html">VlanInterface</a></li>
 				<li><a href="class-Zone.html">Zone</a></li>
 				<li><a href="class-ZoneRuleContainer.html">ZoneRuleContainer</a></li>
 				<li><a href="class-ZoneStore.html">ZoneStore</a></li>
@@ -233,7 +249,7 @@ $pan-&gt;display_statistics();</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_name">#</a>
-		<code><b>name</b>( )</code>
+		<code>name( )</code>
 
 		<div class="description short">
 			
@@ -262,7 +278,7 @@ $pan-&gt;display_statistics();</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#___construct">#</a>
-		<code><b>__construct</b>( )</code>
+		<code>__construct( )</code>
 
 		<div class="description short">
 			
@@ -291,7 +307,7 @@ $pan-&gt;display_statistics();</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_load_from_xmlstring">#</a>
-		<code><b>load_from_xmlstring</b>( <span>mixed <var>&amp; $xml</var></span> )</code>
+		<code>load_from_xmlstring( <span>mixed <var>&amp; $xml</var></span> )</code>
 
 		<div class="description short">
 			
@@ -320,7 +336,7 @@ $pan-&gt;display_statistics();</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_load_from_domxml">#</a>
-		<code><b>load_from_domxml</b>( <span><code><a href="class-DOMElement.html">DOMElement</a></code>|<code><a href="class-DOMDocument.html">DOMDocument</a></code> <var>$xml</var></span> )</code>
+		<code>load_from_domxml( <span><code><a href="class-DOMElement.html">DOMElement</a></code>|<code><a href="class-DOMDocument.html">DOMDocument</a></code> <var>$xml</var></span> )</code>
 
 		<div class="description short">
 			
@@ -358,7 +374,7 @@ $pan-&gt;display_statistics();</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_findDeviceGroup">#</a>
-		<code><b>findDeviceGroup</b>( <span>string <var>$name</var></span> )</code>
+		<code>findDeviceGroup( <span>string <var>$name</var></span> )</code>
 
 		<div class="description short">
 			
@@ -396,7 +412,7 @@ $pan-&gt;display_statistics();</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_findTemplate">#</a>
-		<code><b>findTemplate</b>( <span>string <var>$name</var></span> )</code>
+		<code>findTemplate( <span>string <var>$name</var></span> )</code>
 
 		<div class="description short">
 			
@@ -423,6 +439,44 @@ $pan-&gt;display_statistics();</p>
 		</div>
 		</div></td>
 	</tr>
+	<tr data-order="findTemplateStack" id="_findTemplateStack">
+
+		<td class="attributes"><code>
+			 public 
+			<code><a href="class-TemplateStack.html">TemplateStack</a></code>|null
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_findTemplateStack">#</a>
+		<code>findTemplateStack( <span>string <var>$name</var></span> )</code>
+
+		<div class="description short">
+			
+		</div>
+
+		<div class="description detailed hidden">
+			
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$name</var></dt>
+					<dd><code>string</code><br>$name</dd>
+				</dl></div>
+
+				<h4>Returns</h4>
+				<div class="list">
+					<code><code><a href="class-TemplateStack.html">TemplateStack</a></code>|null</code><br />
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
 	<tr data-order="save_to_file" id="_save_to_file">
 
 		<td class="attributes"><code>
@@ -434,7 +488,7 @@ $pan-&gt;display_statistics();</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_save_to_file">#</a>
-		<code><b>save_to_file</b>( <span>string <var>$fileName</var></span>, <span>boolean <var>$printMessage</var> = <span class="php-keyword1">true</span></span>, <span>integer <var>$indentingXml</var> = <span class="php-num">1</span></span> )</code>
+		<code>save_to_file( <span>string <var>$fileName</var></span>, <span>boolean <var>$printMessage</var> = <span class="php-keyword1">true</span></span>, <span>integer <var>$indentingXml</var> = <span class="php-num">1</span></span> )</code>
 
 		<div class="description short">
 			
@@ -472,7 +526,7 @@ $pan-&gt;display_statistics();</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_load_from_file">#</a>
-		<code><b>load_from_file</b>( <span>string <var>$fileName</var></span> )</code>
+		<code>load_from_file( <span>string <var>$fileName</var></span> )</code>
 
 		<div class="description short">
 			
@@ -506,7 +560,7 @@ $pan-&gt;display_statistics();</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_display_statistics">#</a>
-		<code><b>display_statistics</b>( )</code>
+		<code>display_statistics( )</code>
 
 		<div class="description short">
 			
@@ -535,7 +589,7 @@ $pan-&gt;display_statistics();</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_API_load_from_running">#</a>
-		<code><b>API_load_from_running</b>( <span><code><a href="class-PanAPIConnector.html">PanAPIConnector</a></code> <var>$conn</var></span> )</code>
+		<code>API_load_from_running( <span><code><a href="class-PanAPIConnector.html">PanAPIConnector</a></code> <var>$conn</var></span> )</code>
 
 		<div class="description short">
 			
@@ -564,7 +618,7 @@ $pan-&gt;display_statistics();</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_API_load_from_candidate">#</a>
-		<code><b>API_load_from_candidate</b>( <span><code><a href="class-PanAPIConnector.html">PanAPIConnector</a></code> <var>$conn</var></span> )</code>
+		<code>API_load_from_candidate( <span><code><a href="class-PanAPIConnector.html">PanAPIConnector</a></code> <var>$conn</var></span> )</code>
 
 		<div class="description short">
 			
@@ -593,7 +647,7 @@ $pan-&gt;display_statistics();</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_API_uploadConfig">#</a>
-		<code><b>API_uploadConfig</b>( <span>mixed <var>$config_filename</var> = <span class="php-quote">'panconfigurator-default.xml'</span> </span> )</code>
+		<code>API_uploadConfig( <span>mixed <var>$config_filename</var> = <span class="php-quote">'panconfigurator-default.xml'</span> </span> )</code>
 
 		<div class="description short">
 			
@@ -631,7 +685,7 @@ $pan-&gt;display_statistics();</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_API_loadManagedFirewallConfigs">#</a>
-		<code><b>API_loadManagedFirewallConfigs</b>( <span>mixed <var>$fromRunning</var></span> )</code>
+		<code>API_loadManagedFirewallConfigs( <span>mixed <var>$fromRunning</var></span> )</code>
 
 		<div class="description short">
 			
@@ -666,7 +720,7 @@ $fromRunning = TRUE</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_loadManagedFirewallsConfigs">#</a>
-		<code><b>loadManagedFirewallsConfigs</b>( <span>mixed <var>$fromDirectory</var> = <span class="php-quote">'./'</span></span> )</code>
+		<code>loadManagedFirewallsConfigs( <span>mixed <var>$fromDirectory</var> = <span class="php-quote">'./'</span></span> )</code>
 
 		<div class="description short">
 			
@@ -703,7 +757,7 @@ $fromRunning = TRUE</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_findApplicableDGForVsys">#</a>
-		<code><b>findApplicableDGForVsys</b>( <span>string <var>$deviceSerial</var></span>, <span>string <var>$vsysName</var></span> )</code>
+		<code>findApplicableDGForVsys( <span>string <var>$deviceSerial</var></span>, <span>string <var>$vsysName</var></span> )</code>
 
 		<div class="description short">
 			
@@ -743,7 +797,7 @@ $fromRunning = TRUE</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_createDeviceGroup">#</a>
-		<code><b>createDeviceGroup</b>( <span>string <var>$name</var></span> )</code>
+		<code>createDeviceGroup( <span>string <var>$name</var></span> )</code>
 
 		<div class="description short">
 			
@@ -785,7 +839,7 @@ $fromRunning = TRUE</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_getDeviceGroups">#</a>
-		<code><b>getDeviceGroups</b>( )</code>
+		<code>getDeviceGroups( )</code>
 
 		<div class="description short">
 			
@@ -818,7 +872,7 @@ $fromRunning = TRUE</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_isPanorama">#</a>
-		<code><b>isPanorama</b>( )</code>
+		<code>isPanorama( )</code>
 
 		<div class="description short">
 			
@@ -847,7 +901,7 @@ $fromRunning = TRUE</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_findSubSystemByName">#</a>
-		<code><b>findSubSystemByName</b>( <span>mixed <var>$location</var></span> )</code>
+		<code>findSubSystemByName( <span>mixed <var>$location</var></span> )</code>
 
 		<div class="description short">
 			
@@ -872,9 +926,9 @@ $fromRunning = TRUE</p>
 	<caption>Methods used from <a href="class-PathableName.html#methods">PathableName</a></caption>
 	<tr>
 		<td><code>
-			<a href="class-PathableName.html#__PANC_shortName"><b>_PANC_shortName()</b></a>, 
-			<a href="class-PathableName.html#_getLocationString"><b>getLocationString()</b></a>, 
-			<a href="class-PathableName.html#_toString"><b>toString()</b></a>
+			<a href="class-PathableName.html#__PANC_shortName">_PANC_shortNameo()</a>, 
+			<a href="class-PathableName.html#_getLocationString">getLocationStringo()</a>, 
+			<a href="class-PathableName.html#_toString">toStringo()</a>
 		</code></td>
 	</tr>
 	</table>
@@ -882,10 +936,10 @@ $fromRunning = TRUE</p>
 	<caption>Methods used from <a href="class-PanSubHelperTrait.html#methods">PanSubHelperTrait</a></caption>
 	<tr>
 		<td><code>
-			<a href="class-PanSubHelperTrait.html#_isDeviceGroup"><b>isDeviceGroup()</b></a>, 
-			<a href="class-PanSubHelperTrait.html#_isFirewall"><b>isFirewall()</b></a>, 
-			<a href="class-PanSubHelperTrait.html#_isTemplate"><b>isTemplate()</b></a>, 
-			<a href="class-PanSubHelperTrait.html#_isVirtualSystem"><b>isVirtualSystem()</b></a>
+			<a href="class-PanSubHelperTrait.html#_isDeviceGroup">isDeviceGroupo()</a>, 
+			<a href="class-PanSubHelperTrait.html#_isFirewall">isFirewallo()</a>, 
+			<a href="class-PanSubHelperTrait.html#_isTemplate">isTemplateo()</a>, 
+			<a href="class-PanSubHelperTrait.html#_isVirtualSystem">isVirtualSystemo()</a>
 		</code></td>
 	</tr>
 	</table>
@@ -1011,6 +1065,50 @@ $fromRunning = TRUE</p>
 			</div>
 		</div></td>
 	</tr>
+	<tr data-order="templateroot" id="$templateroot">
+		<td class="attributes"><code>
+			public  
+			string[]|DomNode
+		</code></td>
+
+		<td class="name">
+<var>$templateroot</var>		</td>
+		<td class="value"><code></code></td>
+		<td class="description"><div>
+			<a href="#$templateroot" class="anchor">#</a>
+
+			<div class="description short">
+				
+			</div>
+
+			<div class="description detailed hidden">
+				
+
+			</div>
+		</div></td>
+	</tr>
+	<tr data-order="templatestackroot" id="$templatestackroot">
+		<td class="attributes"><code>
+			public  
+			string[]|DomNode
+		</code></td>
+
+		<td class="name">
+<var>$templatestackroot</var>		</td>
+		<td class="value"><code></code></td>
+		<td class="description"><div>
+			<a href="#$templatestackroot" class="anchor">#</a>
+
+			<div class="description short">
+				
+			</div>
+
+			<div class="description detailed hidden">
+				
+
+			</div>
+		</div></td>
+	</tr>
 	<tr data-order="devicegrouproot" id="$devicegrouproot">
 		<td class="attributes"><code>
 			public  
@@ -1057,7 +1155,7 @@ $fromRunning = TRUE</p>
 	</tr>
 	<tr data-order="managedFirewallsSerials" id="$managedFirewallsSerials">
 		<td class="attributes"><code>
-			protected  
+			public  
 			array
 		</code></td>
 
@@ -1066,6 +1164,28 @@ $fromRunning = TRUE</p>
 		<td class="value"><code><span class="php-keyword1">Array</span>()</code></td>
 		<td class="description"><div>
 			<a href="#$managedFirewallsSerials" class="anchor">#</a>
+
+			<div class="description short">
+				
+			</div>
+
+			<div class="description detailed hidden">
+				
+
+			</div>
+		</div></td>
+	</tr>
+	<tr data-order="managedFirewallsStore" id="$managedFirewallsStore">
+		<td class="attributes"><code>
+			public  
+			mixed
+		</code></td>
+
+		<td class="name">
+<var>$managedFirewallsStore</var>		</td>
+		<td class="value"><code></code></td>
+		<td class="description"><div>
+			<a href="#$managedFirewallsStore" class="anchor">#</a>
 
 			<div class="description short">
 				
@@ -1132,6 +1252,28 @@ $fromRunning = TRUE</p>
 		<td class="value"><code><span class="php-keyword1">Array</span>()</code></td>
 		<td class="description"><div>
 			<a href="#$templates" class="anchor">#</a>
+
+			<div class="description short">
+				
+			</div>
+
+			<div class="description detailed hidden">
+				
+
+			</div>
+		</div></td>
+	</tr>
+	<tr data-order="templatestacks" id="$templatestacks">
+		<td class="attributes"><code>
+			public  
+			<code><a href="class-TemplateStack.html">TemplateStack</a>[]</code>
+		</code></td>
+
+		<td class="name">
+<var>$templatestacks</var>		</td>
+		<td class="value"><code><span class="php-keyword1">Array</span>()</code></td>
+		<td class="description"><div>
+			<a href="#$templatestacks" class="anchor">#</a>
 
 			<div class="description short">
 				
@@ -1242,6 +1384,28 @@ $fromRunning = TRUE</p>
 		<td class="value"><code></code></td>
 		<td class="description"><div>
 			<a href="#$captivePortalRules" class="anchor">#</a>
+
+			<div class="description short">
+				
+			</div>
+
+			<div class="description detailed hidden">
+				
+
+			</div>
+		</div></td>
+	</tr>
+	<tr data-order="authenticationRules" id="$authenticationRules">
+		<td class="attributes"><code>
+			public  
+			<code><a href="class-RuleStore.html">RuleStore</a></code>
+		</code></td>
+
+		<td class="name">
+<var>$authenticationRules</var>		</td>
+		<td class="value"><code></code></td>
+		<td class="description"><div>
+			<a href="#$authenticationRules" class="anchor">#</a>
 
 			<div class="description short">
 				

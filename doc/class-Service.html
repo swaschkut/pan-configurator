@@ -6,8 +6,8 @@
 
 	<title>Class Service | PAN-PHP-FRAMEWORK</title>
 
-	<script type="text/javascript" src="resources/combined.js?772778653"></script>
-	<script type="text/javascript" src="elementlist.js?4105871058"></script>
+	<script type="text/javascript" src="resources/combined.js?1588816152"></script>
+	<script type="text/javascript" src="elementlist.js?4215409147"></script>
 	<link rel="stylesheet" type="text/css" media="all" href="resources/style.css?3505392360" />
 
 </head>
@@ -44,6 +44,7 @@
 				<li><a href="class-AppOverrideRule.html">AppOverrideRule</a></li>
 				<li><a href="class-AppRuleContainer.html">AppRuleContainer</a></li>
 				<li><a href="class-AppStore.html">AppStore</a></li>
+				<li><a href="class-AuthenticationRule.html">AuthenticationRule</a></li>
 				<li><a href="class-CaptivePortalRule.html">CaptivePortalRule</a></li>
 				<li><a href="class-cidr.html">cidr</a></li>
 				<li><a href="class-CsvParser.html">CsvParser</a></li>
@@ -53,13 +54,20 @@
 				<li><a href="class-DoSRule.html">DoSRule</a></li>
 				<li><a href="class-EthernetIfStore.html">EthernetIfStore</a></li>
 				<li><a href="class-EthernetInterface.html">EthernetInterface</a></li>
+				<li><a href="class-IkeCryptoProfil.html">IkeCryptoProfil</a></li>
+				<li><a href="class-IkeCryptoProfileStore.html">IkeCryptoProfileStore</a></li>
+				<li><a href="class-IKEGateway.html">IKEGateway</a></li>
+				<li><a href="class-IKEGatewayStore.html">IKEGatewayStore</a></li>
 				<li><a href="class-InterfaceContainer.html">InterfaceContainer</a></li>
 				<li><a href="class-IP4Map.html">IP4Map</a></li>
+				<li><a href="class-IPSecCryptoProfil.html">IPSecCryptoProfil</a></li>
+				<li><a href="class-IPSecCryptoProfileStore.html">IPSecCryptoProfileStore</a></li>
 				<li><a href="class-IPsecTunnel.html">IPsecTunnel</a></li>
 				<li><a href="class-IPsecTunnelStore.html">IPsecTunnelStore</a></li>
 				<li><a href="class-LoopbackIfStore.html">LoopbackIfStore</a></li>
 				<li><a href="class-LoopbackInterface.html">LoopbackInterface</a></li>
 				<li><a href="class-ManagedDevice.html">ManagedDevice</a></li>
+				<li><a href="class-ManagedDeviceStore.html">ManagedDeviceStore</a></li>
 				<li><a href="class-NatRule.html">NatRule</a></li>
 				<li><a href="class-NetworkPropertiesContainer.html">NetworkPropertiesContainer</a></li>
 				<li><a href="class-ObjRuleContainer.html">ObjRuleContainer</a></li>
@@ -79,17 +87,25 @@
 				<li><a href="class-ServiceDstPortMapping.html">ServiceDstPortMapping</a></li>
 				<li><a href="class-ServiceGroup.html">ServiceGroup</a></li>
 				<li><a href="class-ServiceRuleContainer.html">ServiceRuleContainer</a></li>
+				<li><a href="class-ServiceSrcPortMapping.html">ServiceSrcPortMapping</a></li>
 				<li><a href="class-ServiceStore.html">ServiceStore</a></li>
 				<li><a href="class-StaticRoute.html">StaticRoute</a></li>
 				<li><a href="class-Tag.html">Tag</a></li>
 				<li><a href="class-TagRuleContainer.html">TagRuleContainer</a></li>
 				<li><a href="class-TagStore.html">TagStore</a></li>
 				<li><a href="class-Template.html">Template</a></li>
+				<li><a href="class-TemplateStack.html">TemplateStack</a></li>
 				<li><a href="class-TmpInterface.html">TmpInterface</a></li>
 				<li><a href="class-TmpInterfaceStore.html">TmpInterfaceStore</a></li>
+				<li><a href="class-TunnelIfStore.html">TunnelIfStore</a></li>
+				<li><a href="class-TunnelInterface.html">TunnelInterface</a></li>
 				<li><a href="class-VirtualRouter.html">VirtualRouter</a></li>
 				<li><a href="class-VirtualRouterStore.html">VirtualRouterStore</a></li>
 				<li><a href="class-VirtualSystem.html">VirtualSystem</a></li>
+				<li><a href="class-VirtualWire.html">VirtualWire</a></li>
+				<li><a href="class-VirtualWireStore.html">VirtualWireStore</a></li>
+				<li><a href="class-VlanIfStore.html">VlanIfStore</a></li>
+				<li><a href="class-VlanInterface.html">VlanInterface</a></li>
 				<li><a href="class-Zone.html">Zone</a></li>
 				<li><a href="class-ZoneRuleContainer.html">ZoneRuleContainer</a></li>
 				<li><a href="class-ZoneStore.html">ZoneStore</a></li>
@@ -225,7 +241,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#___construct">#</a>
-		<code><b>__construct</b>( <span>mixed <var>$name</var></span>, <span><code><a href="class-ServiceStore.html">ServiceStore</a></code> <var>$owner</var> = <span class="php-keyword1">null</span></span>, <span>boolean <var>$fromTemplateXml</var> = <span class="php-keyword1">false</span></span> )</code>
+		<code>__construct( <span>mixed <var>$name</var></span>, <span><code><a href="class-ServiceStore.html">ServiceStore</a></code> <var>$owner</var> = <span class="php-keyword1">null</span></span>, <span>boolean <var>$fromTemplateXml</var> = <span class="php-keyword1">false</span></span> )</code>
 
 		<div class="description short">
 			
@@ -263,7 +279,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_load_from_domxml">#</a>
-		<code><b>load_from_domxml</b>( <span><code><a href="class-DOMElement.html">DOMElement</a></code> <var>$xml</var></span> )</code>
+		<code>load_from_domxml( <span><code><a href="class-DOMElement.html">DOMElement</a></code> <var>$xml</var></span> )</code>
 
 		<div class="description short">
 			
@@ -301,7 +317,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_setDestPort">#</a>
-		<code><b>setDestPort</b>( <span>string <var>$newPorts</var></span> )</code>
+		<code>setDestPort( <span>string <var>$newPorts</var></span> )</code>
 
 		<div class="description short">
 			
@@ -339,7 +355,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_API_setDestPort">#</a>
-		<code><b>API_setDestPort</b>( <span>string <var>$newPorts</var></span> )</code>
+		<code>API_setDestPort( <span>string <var>$newPorts</var></span> )</code>
 
 		<div class="description short">
 			
@@ -377,7 +393,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_setSourcePort">#</a>
-		<code><b>setSourcePort</b>( <span>mixed <var>$newPorts</var></span> )</code>
+		<code>setSourcePort( <span>mixed <var>$newPorts</var></span> )</code>
 
 		<div class="description short">
 			
@@ -406,7 +422,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_isTcp">#</a>
-		<code><b>isTcp</b>( )</code>
+		<code>isTcp( )</code>
 
 		<div class="description short">
 			
@@ -435,7 +451,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_isUdp">#</a>
-		<code><b>isUdp</b>( )</code>
+		<code>isUdp( )</code>
 
 		<div class="description short">
 			
@@ -464,7 +480,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_setProtocol">#</a>
-		<code><b>setProtocol</b>( <span>string <var>$newProtocol</var></span> )</code>
+		<code>setProtocol( <span>string <var>$newProtocol</var></span> )</code>
 
 		<div class="description short">
 			
@@ -498,7 +514,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_protocol">#</a>
-		<code><b>protocol</b>( )</code>
+		<code>protocol( )</code>
 
 		<div class="description short">
 			
@@ -531,7 +547,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_getDestPort">#</a>
-		<code><b>getDestPort</b>( )</code>
+		<code>getDestPort( )</code>
 
 		<div class="description short">
 			
@@ -564,7 +580,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_getSourcePort">#</a>
-		<code><b>getSourcePort</b>( )</code>
+		<code>getSourcePort( )</code>
 
 		<div class="description short">
 			
@@ -597,7 +613,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_setName">#</a>
-		<code><b>setName</b>( <span>string <var>$newName</var></span> )</code>
+		<code>setName( <span>string <var>$newName</var></span> )</code>
 
 		<div class="description short">
 			
@@ -631,7 +647,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_API_setName">#</a>
-		<code><b>API_setName</b>( <span>string <var>$newName</var></span> )</code>
+		<code>API_setName( <span>string <var>$newName</var></span> )</code>
 
 		<div class="description short">
 			
@@ -665,7 +681,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_getXPath">#</a>
-		<code><b>getXPath</b>( )</code>
+		<code>getXPath( )</code>
 
 		<div class="description short">
 			
@@ -698,7 +714,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_isService">#</a>
-		<code><b>isService</b>( )</code>
+		<code>isService( )</code>
 
 		<div class="description short">
 			
@@ -727,7 +743,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_isTmpSrv">#</a>
-		<code><b>isTmpSrv</b>( )</code>
+		<code>isTmpSrv( )</code>
 
 		<div class="description short">
 			
@@ -756,7 +772,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_equals">#</a>
-		<code><b>equals</b>( <span>mixed <var>$otherObject</var></span> )</code>
+		<code>equals( <span>mixed <var>$otherObject</var></span> )</code>
 
 		<div class="description short">
 			
@@ -794,7 +810,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_sameValue">#</a>
-		<code><b>sameValue</b>( <span><code><a href="class-Service.html">Service</a></code> <var>$otherObject</var></span> )</code>
+		<code>sameValue( <span><code><a href="class-Service.html">Service</a></code> <var>$otherObject</var></span> )</code>
 
 		<div class="description short">
 			
@@ -823,7 +839,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_dstPortMapping">#</a>
-		<code><b>dstPortMapping</b>( )</code>
+		<code>dstPortMapping( )</code>
 
 		<div class="description short">
 			
@@ -849,6 +865,43 @@
 		</div>
 		</div></td>
 	</tr>
+	<tr data-order="srcPortMapping" id="_srcPortMapping">
+
+		<td class="attributes"><code>
+			 public 
+			<code><a href="class-ServiceSrcPortMapping.html">ServiceSrcPortMapping</a></code>
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_srcPortMapping">#</a>
+		<code>srcPortMapping( )</code>
+
+		<div class="description short">
+			
+		</div>
+
+		<div class="description detailed hidden">
+			
+
+
+
+				<h4>Returns</h4>
+				<div class="list">
+					<code><code><a href="class-ServiceSrcPortMapping.html">ServiceSrcPortMapping</a></code></code><br />
+				</div>
+
+				<h4>Throws</h4>
+				<div class="list">
+					<code><code><a href="class-Exception.html">Exception</a></code></code><br />
+				</div>
+
+
+
+		</div>
+		</div></td>
+	</tr>
 	<tr data-order="API_delete" id="_API_delete">
 
 		<td class="attributes"><code>
@@ -860,7 +913,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_API_delete">#</a>
-		<code><b>API_delete</b>( )</code>
+		<code>API_delete( )</code>
 
 		<div class="description short">
 			
@@ -889,7 +942,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_removeReference">#</a>
-		<code><b>removeReference</b>( <span>mixed <var>$object</var></span> )</code>
+		<code>removeReference( <span>mixed <var>$object</var></span> )</code>
 
 		<div class="description short">
 			
@@ -914,9 +967,9 @@
 	<caption>Methods used from <a href="class-PathableName.html#methods">PathableName</a></caption>
 	<tr>
 		<td><code>
-			<a href="class-PathableName.html#__PANC_shortName"><b>_PANC_shortName()</b></a>, 
-			<a href="class-PathableName.html#_getLocationString"><b>getLocationString()</b></a>, 
-			<a href="class-PathableName.html#_toString"><b>toString()</b></a>
+			<a href="class-PathableName.html#__PANC_shortName">_PANC_shortNameo()</a>, 
+			<a href="class-PathableName.html#_getLocationString">getLocationStringo()</a>, 
+			<a href="class-PathableName.html#_toString">toStringo()</a>
 		</code></td>
 	</tr>
 	</table>
@@ -924,10 +977,11 @@
 	<caption>Methods used from <a href="class-XmlConvertible.html#methods">XmlConvertible</a></caption>
 	<tr>
 		<td><code>
-			<a href="class-XmlConvertible.html#_API_sync"><b>API_sync()</b></a>, 
-			<a href="class-XmlConvertible.html#_getChildXmlText_inline"><b>getChildXmlText_inline()</b></a>, 
-			<a href="class-XmlConvertible.html#_getXmlText"><b>getXmlText()</b></a>, 
-			<a href="class-XmlConvertible.html#_getXmlText_inline"><b>getXmlText_inline()</b></a>
+			<a href="class-XmlConvertible.html#_API_sync">API_synco()</a>, 
+			<a href="class-XmlConvertible.html#_getChildXmlText_inline">getChildXmlText_inlineo()</a>, 
+			<a href="class-XmlConvertible.html#_getXmlText">getXmlTexto()</a>, 
+			<a href="class-XmlConvertible.html#_getXmlText_inline">getXmlText_inlineo()</a>, 
+			<a href="class-XmlConvertible.html#_set_node_attribute">set_node_attributeo()</a>
 		</code></td>
 	</tr>
 	</table>
@@ -935,10 +989,11 @@
 	<caption>Methods used from <a href="class-ObjectWithDescription.html#methods">ObjectWithDescription</a></caption>
 	<tr>
 		<td><code>
-			<a href="class-ObjectWithDescription.html#_API_setDescription"><b>API_setDescription()</b></a>, 
-			<a href="class-ObjectWithDescription.html#__load_description_from_domxml"><b>_load_description_from_domxml()</b></a>, 
-			<a href="class-ObjectWithDescription.html#_description"><b>description()</b></a>, 
-			<a href="class-ObjectWithDescription.html#_setDescription"><b>setDescription()</b></a>
+			<a href="class-ObjectWithDescription.html#_API_setDescription">API_setDescriptiono()</a>, 
+			<a href="class-ObjectWithDescription.html#__load_description_from_domxml">_load_description_from_domxmlo()</a>, 
+			<a href="class-ObjectWithDescription.html#_description">descriptiono()</a>, 
+			<a href="class-ObjectWithDescription.html#_description_merge">description_mergeo()</a>, 
+			<a href="class-ObjectWithDescription.html#_setDescription">setDescriptiono()</a>
 		</code></td>
 	</tr>
 	</table>
@@ -946,14 +1001,14 @@
 	<caption>Methods used from <a href="class-ServiceCommon.html#methods">ServiceCommon</a></caption>
 	<tr>
 		<td><code>
-			<a href="class-ServiceCommon.html#_API_addObjectWhereIamUsed"><b>API_addObjectWhereIamUsed()</b></a>, 
-			<a href="class-ServiceCommon.html#_API_removeWhereIamUsed"><b>API_removeWhereIamUsed()</b></a>, 
-			<a href="class-ServiceCommon.html#_API_replaceWhereIamUsed"><b>API_replaceWhereIamUsed()</b></a>, 
-			<a href="class-ServiceCommon.html#___replaceWhereIamUsed"><b>__replaceWhereIamUsed()</b></a>, 
-			<a href="class-ServiceCommon.html#_addObjectWhereIamUsed"><b>addObjectWhereIamUsed()</b></a>, 
-			<a href="class-ServiceCommon.html#_isGroup"><b>isGroup()</b></a>, 
-			<a href="class-ServiceCommon.html#_removeWhereIamUsed"><b>removeWhereIamUsed()</b></a>, 
-			<a href="class-ServiceCommon.html#_replaceWhereIamUsed"><b>replaceWhereIamUsed()</b></a>
+			<a href="class-ServiceCommon.html#_API_addObjectWhereIamUsed">API_addObjectWhereIamUsedo()</a>, 
+			<a href="class-ServiceCommon.html#_API_removeWhereIamUsed">API_removeWhereIamUsedo()</a>, 
+			<a href="class-ServiceCommon.html#_API_replaceWhereIamUsed">API_replaceWhereIamUsedo()</a>, 
+			<a href="class-ServiceCommon.html#___replaceWhereIamUsed">__replaceWhereIamUsedo()</a>, 
+			<a href="class-ServiceCommon.html#_addObjectWhereIamUsed">addObjectWhereIamUsedo()</a>, 
+			<a href="class-ServiceCommon.html#_isGroup">isGroupo()</a>, 
+			<a href="class-ServiceCommon.html#_removeWhereIamUsed">removeWhereIamUsedo()</a>, 
+			<a href="class-ServiceCommon.html#_replaceWhereIamUsed">replaceWhereIamUsedo()</a>
 		</code></td>
 	</tr>
 	</table>
@@ -961,25 +1016,25 @@
 	<caption>Methods used from <a href="class-ReferencableObject.html#methods">ReferencableObject</a></caption>
 	<tr>
 		<td><code>
-			<a href="class-ReferencableObject.html#_ReferencesStoreValidation"><b>ReferencesStoreValidation()</b></a>, 
-			<a href="class-ReferencableObject.html#_ReferencesTypeValidation"><b>ReferencesTypeValidation()</b></a>, 
-			<a href="class-ReferencableObject.html#_addReference"><b>addReference()</b></a>, 
-			<a href="class-ReferencableObject.html#_broadcastMyNameChange"><b>broadcastMyNameChange()</b></a>, 
-			<a href="class-ReferencableObject.html#_countReferences"><b>countReferences()</b></a>, 
-			<a href="class-ReferencableObject.html#_display_references"><b>display_references()</b></a>, 
-			<a href="class-ReferencableObject.html#_findAssociatedRule_byType"><b>findAssociatedRule_byType()</b></a>, 
-			<a href="class-ReferencableObject.html#_findAssociatedSecurityRules"><b>findAssociatedSecurityRules()</b></a>, 
-			<a href="class-ReferencableObject.html#_findReferencesWithClass"><b>findReferencesWithClass()</b></a>, 
-			<a href="class-ReferencableObject.html#_generateRefHashComp"><b>generateRefHashComp()</b></a>, 
-			<a href="class-ReferencableObject.html#_getRefHashComp"><b>getRefHashComp()</b></a>, 
-			<a href="class-ReferencableObject.html#_getReferences"><b>getReferences()</b></a>, 
-			<a href="class-ReferencableObject.html#_getReferencesLocation"><b>getReferencesLocation()</b></a>, 
-			<a href="class-ReferencableObject.html#_getReferencesStore"><b>getReferencesStore()</b></a>, 
-			<a href="class-ReferencableObject.html#_getReferencesType"><b>getReferencesType()</b></a>, 
-			<a href="class-ReferencableObject.html#_name"><b>name()</b></a>, 
-			<a href="class-ReferencableObject.html#_replaceMeGlobally"><b>replaceMeGlobally()</b></a>, 
-			<a href="class-ReferencableObject.html#_setRefName"><b>setRefName()</b></a>, 
-			<a href="class-ReferencableObject.html#_removeReference"><b>super_removeReference()</b></a>(as super_removeReference())
+			<a href="class-ReferencableObject.html#_ReferencesStoreValidation">ReferencesStoreValidationo()</a>, 
+			<a href="class-ReferencableObject.html#_ReferencesTypeValidation">ReferencesTypeValidationo()</a>, 
+			<a href="class-ReferencableObject.html#_addReference">addReferenceo()</a>, 
+			<a href="class-ReferencableObject.html#_broadcastMyNameChange">broadcastMyNameChangeo()</a>, 
+			<a href="class-ReferencableObject.html#_countReferences">countReferenceso()</a>, 
+			<a href="class-ReferencableObject.html#_display_references">display_referenceso()</a>, 
+			<a href="class-ReferencableObject.html#_findAssociatedRule_byType">findAssociatedRule_byTypeo()</a>, 
+			<a href="class-ReferencableObject.html#_findAssociatedSecurityRules">findAssociatedSecurityRuleso()</a>, 
+			<a href="class-ReferencableObject.html#_findReferencesWithClass">findReferencesWithClasso()</a>, 
+			<a href="class-ReferencableObject.html#_generateRefHashComp">generateRefHashCompo()</a>, 
+			<a href="class-ReferencableObject.html#_getRefHashComp">getRefHashCompo()</a>, 
+			<a href="class-ReferencableObject.html#_getReferences">getReferenceso()</a>, 
+			<a href="class-ReferencableObject.html#_getReferencesLocation">getReferencesLocationo()</a>, 
+			<a href="class-ReferencableObject.html#_getReferencesStore">getReferencesStoreo()</a>, 
+			<a href="class-ReferencableObject.html#_getReferencesType">getReferencesTypeo()</a>, 
+			<a href="class-ReferencableObject.html#_name">nameo()</a>, 
+			<a href="class-ReferencableObject.html#_replaceMeGlobally">replaceMeGloballyo()</a>, 
+			<a href="class-ReferencableObject.html#_setRefName">setRefNameo()</a>, 
+			<a href="class-ReferencableObject.html#_removeReference">super_removeReferenceo()</a>(as super_removeReference())
 		</code></td>
 	</tr>
 	</table>

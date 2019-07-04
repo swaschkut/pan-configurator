@@ -6,8 +6,8 @@
 
 	<title>Class TagStore | PAN-PHP-FRAMEWORK</title>
 
-	<script type="text/javascript" src="resources/combined.js?772778653"></script>
-	<script type="text/javascript" src="elementlist.js?4105871058"></script>
+	<script type="text/javascript" src="resources/combined.js?1588816152"></script>
+	<script type="text/javascript" src="elementlist.js?4215409147"></script>
 	<link rel="stylesheet" type="text/css" media="all" href="resources/style.css?3505392360" />
 
 </head>
@@ -44,6 +44,7 @@
 				<li><a href="class-AppOverrideRule.html">AppOverrideRule</a></li>
 				<li><a href="class-AppRuleContainer.html">AppRuleContainer</a></li>
 				<li><a href="class-AppStore.html">AppStore</a></li>
+				<li><a href="class-AuthenticationRule.html">AuthenticationRule</a></li>
 				<li><a href="class-CaptivePortalRule.html">CaptivePortalRule</a></li>
 				<li><a href="class-cidr.html">cidr</a></li>
 				<li><a href="class-CsvParser.html">CsvParser</a></li>
@@ -53,13 +54,20 @@
 				<li><a href="class-DoSRule.html">DoSRule</a></li>
 				<li><a href="class-EthernetIfStore.html">EthernetIfStore</a></li>
 				<li><a href="class-EthernetInterface.html">EthernetInterface</a></li>
+				<li><a href="class-IkeCryptoProfil.html">IkeCryptoProfil</a></li>
+				<li><a href="class-IkeCryptoProfileStore.html">IkeCryptoProfileStore</a></li>
+				<li><a href="class-IKEGateway.html">IKEGateway</a></li>
+				<li><a href="class-IKEGatewayStore.html">IKEGatewayStore</a></li>
 				<li><a href="class-InterfaceContainer.html">InterfaceContainer</a></li>
 				<li><a href="class-IP4Map.html">IP4Map</a></li>
+				<li><a href="class-IPSecCryptoProfil.html">IPSecCryptoProfil</a></li>
+				<li><a href="class-IPSecCryptoProfileStore.html">IPSecCryptoProfileStore</a></li>
 				<li><a href="class-IPsecTunnel.html">IPsecTunnel</a></li>
 				<li><a href="class-IPsecTunnelStore.html">IPsecTunnelStore</a></li>
 				<li><a href="class-LoopbackIfStore.html">LoopbackIfStore</a></li>
 				<li><a href="class-LoopbackInterface.html">LoopbackInterface</a></li>
 				<li><a href="class-ManagedDevice.html">ManagedDevice</a></li>
+				<li><a href="class-ManagedDeviceStore.html">ManagedDeviceStore</a></li>
 				<li><a href="class-NatRule.html">NatRule</a></li>
 				<li><a href="class-NetworkPropertiesContainer.html">NetworkPropertiesContainer</a></li>
 				<li><a href="class-ObjRuleContainer.html">ObjRuleContainer</a></li>
@@ -79,17 +87,25 @@
 				<li><a href="class-ServiceDstPortMapping.html">ServiceDstPortMapping</a></li>
 				<li><a href="class-ServiceGroup.html">ServiceGroup</a></li>
 				<li><a href="class-ServiceRuleContainer.html">ServiceRuleContainer</a></li>
+				<li><a href="class-ServiceSrcPortMapping.html">ServiceSrcPortMapping</a></li>
 				<li><a href="class-ServiceStore.html">ServiceStore</a></li>
 				<li><a href="class-StaticRoute.html">StaticRoute</a></li>
 				<li><a href="class-Tag.html">Tag</a></li>
 				<li><a href="class-TagRuleContainer.html">TagRuleContainer</a></li>
 				<li class="active"><a href="class-TagStore.html">TagStore</a></li>
 				<li><a href="class-Template.html">Template</a></li>
+				<li><a href="class-TemplateStack.html">TemplateStack</a></li>
 				<li><a href="class-TmpInterface.html">TmpInterface</a></li>
 				<li><a href="class-TmpInterfaceStore.html">TmpInterfaceStore</a></li>
+				<li><a href="class-TunnelIfStore.html">TunnelIfStore</a></li>
+				<li><a href="class-TunnelInterface.html">TunnelInterface</a></li>
 				<li><a href="class-VirtualRouter.html">VirtualRouter</a></li>
 				<li><a href="class-VirtualRouterStore.html">VirtualRouterStore</a></li>
 				<li><a href="class-VirtualSystem.html">VirtualSystem</a></li>
+				<li><a href="class-VirtualWire.html">VirtualWire</a></li>
+				<li><a href="class-VirtualWireStore.html">VirtualWireStore</a></li>
+				<li><a href="class-VlanIfStore.html">VlanIfStore</a></li>
+				<li><a href="class-VlanInterface.html">VlanInterface</a></li>
 				<li><a href="class-Zone.html">Zone</a></li>
 				<li><a href="class-ZoneRuleContainer.html">ZoneRuleContainer</a></li>
 				<li><a href="class-ZoneStore.html">ZoneStore</a></li>
@@ -233,7 +249,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#___construct">#</a>
-		<code><b>__construct</b>( <span>mixed <var>$owner</var></span> )</code>
+		<code>__construct( <span>mixed <var>$owner</var></span> )</code>
 
 		<div class="description short">
 			
@@ -262,7 +278,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_find">#</a>
-		<code><b>find</b>( <span>mixed <var>$name</var></span>, <span>null <var>$ref</var> = <span class="php-keyword1">null</span></span>, <span>boolean <var>$nested</var> = <span class="php-keyword1">true</span></span> )</code>
+		<code>find( <span>mixed <var>$name</var></span>, <span>null <var>$ref</var> = <span class="php-keyword1">null</span></span>, <span>boolean <var>$nested</var> = <span class="php-keyword1">true</span></span> )</code>
 
 		<div class="description short">
 			
@@ -304,7 +320,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_removeAllTags">#</a>
-		<code><b>removeAllTags</b>( )</code>
+		<code>removeAllTags( )</code>
 
 		<div class="description short">
 			
@@ -333,7 +349,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_addTag">#</a>
-		<code><b>addTag</b>( <span><code><a href="class-Tag.html">Tag</a></code> <var>$Obj</var></span>, <span>boolean <var>$rewriteXML</var> = <span class="php-keyword1">true</span> </span> )</code>
+		<code>addTag( <span><code><a href="class-Tag.html">Tag</a></code> <var>$Obj</var></span>, <span>boolean <var>$rewriteXML</var> = <span class="php-keyword1">true</span> </span> )</code>
 
 		<div class="description short">
 			
@@ -377,7 +393,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_findAvailableTagName">#</a>
-		<code><b>findAvailableTagName</b>( <span>string <var>$base</var></span>, <span>string <var>$suffix</var></span>, <span>integer|string <var>$startCount</var> = <span class="php-quote">''</span></span> )</code>
+		<code>findAvailableTagName( <span>string <var>$base</var></span>, <span>string <var>$suffix</var></span>, <span>integer|string <var>$startCount</var> = <span class="php-quote">''</span></span> )</code>
 
 		<div class="description short">
 			
@@ -419,7 +435,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_tags">#</a>
-		<code><b>tags</b>( )</code>
+		<code>tags( )</code>
 
 		<div class="description short">
 			
@@ -456,7 +472,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_createTag">#</a>
-		<code><b>createTag</b>( <span>mixed <var>$name</var></span>, <span>mixed <var>$ref</var> = <span class="php-keyword1">null</span></span> )</code>
+		<code>createTag( <span>mixed <var>$name</var></span>, <span>mixed <var>$ref</var> = <span class="php-keyword1">null</span></span> )</code>
 
 		<div class="description short">
 			
@@ -485,7 +501,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_findOrCreate">#</a>
-		<code><b>findOrCreate</b>( <span>mixed <var>$name</var></span>, <span>mixed <var>$ref</var> = <span class="php-keyword1">null</span></span>, <span>mixed <var>$nested</var> = <span class="php-keyword1">true</span></span> )</code>
+		<code>findOrCreate( <span>mixed <var>$name</var></span>, <span>mixed <var>$ref</var> = <span class="php-keyword1">null</span></span>, <span>mixed <var>$nested</var> = <span class="php-keyword1">true</span></span> )</code>
 
 		<div class="description short">
 			
@@ -522,7 +538,7 @@ it and return it.</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_API_createTag">#</a>
-		<code><b>API_createTag</b>( <span>mixed <var>$name</var></span>, <span>mixed <var>$ref</var> = <span class="php-keyword1">null</span></span> )</code>
+		<code>API_createTag( <span>mixed <var>$name</var></span>, <span>mixed <var>$ref</var> = <span class="php-keyword1">null</span></span> )</code>
 
 		<div class="description short">
 			
@@ -551,7 +567,7 @@ it and return it.</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_removeTag">#</a>
-		<code><b>removeTag</b>( <span><code><a href="class-Tag.html">Tag</a></code> <var>$tag</var></span> )</code>
+		<code>removeTag( <span><code><a href="class-Tag.html">Tag</a></code> <var>$tag</var></span> )</code>
 
 		<div class="description short">
 			
@@ -589,7 +605,7 @@ it and return it.</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_API_removeTag">#</a>
-		<code><b>API_removeTag</b>( <span><code><a href="class-Tag.html">Tag</a></code> <var>$tag</var></span> )</code>
+		<code>API_removeTag( <span><code><a href="class-Tag.html">Tag</a></code> <var>$tag</var></span> )</code>
 
 		<div class="description short">
 			
@@ -627,7 +643,7 @@ it and return it.</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_getXPath">#</a>
-		<code><b>getXPath</b>( )</code>
+		<code>getXPath( )</code>
 
 		<div class="description short">
 			
@@ -656,7 +672,7 @@ it and return it.</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_getTagStoreXPath">#</a>
-		<code><b>getTagStoreXPath</b>( )</code>
+		<code>getTagStoreXPath( )</code>
 
 		<div class="description short">
 			
@@ -685,7 +701,7 @@ it and return it.</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_rewriteXML">#</a>
-		<code><b>rewriteXML</b>( )</code>
+		<code>rewriteXML( )</code>
 
 		<div class="description short">
 			
@@ -711,17 +727,17 @@ it and return it.</p>
 	<caption>Methods inherited from <a href="class-ObjStore.html#methods">ObjStore</a></caption>
 	<tr>
 		<td><code>
-			<a href="class-ObjStore.html#_count"><b>count()</b></a>, 
-			<a href="class-ObjStore.html#_countUnused"><b>countUnused()</b></a>, 
-			<a href="class-ObjStore.html#_createTmp"><b>createTmp()</b></a>, 
-			<a href="class-ObjStore.html#_display"><b>display()</b></a>, 
-			<a href="class-ObjStore.html#_findByName"><b>findByName()</b></a>, 
-			<a href="class-ObjStore.html#_getAll"><b>getAll()</b></a>, 
-			<a href="class-ObjStore.html#_inStore"><b>inStore()</b></a>, 
-			<a href="class-ObjStore.html#_referencedObjectRenamed"><b>referencedObjectRenamed()</b></a>, 
-			<a href="class-ObjStore.html#_remove"><b>remove()</b></a>, 
-			<a href="class-ObjStore.html#_removeAll"><b>removeAll()</b></a>, 
-			<a href="class-ObjStore.html#_setName"><b>setName()</b></a>
+			<a href="class-ObjStore.html#_count">count()</a>, 
+			<a href="class-ObjStore.html#_countUnused">countUnused()</a>, 
+			<a href="class-ObjStore.html#_createTmp">createTmp()</a>, 
+			<a href="class-ObjStore.html#_display">display()</a>, 
+			<a href="class-ObjStore.html#_findByName">findByName()</a>, 
+			<a href="class-ObjStore.html#_getAll">getAll()</a>, 
+			<a href="class-ObjStore.html#_inStore">inStore()</a>, 
+			<a href="class-ObjStore.html#_referencedObjectRenamed">referencedObjectRenamed()</a>, 
+			<a href="class-ObjStore.html#_remove">remove()</a>, 
+			<a href="class-ObjStore.html#_removeAll">removeAll()</a>, 
+			<a href="class-ObjStore.html#_setName">setName()</a>
 		</code></td>
 	</tr>
 	</table>
@@ -730,9 +746,9 @@ it and return it.</p>
 	<caption>Methods used from <a href="class-PathableName.html#methods">PathableName</a></caption>
 	<tr>
 		<td><code>
-			<a href="class-PathableName.html#__PANC_shortName"><b>_PANC_shortName()</b></a>, 
-			<a href="class-PathableName.html#_getLocationString"><b>getLocationString()</b></a>, 
-			<a href="class-PathableName.html#_toString"><b>toString()</b></a>
+			<a href="class-PathableName.html#__PANC_shortName">_PANC_shortNameo()</a>, 
+			<a href="class-PathableName.html#_getLocationString">getLocationStringo()</a>, 
+			<a href="class-PathableName.html#_toString">toStringo()</a>
 		</code></td>
 	</tr>
 	</table>
@@ -740,10 +756,11 @@ it and return it.</p>
 	<caption>Methods used from <a href="class-XmlConvertible.html#methods">XmlConvertible</a></caption>
 	<tr>
 		<td><code>
-			<a href="class-XmlConvertible.html#_API_sync"><b>API_sync()</b></a>, 
-			<a href="class-XmlConvertible.html#_getChildXmlText_inline"><b>getChildXmlText_inline()</b></a>, 
-			<a href="class-XmlConvertible.html#_getXmlText"><b>getXmlText()</b></a>, 
-			<a href="class-XmlConvertible.html#_getXmlText_inline"><b>getXmlText_inline()</b></a>
+			<a href="class-XmlConvertible.html#_API_sync">API_synco()</a>, 
+			<a href="class-XmlConvertible.html#_getChildXmlText_inline">getChildXmlText_inlineo()</a>, 
+			<a href="class-XmlConvertible.html#_getXmlText">getXmlTexto()</a>, 
+			<a href="class-XmlConvertible.html#_getXmlText_inline">getXmlText_inlineo()</a>, 
+			<a href="class-XmlConvertible.html#_set_node_attribute">set_node_attributeo()</a>
 		</code></td>
 	</tr>
 	</table>
