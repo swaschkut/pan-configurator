@@ -6,8 +6,8 @@
 
 	<title>Class NatRule | PAN-PHP-FRAMEWORK</title>
 
-	<script type="text/javascript" src="resources/combined.js?772778653"></script>
-	<script type="text/javascript" src="elementlist.js?4105871058"></script>
+	<script type="text/javascript" src="resources/combined.js?1588816152"></script>
+	<script type="text/javascript" src="elementlist.js?4215409147"></script>
 	<link rel="stylesheet" type="text/css" media="all" href="resources/style.css?3505392360" />
 
 </head>
@@ -44,6 +44,7 @@
 				<li><a href="class-AppOverrideRule.html">AppOverrideRule</a></li>
 				<li><a href="class-AppRuleContainer.html">AppRuleContainer</a></li>
 				<li><a href="class-AppStore.html">AppStore</a></li>
+				<li><a href="class-AuthenticationRule.html">AuthenticationRule</a></li>
 				<li><a href="class-CaptivePortalRule.html">CaptivePortalRule</a></li>
 				<li><a href="class-cidr.html">cidr</a></li>
 				<li><a href="class-CsvParser.html">CsvParser</a></li>
@@ -53,13 +54,20 @@
 				<li><a href="class-DoSRule.html">DoSRule</a></li>
 				<li><a href="class-EthernetIfStore.html">EthernetIfStore</a></li>
 				<li><a href="class-EthernetInterface.html">EthernetInterface</a></li>
+				<li><a href="class-IkeCryptoProfil.html">IkeCryptoProfil</a></li>
+				<li><a href="class-IkeCryptoProfileStore.html">IkeCryptoProfileStore</a></li>
+				<li><a href="class-IKEGateway.html">IKEGateway</a></li>
+				<li><a href="class-IKEGatewayStore.html">IKEGatewayStore</a></li>
 				<li><a href="class-InterfaceContainer.html">InterfaceContainer</a></li>
 				<li><a href="class-IP4Map.html">IP4Map</a></li>
+				<li><a href="class-IPSecCryptoProfil.html">IPSecCryptoProfil</a></li>
+				<li><a href="class-IPSecCryptoProfileStore.html">IPSecCryptoProfileStore</a></li>
 				<li><a href="class-IPsecTunnel.html">IPsecTunnel</a></li>
 				<li><a href="class-IPsecTunnelStore.html">IPsecTunnelStore</a></li>
 				<li><a href="class-LoopbackIfStore.html">LoopbackIfStore</a></li>
 				<li><a href="class-LoopbackInterface.html">LoopbackInterface</a></li>
 				<li><a href="class-ManagedDevice.html">ManagedDevice</a></li>
+				<li><a href="class-ManagedDeviceStore.html">ManagedDeviceStore</a></li>
 				<li class="active"><a href="class-NatRule.html">NatRule</a></li>
 				<li><a href="class-NetworkPropertiesContainer.html">NetworkPropertiesContainer</a></li>
 				<li><a href="class-ObjRuleContainer.html">ObjRuleContainer</a></li>
@@ -79,17 +87,25 @@
 				<li><a href="class-ServiceDstPortMapping.html">ServiceDstPortMapping</a></li>
 				<li><a href="class-ServiceGroup.html">ServiceGroup</a></li>
 				<li><a href="class-ServiceRuleContainer.html">ServiceRuleContainer</a></li>
+				<li><a href="class-ServiceSrcPortMapping.html">ServiceSrcPortMapping</a></li>
 				<li><a href="class-ServiceStore.html">ServiceStore</a></li>
 				<li><a href="class-StaticRoute.html">StaticRoute</a></li>
 				<li><a href="class-Tag.html">Tag</a></li>
 				<li><a href="class-TagRuleContainer.html">TagRuleContainer</a></li>
 				<li><a href="class-TagStore.html">TagStore</a></li>
 				<li><a href="class-Template.html">Template</a></li>
+				<li><a href="class-TemplateStack.html">TemplateStack</a></li>
 				<li><a href="class-TmpInterface.html">TmpInterface</a></li>
 				<li><a href="class-TmpInterfaceStore.html">TmpInterfaceStore</a></li>
+				<li><a href="class-TunnelIfStore.html">TunnelIfStore</a></li>
+				<li><a href="class-TunnelInterface.html">TunnelInterface</a></li>
 				<li><a href="class-VirtualRouter.html">VirtualRouter</a></li>
 				<li><a href="class-VirtualRouterStore.html">VirtualRouterStore</a></li>
 				<li><a href="class-VirtualSystem.html">VirtualSystem</a></li>
+				<li><a href="class-VirtualWire.html">VirtualWire</a></li>
+				<li><a href="class-VirtualWireStore.html">VirtualWireStore</a></li>
+				<li><a href="class-VlanIfStore.html">VlanIfStore</a></li>
+				<li><a href="class-VlanInterface.html">VlanInterface</a></li>
 				<li><a href="class-Zone.html">Zone</a></li>
 				<li><a href="class-ZoneRuleContainer.html">ZoneRuleContainer</a></li>
 				<li><a href="class-ZoneStore.html">ZoneStore</a></li>
@@ -234,7 +250,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#___construct">#</a>
-		<code><b>__construct</b>( <span><code><a href="class-RuleStore.html">RuleStore</a></code> <var>$owner</var></span>, <span>boolean <var>$fromTemplateXML</var> = <span class="php-keyword1">false</span></span> )</code>
+		<code>__construct( <span><code><a href="class-RuleStore.html">RuleStore</a></code> <var>$owner</var></span>, <span>boolean <var>$fromTemplateXML</var> = <span class="php-keyword1">false</span></span> )</code>
 
 		<div class="description short">
 			
@@ -270,7 +286,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_load_from_domxml">#</a>
-		<code><b>load_from_domxml</b>( <span>mixed <var>$xml</var></span> )</code>
+		<code>load_from_domxml( <span>mixed <var>$xml</var></span> )</code>
 
 		<div class="description short">
 			
@@ -299,7 +315,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_referencedObjectRenamed">#</a>
-		<code><b>referencedObjectRenamed</b>( <span>mixed <var>$h</var></span> )</code>
+		<code>referencedObjectRenamed( <span>mixed <var>$h</var></span> )</code>
 
 		<div class="description short">
 			
@@ -328,7 +344,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_replaceReferencedObject">#</a>
-		<code><b>replaceReferencedObject</b>( <span><code><a href="class-ReferencableObject.html">ReferencableObject</a></code> <var>$old</var></span>, <span><code><a href="class-ReferencableObject.html">ReferencableObject</a></code> <var>$new</var></span> )</code>
+		<code>replaceReferencedObject( <span><code><a href="class-ReferencableObject.html">ReferencableObject</a></code> <var>$old</var></span>, <span><code><a href="class-ReferencableObject.html">ReferencableObject</a></code> <var>$new</var></span> )</code>
 
 		<div class="description short">
 			
@@ -372,7 +388,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_API_replaceReferencedObject">#</a>
-		<code><b>API_replaceReferencedObject</b>( <span>mixed <var>$old</var></span>, <span>mixed <var>$new</var></span> )</code>
+		<code>API_replaceReferencedObject( <span>mixed <var>$old</var></span>, <span>mixed <var>$new</var></span> )</code>
 
 		<div class="description short">
 			
@@ -416,7 +432,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_rewriteSNAT_XML">#</a>
-		<code><b>rewriteSNAT_XML</b>( )</code>
+		<code>rewriteSNAT_XML( )</code>
 
 		<div class="description short">
 			
@@ -445,7 +461,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_setBiDirectional">#</a>
-		<code><b>setBiDirectional</b>( <span>boolean <var>$yes</var></span> )</code>
+		<code>setBiDirectional( <span>boolean <var>$yes</var></span> )</code>
 
 		<div class="description short">
 			
@@ -479,7 +495,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_isBiDirectional">#</a>
-		<code><b>isBiDirectional</b>( )</code>
+		<code>isBiDirectional( )</code>
 
 		<div class="description short">
 			
@@ -512,7 +528,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_changeSourceNAT">#</a>
-		<code><b>changeSourceNAT</b>( <span>mixed <var>$newtype</var></span>, <span>mixed <var>$interface</var> = <span class="php-keyword1">null</span></span>, <span>mixed <var>$bidirectional</var> = <span class="php-keyword1">false</span></span> )</code>
+		<code>changeSourceNAT( <span>mixed <var>$newtype</var></span>, <span>mixed <var>$interface</var> = <span class="php-keyword1">null</span></span>, <span>mixed <var>$bidirectional</var> = <span class="php-keyword1">false</span></span> )</code>
 
 		<div class="description short">
 			
@@ -541,7 +557,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_setNoDNAT">#</a>
-		<code><b>setNoDNAT</b>( )</code>
+		<code>setNoDNAT( )</code>
 
 		<div class="description short">
 			
@@ -563,6 +579,35 @@
 		</div>
 		</div></td>
 	</tr>
+	<tr data-order="API_setNoDNAT" id="_API_setNoDNAT">
+
+		<td class="attributes"><code>
+			 public 
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_API_setNoDNAT">#</a>
+		<code>API_setNoDNAT( )</code>
+
+		<div class="description short">
+			
+		</div>
+
+		<div class="description detailed hidden">
+			
+
+
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
 	<tr data-order="setDNAT" id="_setDNAT">
 
 		<td class="attributes"><code>
@@ -574,7 +619,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_setDNAT">#</a>
-		<code><b>setDNAT</b>( <span><code><a href="class-Address.html">Address</a></code>|<code><a href="class-AddressGroup.html">AddressGroup</a></code> <var>$host</var></span>, <span>null <var>$ports</var> = <span class="php-keyword1">null</span></span> )</code>
+		<code>setDNAT( <span><code><a href="class-Address.html">Address</a></code>|<code><a href="class-AddressGroup.html">AddressGroup</a></code> <var>$host</var></span>, <span>null <var>$ports</var> = <span class="php-keyword1">null</span></span> )</code>
 
 		<div class="description short">
 			
@@ -618,7 +663,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_API_setDNAT">#</a>
-		<code><b>API_setDNAT</b>( <span>mixed <var>$host</var></span>, <span>mixed <var>$ports</var> = <span class="php-keyword1">null</span></span> )</code>
+		<code>API_setDNAT( <span>mixed <var>$host</var></span>, <span>mixed <var>$ports</var> = <span class="php-keyword1">null</span></span> )</code>
 
 		<div class="description short">
 			
@@ -647,7 +692,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_rewriteDNAT">#</a>
-		<code><b>rewriteDNAT</b>( )</code>
+		<code>rewriteDNAT( )</code>
 
 		<div class="description short">
 			
@@ -676,7 +721,36 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_setNoSNAT">#</a>
-		<code><b>setNoSNAT</b>( )</code>
+		<code>setNoSNAT( )</code>
+
+		<div class="description short">
+			
+		</div>
+
+		<div class="description detailed hidden">
+			
+
+
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="API_setNoSNAT" id="_API_setNoSNAT">
+
+		<td class="attributes"><code>
+			 public 
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_API_setNoSNAT">#</a>
+		<code>API_setNoSNAT( )</code>
 
 		<div class="description short">
 			
@@ -705,7 +779,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_setDestinationInterface">#</a>
-		<code><b>setDestinationInterface</b>( <span>mixed <var>$newDestinationInterface</var></span> )</code>
+		<code>setDestinationInterface( <span>mixed <var>$newDestinationInterface</var></span> )</code>
 
 		<div class="description short">
 			
@@ -734,7 +808,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_setService">#</a>
-		<code><b>setService</b>( <span>mixed <var>$newServiceObject</var></span> )</code>
+		<code>setService( <span>mixed <var>$newServiceObject</var></span> )</code>
 
 		<div class="description short">
 			
@@ -772,7 +846,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_API_setService">#</a>
-		<code><b>API_setService</b>( <span>mixed <var>$newServiceObject</var></span> )</code>
+		<code>API_setService( <span>mixed <var>$newServiceObject</var></span> )</code>
 
 		<div class="description short">
 			
@@ -810,7 +884,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_reLinkObjects">#</a>
-		<code><b>reLinkObjects</b>( )</code>
+		<code>reLinkObjects( )</code>
 
 		<div class="description short">
 			
@@ -839,7 +913,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_rewriteService_XML">#</a>
-		<code><b>rewriteService_XML</b>( )</code>
+		<code>rewriteService_XML( )</code>
 
 		<div class="description short">
 			
@@ -868,7 +942,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_display">#</a>
-		<code><b>display</b>( <span>mixed <var>$padding</var> = <span class="php-num">0</span></span> )</code>
+		<code>display( <span>mixed <var>$padding</var> = <span class="php-num">0</span></span> )</code>
 
 		<div class="description short">
 			
@@ -897,7 +971,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_destinationInterface">#</a>
-		<code><b>destinationInterface</b>( )</code>
+		<code>destinationInterface( )</code>
 
 		<div class="description short">
 			
@@ -926,7 +1000,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_destinationNatIsEnabled">#</a>
-		<code><b>destinationNatIsEnabled</b>( )</code>
+		<code>destinationNatIsEnabled( )</code>
 
 		<div class="description short">
 			
@@ -955,7 +1029,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_SourceNat_Type">#</a>
-		<code><b>SourceNat_Type</b>( )</code>
+		<code>SourceNat_Type( )</code>
 
 		<div class="description short">
 			
@@ -988,7 +1062,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_sourceNatTypeIs_None">#</a>
-		<code><b>sourceNatTypeIs_None</b>( )</code>
+		<code>sourceNatTypeIs_None( )</code>
 
 		<div class="description short">
 			
@@ -1017,7 +1091,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_sourceNatTypeIs_Dynamic">#</a>
-		<code><b>sourceNatTypeIs_Dynamic</b>( )</code>
+		<code>sourceNatTypeIs_Dynamic( )</code>
 
 		<div class="description short">
 			
@@ -1046,7 +1120,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_sourceNatTypeIs_DIPP">#</a>
-		<code><b>sourceNatTypeIs_DIPP</b>( )</code>
+		<code>sourceNatTypeIs_DIPP( )</code>
 
 		<div class="description short">
 			
@@ -1075,7 +1149,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_sourceNatTypeIs_Static">#</a>
-		<code><b>sourceNatTypeIs_Static</b>( )</code>
+		<code>sourceNatTypeIs_Static( )</code>
 
 		<div class="description short">
 			
@@ -1104,7 +1178,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_hasDestinationInterface">#</a>
-		<code><b>hasDestinationInterface</b>( )</code>
+		<code>hasDestinationInterface( )</code>
 
 		<div class="description short">
 			
@@ -1133,7 +1207,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_isNatRule">#</a>
-		<code><b>isNatRule</b>( )</code>
+		<code>isNatRule( )</code>
 
 		<div class="description short">
 			
@@ -1164,7 +1238,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_cleanForDestruction">#</a>
-		<code><b>cleanForDestruction</b>( )</code>
+		<code>cleanForDestruction( )</code>
 
 		<div class="description short">
 			
@@ -1193,7 +1267,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_storeVariableName">#</a>
-		<code><b>storeVariableName</b>( )</code>
+		<code>storeVariableName( )</code>
 
 		<div class="description short">
 			
@@ -1222,7 +1296,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_ruleNature">#</a>
-		<code><b>ruleNature</b>( )</code>
+		<code>ruleNature( )</code>
 
 		<div class="description short">
 			
@@ -1248,45 +1322,46 @@
 	<caption>Methods inherited from <a href="class-Rule.html#methods">Rule</a></caption>
 	<tr>
 		<td><code>
-			<a href="class-Rule.html#_API_setDisabled"><b>API_setDisabled()</b></a>, 
-			<a href="class-Rule.html#_API_setEnabled"><b>API_setEnabled()</b></a>, 
-			<a href="class-Rule.html#_API_setName"><b>API_setName()</b></a>, 
-			<a href="class-Rule.html#_API_target_addDevice"><b>API_target_addDevice()</b></a>, 
-			<a href="class-Rule.html#_API_target_negateSet"><b>API_target_negateSet()</b></a>, 
-			<a href="class-Rule.html#_API_target_removeDevice"><b>API_target_removeDevice()</b></a>, 
-			<a href="class-Rule.html#_API_target_setAny"><b>API_target_setAny()</b></a>, 
-			<a href="class-Rule.html#_getXPath"><b>getXPath()</b></a>, 
-			<a href="class-Rule.html#_isAppOverrideRule"><b>isAppOverrideRule()</b></a>, 
-			<a href="class-Rule.html#_isCaptivePortalRule"><b>isCaptivePortalRule()</b></a>, 
-			<a href="class-Rule.html#_isDecryptionRule"><b>isDecryptionRule()</b></a>, 
-			<a href="class-Rule.html#_isDisabled"><b>isDisabled()</b></a>, 
-			<a href="class-Rule.html#_isDoSRule"><b>isDoSRule()</b></a>, 
-			<a href="class-Rule.html#_isEnabled"><b>isEnabled()</b></a>, 
-			<a href="class-Rule.html#_isPbfRule"><b>isPbfRule()</b></a>, 
-			<a href="class-Rule.html#_isPostRule"><b>isPostRule()</b></a>, 
-			<a href="class-Rule.html#_isPreRule"><b>isPreRule()</b></a>, 
-			<a href="class-Rule.html#_isQoSRule"><b>isQoSRule()</b></a>, 
-			<a href="class-Rule.html#_isSecurityRule"><b>isSecurityRule()</b></a>, 
-			<a href="class-Rule.html#_load_common_from_domxml"><b>load_common_from_domxml()</b></a>, 
-			<a href="class-Rule.html#_load_destination"><b>load_destination()</b></a>, 
-			<a href="class-Rule.html#_load_from"><b>load_from()</b></a>, 
-			<a href="class-Rule.html#_load_source"><b>load_source()</b></a>, 
-			<a href="class-Rule.html#_load_to"><b>load_to()</b></a>, 
-			<a href="class-Rule.html#_name"><b>name()</b></a>, 
-			<a href="class-Rule.html#_rewriteSDisabled_XML"><b>rewriteSDisabled_XML()</b></a>, 
-			<a href="class-Rule.html#_setDisabled"><b>setDisabled()</b></a>, 
-			<a href="class-Rule.html#_setEnabled"><b>setEnabled()</b></a>, 
-			<a href="class-Rule.html#_setName"><b>setName()</b></a>, 
-			<a href="class-Rule.html#_target_addDevice"><b>target_addDevice()</b></a>, 
-			<a href="class-Rule.html#_target_hasDeviceAndVsys"><b>target_hasDeviceAndVsys()</b></a>, 
-			<a href="class-Rule.html#_target_isAny"><b>target_isAny()</b></a>, 
-			<a href="class-Rule.html#_target_isNegated"><b>target_isNegated()</b></a>, 
-			<a href="class-Rule.html#_target_negateSet"><b>target_negateSet()</b></a>, 
-			<a href="class-Rule.html#_target_removeDevice"><b>target_removeDevice()</b></a>, 
-			<a href="class-Rule.html#_target_rewriteXML"><b>target_rewriteXML()</b></a>, 
-			<a href="class-Rule.html#_target_setAny"><b>target_setAny()</b></a>, 
-			<a href="class-Rule.html#_targets"><b>targets()</b></a>, 
-			<a href="class-Rule.html#_targets_toString"><b>targets_toString()</b></a>
+			<a href="class-Rule.html#_API_setDisabled">API_setDisabled()</a>, 
+			<a href="class-Rule.html#_API_setEnabled">API_setEnabled()</a>, 
+			<a href="class-Rule.html#_API_setName">API_setName()</a>, 
+			<a href="class-Rule.html#_API_target_addDevice">API_target_addDevice()</a>, 
+			<a href="class-Rule.html#_API_target_negateSet">API_target_negateSet()</a>, 
+			<a href="class-Rule.html#_API_target_removeDevice">API_target_removeDevice()</a>, 
+			<a href="class-Rule.html#_API_target_setAny">API_target_setAny()</a>, 
+			<a href="class-Rule.html#_getXPath">getXPath()</a>, 
+			<a href="class-Rule.html#_isAppOverrideRule">isAppOverrideRule()</a>, 
+			<a href="class-Rule.html#_isAuthenticationRule">isAuthenticationRule()</a>, 
+			<a href="class-Rule.html#_isCaptivePortalRule">isCaptivePortalRule()</a>, 
+			<a href="class-Rule.html#_isDecryptionRule">isDecryptionRule()</a>, 
+			<a href="class-Rule.html#_isDisabled">isDisabled()</a>, 
+			<a href="class-Rule.html#_isDoSRule">isDoSRule()</a>, 
+			<a href="class-Rule.html#_isEnabled">isEnabled()</a>, 
+			<a href="class-Rule.html#_isPbfRule">isPbfRule()</a>, 
+			<a href="class-Rule.html#_isPostRule">isPostRule()</a>, 
+			<a href="class-Rule.html#_isPreRule">isPreRule()</a>, 
+			<a href="class-Rule.html#_isQoSRule">isQoSRule()</a>, 
+			<a href="class-Rule.html#_isSecurityRule">isSecurityRule()</a>, 
+			<a href="class-Rule.html#_load_common_from_domxml">load_common_from_domxml()</a>, 
+			<a href="class-Rule.html#_load_destination">load_destination()</a>, 
+			<a href="class-Rule.html#_load_from">load_from()</a>, 
+			<a href="class-Rule.html#_load_source">load_source()</a>, 
+			<a href="class-Rule.html#_load_to">load_to()</a>, 
+			<a href="class-Rule.html#_name">name()</a>, 
+			<a href="class-Rule.html#_rewriteSDisabled_XML">rewriteSDisabled_XML()</a>, 
+			<a href="class-Rule.html#_setDisabled">setDisabled()</a>, 
+			<a href="class-Rule.html#_setEnabled">setEnabled()</a>, 
+			<a href="class-Rule.html#_setName">setName()</a>, 
+			<a href="class-Rule.html#_target_addDevice">target_addDevice()</a>, 
+			<a href="class-Rule.html#_target_hasDeviceAndVsys">target_hasDeviceAndVsys()</a>, 
+			<a href="class-Rule.html#_target_isAny">target_isAny()</a>, 
+			<a href="class-Rule.html#_target_isNegated">target_isNegated()</a>, 
+			<a href="class-Rule.html#_target_negateSet">target_negateSet()</a>, 
+			<a href="class-Rule.html#_target_removeDevice">target_removeDevice()</a>, 
+			<a href="class-Rule.html#_target_rewriteXML">target_rewriteXML()</a>, 
+			<a href="class-Rule.html#_target_setAny">target_setAny()</a>, 
+			<a href="class-Rule.html#_targets">targets()</a>, 
+			<a href="class-Rule.html#_targets_toString">targets_toString()</a>
 		</code></td>
 	</tr>
 	</table>
@@ -1295,9 +1370,9 @@
 	<caption>Methods used from <a href="class-PathableName.html#methods">PathableName</a></caption>
 	<tr>
 		<td><code>
-			<a href="class-PathableName.html#__PANC_shortName"><b>_PANC_shortName()</b></a>, 
-			<a href="class-PathableName.html#_getLocationString"><b>getLocationString()</b></a>, 
-			<a href="class-PathableName.html#_toString"><b>toString()</b></a>
+			<a href="class-PathableName.html#__PANC_shortName">_PANC_shortNameo()</a>, 
+			<a href="class-PathableName.html#_getLocationString">getLocationStringo()</a>, 
+			<a href="class-PathableName.html#_toString">toStringo()</a>
 		</code></td>
 	</tr>
 	</table>
@@ -1305,7 +1380,7 @@
 	<caption>Methods used from <a href="class-centralServiceStoreUser.html#methods">centralServiceStoreUser</a></caption>
 	<tr>
 		<td><code>
-			<a href="class-centralServiceStoreUser.html#_findParentServiceStore"><b>findParentServiceStore()</b></a>
+			<a href="class-centralServiceStoreUser.html#_findParentServiceStore">findParentServiceStoreo()</a>
 		</code></td>
 	</tr>
 	</table>
@@ -1313,7 +1388,7 @@
 	<caption>Methods used from <a href="class-centralAddressStoreUser.html#methods">centralAddressStoreUser</a></caption>
 	<tr>
 		<td><code>
-			<a href="class-centralAddressStoreUser.html#_findParentAddressStore"><b>findParentAddressStore()</b></a>
+			<a href="class-centralAddressStoreUser.html#_findParentAddressStore">findParentAddressStoreo()</a>
 		</code></td>
 	</tr>
 	</table>
@@ -1321,10 +1396,11 @@
 	<caption>Methods used from <a href="class-ObjectWithDescription.html#methods">ObjectWithDescription</a></caption>
 	<tr>
 		<td><code>
-			<a href="class-ObjectWithDescription.html#_API_setDescription"><b>API_setDescription()</b></a>, 
-			<a href="class-ObjectWithDescription.html#__load_description_from_domxml"><b>_load_description_from_domxml()</b></a>, 
-			<a href="class-ObjectWithDescription.html#_description"><b>description()</b></a>, 
-			<a href="class-ObjectWithDescription.html#_setDescription"><b>setDescription()</b></a>
+			<a href="class-ObjectWithDescription.html#_API_setDescription">API_setDescriptiono()</a>, 
+			<a href="class-ObjectWithDescription.html#__load_description_from_domxml">_load_description_from_domxmlo()</a>, 
+			<a href="class-ObjectWithDescription.html#_description">descriptiono()</a>, 
+			<a href="class-ObjectWithDescription.html#_description_merge">description_mergeo()</a>, 
+			<a href="class-ObjectWithDescription.html#_setDescription">setDescriptiono()</a>
 		</code></td>
 	</tr>
 	</table>
@@ -1332,10 +1408,11 @@
 	<caption>Methods used from <a href="class-XmlConvertible.html#methods">XmlConvertible</a></caption>
 	<tr>
 		<td><code>
-			<a href="class-XmlConvertible.html#_API_sync"><b>API_sync()</b></a>, 
-			<a href="class-XmlConvertible.html#_getChildXmlText_inline"><b>getChildXmlText_inline()</b></a>, 
-			<a href="class-XmlConvertible.html#_getXmlText"><b>getXmlText()</b></a>, 
-			<a href="class-XmlConvertible.html#_getXmlText_inline"><b>getXmlText_inline()</b></a>
+			<a href="class-XmlConvertible.html#_API_sync">API_synco()</a>, 
+			<a href="class-XmlConvertible.html#_getChildXmlText_inline">getChildXmlText_inlineo()</a>, 
+			<a href="class-XmlConvertible.html#_getXmlText">getXmlTexto()</a>, 
+			<a href="class-XmlConvertible.html#_getXmlText_inline">getXmlText_inlineo()</a>, 
+			<a href="class-XmlConvertible.html#_set_node_attribute">set_node_attributeo()</a>
 		</code></td>
 	</tr>
 	</table>

@@ -6,8 +6,8 @@
 
 	<title>Class RuleStore | PAN-PHP-FRAMEWORK</title>
 
-	<script type="text/javascript" src="resources/combined.js?772778653"></script>
-	<script type="text/javascript" src="elementlist.js?4105871058"></script>
+	<script type="text/javascript" src="resources/combined.js?1588816152"></script>
+	<script type="text/javascript" src="elementlist.js?4215409147"></script>
 	<link rel="stylesheet" type="text/css" media="all" href="resources/style.css?3505392360" />
 
 </head>
@@ -44,6 +44,7 @@
 				<li><a href="class-AppOverrideRule.html">AppOverrideRule</a></li>
 				<li><a href="class-AppRuleContainer.html">AppRuleContainer</a></li>
 				<li><a href="class-AppStore.html">AppStore</a></li>
+				<li><a href="class-AuthenticationRule.html">AuthenticationRule</a></li>
 				<li><a href="class-CaptivePortalRule.html">CaptivePortalRule</a></li>
 				<li><a href="class-cidr.html">cidr</a></li>
 				<li><a href="class-CsvParser.html">CsvParser</a></li>
@@ -53,13 +54,20 @@
 				<li><a href="class-DoSRule.html">DoSRule</a></li>
 				<li><a href="class-EthernetIfStore.html">EthernetIfStore</a></li>
 				<li><a href="class-EthernetInterface.html">EthernetInterface</a></li>
+				<li><a href="class-IkeCryptoProfil.html">IkeCryptoProfil</a></li>
+				<li><a href="class-IkeCryptoProfileStore.html">IkeCryptoProfileStore</a></li>
+				<li><a href="class-IKEGateway.html">IKEGateway</a></li>
+				<li><a href="class-IKEGatewayStore.html">IKEGatewayStore</a></li>
 				<li><a href="class-InterfaceContainer.html">InterfaceContainer</a></li>
 				<li><a href="class-IP4Map.html">IP4Map</a></li>
+				<li><a href="class-IPSecCryptoProfil.html">IPSecCryptoProfil</a></li>
+				<li><a href="class-IPSecCryptoProfileStore.html">IPSecCryptoProfileStore</a></li>
 				<li><a href="class-IPsecTunnel.html">IPsecTunnel</a></li>
 				<li><a href="class-IPsecTunnelStore.html">IPsecTunnelStore</a></li>
 				<li><a href="class-LoopbackIfStore.html">LoopbackIfStore</a></li>
 				<li><a href="class-LoopbackInterface.html">LoopbackInterface</a></li>
 				<li><a href="class-ManagedDevice.html">ManagedDevice</a></li>
+				<li><a href="class-ManagedDeviceStore.html">ManagedDeviceStore</a></li>
 				<li><a href="class-NatRule.html">NatRule</a></li>
 				<li><a href="class-NetworkPropertiesContainer.html">NetworkPropertiesContainer</a></li>
 				<li><a href="class-ObjRuleContainer.html">ObjRuleContainer</a></li>
@@ -79,17 +87,25 @@
 				<li><a href="class-ServiceDstPortMapping.html">ServiceDstPortMapping</a></li>
 				<li><a href="class-ServiceGroup.html">ServiceGroup</a></li>
 				<li><a href="class-ServiceRuleContainer.html">ServiceRuleContainer</a></li>
+				<li><a href="class-ServiceSrcPortMapping.html">ServiceSrcPortMapping</a></li>
 				<li><a href="class-ServiceStore.html">ServiceStore</a></li>
 				<li><a href="class-StaticRoute.html">StaticRoute</a></li>
 				<li><a href="class-Tag.html">Tag</a></li>
 				<li><a href="class-TagRuleContainer.html">TagRuleContainer</a></li>
 				<li><a href="class-TagStore.html">TagStore</a></li>
 				<li><a href="class-Template.html">Template</a></li>
+				<li><a href="class-TemplateStack.html">TemplateStack</a></li>
 				<li><a href="class-TmpInterface.html">TmpInterface</a></li>
 				<li><a href="class-TmpInterfaceStore.html">TmpInterfaceStore</a></li>
+				<li><a href="class-TunnelIfStore.html">TunnelIfStore</a></li>
+				<li><a href="class-TunnelInterface.html">TunnelInterface</a></li>
 				<li><a href="class-VirtualRouter.html">VirtualRouter</a></li>
 				<li><a href="class-VirtualRouterStore.html">VirtualRouterStore</a></li>
 				<li><a href="class-VirtualSystem.html">VirtualSystem</a></li>
+				<li><a href="class-VirtualWire.html">VirtualWire</a></li>
+				<li><a href="class-VirtualWireStore.html">VirtualWireStore</a></li>
+				<li><a href="class-VlanIfStore.html">VlanIfStore</a></li>
+				<li><a href="class-VlanInterface.html">VlanInterface</a></li>
 				<li><a href="class-Zone.html">Zone</a></li>
 				<li><a href="class-ZoneRuleContainer.html">ZoneRuleContainer</a></li>
 				<li><a href="class-ZoneStore.html">ZoneStore</a></li>
@@ -221,7 +237,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#___construct">#</a>
-		<code><b>__construct</b>( <span>mixed <var>$owner</var></span>, <span>mixed <var>$ruleType</var></span>, <span>mixed <var>$isPreOrPost</var> = <span class="php-keyword1">false</span></span> )</code>
+		<code>__construct( <span>mixed <var>$owner</var></span>, <span>mixed <var>$ruleType</var></span>, <span>mixed <var>$isPreOrPost</var> = <span class="php-keyword1">false</span></span> )</code>
 
 		<div class="description short">
 			
@@ -250,7 +266,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_countDyn_IP_and_Port_SNat">#</a>
-		<code><b>countDyn_IP_and_Port_SNat</b>( <span>boolean <var>$countDisabledRules</var> = <span class="php-keyword1">false</span></span> )</code>
+		<code>countDyn_IP_and_Port_SNat( <span>boolean <var>$countDisabledRules</var> = <span class="php-keyword1">false</span></span> )</code>
 
 		<div class="description short">
 			
@@ -294,7 +310,7 @@ then it also count disabled rules</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_load_from_domxml">#</a>
-		<code><b>load_from_domxml</b>( <span><code><a href="class-DOMElement.html">DOMElement</a></code>|null <var>$xml</var></span>, <span><code><a href="class-DOMElement.html">DOMElement</a></code>|null <var>$xmlPost</var> = <span class="php-keyword1">null</span></span> )</code>
+		<code>load_from_domxml( <span><code><a href="class-DOMElement.html">DOMElement</a></code>|null <var>$xml</var></span>, <span><code><a href="class-DOMElement.html">DOMElement</a></code>|null <var>$xmlPost</var> = <span class="php-keyword1">null</span></span> )</code>
 
 		<div class="description short">
 			
@@ -334,7 +350,7 @@ then it also count disabled rules</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_addRule">#</a>
-		<code><b>addRule</b>( <span><code><a href="class-SecurityRule.html">SecurityRule</a></code>|<code><a href="class-NatRule.html">NatRule</a></code>|<code><a href="class-DecryptionRule.html">DecryptionRule</a></code>|<code><a href="class-AppOverrideRule.html">AppOverrideRule</a></code>|<code><a href="class-CaptivePortalRule.html">CaptivePortalRule</a></code>|<code><a href="class-PbfRule.html">PbfRule</a></code>|<code><a href="class-QoSRule.html">QoSRule</a></code>|<code><a href="class-DoSRule.html">DoSRule</a></code> <var>$rule</var></span>, <span>boolean <var>$inPost</var> = <span class="php-keyword1">false</span></span> )</code>
+		<code>addRule( <span><code><a href="class-SecurityRule.html">SecurityRule</a></code>|<code><a href="class-NatRule.html">NatRule</a></code>|<code><a href="class-DecryptionRule.html">DecryptionRule</a></code>|<code><a href="class-AppOverrideRule.html">AppOverrideRule</a></code>|<code><a href="class-CaptivePortalRule.html">CaptivePortalRule</a></code>|<code><a href="class-PbfRule.html">PbfRule</a></code>|<code><a href="class-QoSRule.html">QoSRule</a></code>|<code><a href="class-DoSRule.html">DoSRule</a></code> <var>$rule</var></span>, <span>boolean <var>$inPost</var> = <span class="php-keyword1">false</span></span> )</code>
 
 		<div class="description short">
 			
@@ -374,7 +390,7 @@ then it also count disabled rules</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_API_addRule">#</a>
-		<code><b>API_addRule</b>( <span><code><a href="class-SecurityRule.html">SecurityRule</a></code>|<code><a href="class-NatRule.html">NatRule</a></code>|<code><a href="class-DecryptionRule.html">DecryptionRule</a></code>|<code><a href="class-AppOverrideRule.html">AppOverrideRule</a></code>|<code><a href="class-CaptivePortalRule.html">CaptivePortalRule</a></code>|<code><a href="class-PbfRule.html">PbfRule</a></code>|<code><a href="class-QoSRule.html">QoSRule</a></code>|<code><a href="class-DoSRule.html">DoSRule</a></code> <var>$rule</var></span>, <span>boolean <var>$inPost</var> = <span class="php-keyword1">false</span> </span> )</code>
+		<code>API_addRule( <span><code><a href="class-SecurityRule.html">SecurityRule</a></code>|<code><a href="class-NatRule.html">NatRule</a></code>|<code><a href="class-DecryptionRule.html">DecryptionRule</a></code>|<code><a href="class-AppOverrideRule.html">AppOverrideRule</a></code>|<code><a href="class-CaptivePortalRule.html">CaptivePortalRule</a></code>|<code><a href="class-PbfRule.html">PbfRule</a></code>|<code><a href="class-QoSRule.html">QoSRule</a></code>|<code><a href="class-DoSRule.html">DoSRule</a></code> <var>$rule</var></span>, <span>boolean <var>$inPost</var> = <span class="php-keyword1">false</span> </span> )</code>
 
 		<div class="description short">
 			
@@ -414,7 +430,7 @@ then it also count disabled rules</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_inStore">#</a>
-		<code><b>inStore</b>( <span><code><a href="class-SecurityRule.html">SecurityRule</a></code>|<code><a href="class-NatRule.html">NatRule</a></code>|<code><a href="class-DecryptionRule.html">DecryptionRule</a></code>|<code><a href="class-AppOverrideRule.html">AppOverrideRule</a></code>|<code><a href="class-CaptivePortalRule.html">CaptivePortalRule</a></code>|<code><a href="class-PbfRule.html">PbfRule</a></code>|<code><a href="class-QoSRule.html">QoSRule</a></code>|<code><a href="class-DoSRule.html">DoSRule</a></code> <var>$rule</var></span> )</code>
+		<code>inStore( <span><code><a href="class-SecurityRule.html">SecurityRule</a></code>|<code><a href="class-NatRule.html">NatRule</a></code>|<code><a href="class-DecryptionRule.html">DecryptionRule</a></code>|<code><a href="class-AppOverrideRule.html">AppOverrideRule</a></code>|<code><a href="class-CaptivePortalRule.html">CaptivePortalRule</a></code>|<code><a href="class-PbfRule.html">PbfRule</a></code>|<code><a href="class-QoSRule.html">QoSRule</a></code>|<code><a href="class-DoSRule.html">DoSRule</a></code> <var>$rule</var></span> )</code>
 
 		<div class="description short">
 			
@@ -452,7 +468,7 @@ then it also count disabled rules</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_moveRuleToPostRulebase">#</a>
-		<code><b>moveRuleToPostRulebase</b>( <span><code><a href="class-SecurityRule.html">SecurityRule</a></code>|<code><a href="class-NatRule.html">NatRule</a></code>|<code><a href="class-DecryptionRule.html">DecryptionRule</a></code>|<code><a href="class-AppOverrideRule.html">AppOverrideRule</a></code>|<code><a href="class-CaptivePortalRule.html">CaptivePortalRule</a></code>|<code><a href="class-PbfRule.html">PbfRule</a></code>|<code><a href="class-QoSRule.html">QoSRule</a></code>|<code><a href="class-DoSRule.html">DoSRule</a></code> <var>$rule</var></span> )</code>
+		<code>moveRuleToPostRulebase( <span><code><a href="class-SecurityRule.html">SecurityRule</a></code>|<code><a href="class-NatRule.html">NatRule</a></code>|<code><a href="class-DecryptionRule.html">DecryptionRule</a></code>|<code><a href="class-AppOverrideRule.html">AppOverrideRule</a></code>|<code><a href="class-CaptivePortalRule.html">CaptivePortalRule</a></code>|<code><a href="class-PbfRule.html">PbfRule</a></code>|<code><a href="class-QoSRule.html">QoSRule</a></code>|<code><a href="class-DoSRule.html">DoSRule</a></code> <var>$rule</var></span> )</code>
 
 		<div class="description short">
 			
@@ -490,7 +506,7 @@ then it also count disabled rules</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_API_moveRuleToPostRulebase">#</a>
-		<code><b>API_moveRuleToPostRulebase</b>( <span><code><a href="class-SecurityRule.html">SecurityRule</a></code>|<code><a href="class-NatRule.html">NatRule</a></code>|<code><a href="class-DecryptionRule.html">DecryptionRule</a></code>|<code><a href="class-AppOverrideRule.html">AppOverrideRule</a></code>|<code><a href="class-CaptivePortalRule.html">CaptivePortalRule</a></code>|<code><a href="class-PbfRule.html">PbfRule</a></code>|<code><a href="class-QoSRule.html">QoSRule</a></code>|<code><a href="class-DoSRule.html">DoSRule</a></code> <var>$rule</var></span> )</code>
+		<code>API_moveRuleToPostRulebase( <span><code><a href="class-SecurityRule.html">SecurityRule</a></code>|<code><a href="class-NatRule.html">NatRule</a></code>|<code><a href="class-DecryptionRule.html">DecryptionRule</a></code>|<code><a href="class-AppOverrideRule.html">AppOverrideRule</a></code>|<code><a href="class-CaptivePortalRule.html">CaptivePortalRule</a></code>|<code><a href="class-PbfRule.html">PbfRule</a></code>|<code><a href="class-QoSRule.html">QoSRule</a></code>|<code><a href="class-DoSRule.html">DoSRule</a></code> <var>$rule</var></span> )</code>
 
 		<div class="description short">
 			
@@ -528,7 +544,7 @@ then it also count disabled rules</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_moveRuleToPreRulebase">#</a>
-		<code><b>moveRuleToPreRulebase</b>( <span><code><a href="class-SecurityRule.html">SecurityRule</a></code>|<code><a href="class-NatRule.html">NatRule</a></code>|<code><a href="class-DecryptionRule.html">DecryptionRule</a></code>|<code><a href="class-AppOverrideRule.html">AppOverrideRule</a></code>|<code><a href="class-CaptivePortalRule.html">CaptivePortalRule</a></code>|<code><a href="class-PbfRule.html">PbfRule</a></code>|<code><a href="class-QoSRule.html">QoSRule</a></code>|<code><a href="class-DoSRule.html">DoSRule</a></code> <var>$rule</var></span> )</code>
+		<code>moveRuleToPreRulebase( <span><code><a href="class-SecurityRule.html">SecurityRule</a></code>|<code><a href="class-NatRule.html">NatRule</a></code>|<code><a href="class-DecryptionRule.html">DecryptionRule</a></code>|<code><a href="class-AppOverrideRule.html">AppOverrideRule</a></code>|<code><a href="class-CaptivePortalRule.html">CaptivePortalRule</a></code>|<code><a href="class-PbfRule.html">PbfRule</a></code>|<code><a href="class-QoSRule.html">QoSRule</a></code>|<code><a href="class-DoSRule.html">DoSRule</a></code> <var>$rule</var></span> )</code>
 
 		<div class="description short">
 			
@@ -566,7 +582,7 @@ then it also count disabled rules</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_API_moveRuleToPreRulebase">#</a>
-		<code><b>API_moveRuleToPreRulebase</b>( <span><code><a href="class-SecurityRule.html">SecurityRule</a></code>|<code><a href="class-NatRule.html">NatRule</a></code>|<code><a href="class-DecryptionRule.html">DecryptionRule</a></code>|<code><a href="class-AppOverrideRule.html">AppOverrideRule</a></code>|<code><a href="class-CaptivePortalRule.html">CaptivePortalRule</a></code>|<code><a href="class-PbfRule.html">PbfRule</a></code>|<code><a href="class-QoSRule.html">QoSRule</a></code>|<code><a href="class-DoSRule.html">DoSRule</a></code> <var>$rule</var></span> )</code>
+		<code>API_moveRuleToPreRulebase( <span><code><a href="class-SecurityRule.html">SecurityRule</a></code>|<code><a href="class-NatRule.html">NatRule</a></code>|<code><a href="class-DecryptionRule.html">DecryptionRule</a></code>|<code><a href="class-AppOverrideRule.html">AppOverrideRule</a></code>|<code><a href="class-CaptivePortalRule.html">CaptivePortalRule</a></code>|<code><a href="class-PbfRule.html">PbfRule</a></code>|<code><a href="class-QoSRule.html">QoSRule</a></code>|<code><a href="class-DoSRule.html">DoSRule</a></code> <var>$rule</var></span> )</code>
 
 		<div class="description short">
 			
@@ -604,7 +620,7 @@ then it also count disabled rules</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_isRuleNameAvailable">#</a>
-		<code><b>isRuleNameAvailable</b>( <span>string <var>$name</var></span>, <span>boolean <var>$nested</var> = <span class="php-keyword1">true</span></span> )</code>
+		<code>isRuleNameAvailable( <span>string <var>$name</var></span>, <span>boolean <var>$nested</var> = <span class="php-keyword1">true</span></span> )</code>
 
 		<div class="description short">
 			
@@ -648,7 +664,7 @@ then it also count disabled rules</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_getStoreVarName">#</a>
-		<code><b>getStoreVarName</b>( )</code>
+		<code>getStoreVarName( )</code>
 
 		<div class="description short">
 			
@@ -681,7 +697,7 @@ then it also count disabled rules</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_findAvailableName">#</a>
-		<code><b>findAvailableName</b>( <span>string <var>$base</var></span>, <span>string <var>$suffix</var> = <span class="php-quote">''</span></span>, <span>integer|string <var>$startCount</var> = <span class="php-quote">''</span></span> )</code>
+		<code>findAvailableName( <span>string <var>$base</var></span>, <span>string <var>$suffix</var> = <span class="php-quote">''</span></span>, <span>integer|string <var>$startCount</var> = <span class="php-quote">''</span></span> )</code>
 
 		<div class="description short">
 			
@@ -723,7 +739,7 @@ then it also count disabled rules</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_ruleWasRenamed">#</a>
-		<code><b>ruleWasRenamed</b>( <span><code><a href="class-SecurityRule.html">SecurityRule</a></code>|<code><a href="class-NatRule.html">NatRule</a></code>|<code><a href="class-DecryptionRule.html">DecryptionRule</a></code>|<code><a href="class-AppOverrideRule.html">AppOverrideRule</a></code>|<code><a href="class-CaptivePortalRule.html">CaptivePortalRule</a></code>|<code><a href="class-PbfRule.html">PbfRule</a></code>|<code><a href="class-QoSRule.html">QoSRule</a></code>|<code><a href="class-DoSRule.html">DoSRule</a></code> <var>$rule</var></span>, <span>string <var>$oldName</var></span> )</code>
+		<code>ruleWasRenamed( <span><code><a href="class-SecurityRule.html">SecurityRule</a></code>|<code><a href="class-NatRule.html">NatRule</a></code>|<code><a href="class-DecryptionRule.html">DecryptionRule</a></code>|<code><a href="class-AppOverrideRule.html">AppOverrideRule</a></code>|<code><a href="class-CaptivePortalRule.html">CaptivePortalRule</a></code>|<code><a href="class-PbfRule.html">PbfRule</a></code>|<code><a href="class-QoSRule.html">QoSRule</a></code>|<code><a href="class-DoSRule.html">DoSRule</a></code> <var>$rule</var></span>, <span>string <var>$oldName</var></span> )</code>
 
 		<div class="description short">
 			
@@ -765,7 +781,7 @@ accurate indexing</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_cloneRule">#</a>
-		<code><b>cloneRule</b>( <span><code><a href="class-Rule.html">Rule</a></code>|<code><a href="class-SecurityRule.html">SecurityRule</a></code>|<code><a href="class-NatRule.html">NatRule</a></code>|<code><a href="class-DecryptionRule.html">DecryptionRule</a></code>|<code><a href="class-AppOverrideRule.html">AppOverrideRule</a></code>|<code><a href="class-CaptivePortalRule.html">CaptivePortalRule</a></code>|<code><a href="class-PbfRule.html">PbfRule</a></code>|<code><a href="class-QoSRule.html">QoSRule</a></code>|<code><a href="class-DoSRule.html">DoSRule</a></code> <var>$rule</var></span>, <span>string <var>$newName</var> = <span class="php-keyword1">null</span></span>, <span>null|boolean <var>$inPostRuleBase</var> = <span class="php-keyword1">null</span></span> )</code>
+		<code>cloneRule( <span><code><a href="class-Rule.html">Rule</a></code>|<code><a href="class-SecurityRule.html">SecurityRule</a></code>|<code><a href="class-NatRule.html">NatRule</a></code>|<code><a href="class-DecryptionRule.html">DecryptionRule</a></code>|<code><a href="class-AppOverrideRule.html">AppOverrideRule</a></code>|<code><a href="class-CaptivePortalRule.html">CaptivePortalRule</a></code>|<code><a href="class-PbfRule.html">PbfRule</a></code>|<code><a href="class-QoSRule.html">QoSRule</a></code>|<code><a href="class-DoSRule.html">DoSRule</a></code> <var>$rule</var></span>, <span>string <var>$newName</var> = <span class="php-keyword1">null</span></span>, <span>null|boolean <var>$inPostRuleBase</var> = <span class="php-keyword1">null</span></span> )</code>
 
 		<div class="description short">
 			
@@ -807,7 +823,7 @@ accurate indexing</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_API_cloneRule">#</a>
-		<code><b>API_cloneRule</b>( <span><code><a href="class-SecurityRule.html">SecurityRule</a></code>|<code><a href="class-NatRule.html">NatRule</a></code>|<code><a href="class-DecryptionRule.html">DecryptionRule</a></code>|<code><a href="class-AppOverrideRule.html">AppOverrideRule</a></code>|<code><a href="class-CaptivePortalRule.html">CaptivePortalRule</a></code>|<code><a href="class-PbfRule.html">PbfRule</a></code>|<code><a href="class-QoSRule.html">QoSRule</a></code>|<code><a href="class-DoSRule.html">DoSRule</a></code> <var>$rule</var></span>, <span>string <var>$newName</var></span>, <span>mixed <var>$inPostRuleBase</var> = <span class="php-keyword1">null</span></span> )</code>
+		<code>API_cloneRule( <span><code><a href="class-SecurityRule.html">SecurityRule</a></code>|<code><a href="class-NatRule.html">NatRule</a></code>|<code><a href="class-DecryptionRule.html">DecryptionRule</a></code>|<code><a href="class-AppOverrideRule.html">AppOverrideRule</a></code>|<code><a href="class-CaptivePortalRule.html">CaptivePortalRule</a></code>|<code><a href="class-PbfRule.html">PbfRule</a></code>|<code><a href="class-QoSRule.html">QoSRule</a></code>|<code><a href="class-DoSRule.html">DoSRule</a></code> <var>$rule</var></span>, <span>string <var>$newName</var></span>, <span>mixed <var>$inPostRuleBase</var> = <span class="php-keyword1">null</span></span> )</code>
 
 		<div class="description short">
 			
@@ -849,7 +865,7 @@ accurate indexing</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_moveRuleAfter">#</a>
-		<code><b>moveRuleAfter</b>( <span><code><a href="class-SecurityRule.html">SecurityRule</a></code>|<code><a href="class-NatRule.html">NatRule</a></code>|<code><a href="class-DecryptionRule.html">DecryptionRule</a></code>|<code><a href="class-AppOverrideRule.html">AppOverrideRule</a></code>|<code><a href="class-CaptivePortalRule.html">CaptivePortalRule</a></code>|<code><a href="class-PbfRule.html">PbfRule</a></code>|<code><a href="class-QoSRule.html">QoSRule</a></code>|<code><a href="class-DoSRule.html">DoSRule</a></code> <var>$ruleToBeMoved</var></span>, <span><code><a href="class-SecurityRule.html">SecurityRule</a></code>|<code><a href="class-NatRule.html">NatRule</a></code>|<code><a href="class-DecryptionRule.html">DecryptionRule</a></code>|<code><a href="class-AppOverrideRule.html">AppOverrideRule</a></code>|<code><a href="class-CaptivePortalRule.html">CaptivePortalRule</a></code>|<code><a href="class-PbfRule.html">PbfRule</a></code>|<code><a href="class-QoSRule.html">QoSRule</a></code>|<code><a href="class-DoSRule.html">DoSRule</a></code> <var>$ruleRef</var></span>, <span>boolean <var>$rewriteXml</var> = <span class="php-keyword1">true</span> </span> )</code>
+		<code>moveRuleAfter( <span><code><a href="class-SecurityRule.html">SecurityRule</a></code>|<code><a href="class-NatRule.html">NatRule</a></code>|<code><a href="class-DecryptionRule.html">DecryptionRule</a></code>|<code><a href="class-AppOverrideRule.html">AppOverrideRule</a></code>|<code><a href="class-CaptivePortalRule.html">CaptivePortalRule</a></code>|<code><a href="class-PbfRule.html">PbfRule</a></code>|<code><a href="class-QoSRule.html">QoSRule</a></code>|<code><a href="class-DoSRule.html">DoSRule</a></code> <var>$ruleToBeMoved</var></span>, <span><code><a href="class-SecurityRule.html">SecurityRule</a></code>|<code><a href="class-NatRule.html">NatRule</a></code>|<code><a href="class-DecryptionRule.html">DecryptionRule</a></code>|<code><a href="class-AppOverrideRule.html">AppOverrideRule</a></code>|<code><a href="class-CaptivePortalRule.html">CaptivePortalRule</a></code>|<code><a href="class-PbfRule.html">PbfRule</a></code>|<code><a href="class-QoSRule.html">QoSRule</a></code>|<code><a href="class-DoSRule.html">DoSRule</a></code> <var>$ruleRef</var></span>, <span>boolean <var>$rewriteXml</var> = <span class="php-keyword1">true</span> </span> )</code>
 
 		<div class="description short">
 			
@@ -891,7 +907,7 @@ accurate indexing</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_API_moveRuleAfter">#</a>
-		<code><b>API_moveRuleAfter</b>( <span><code><a href="class-SecurityRule.html">SecurityRule</a></code>|<code><a href="class-NatRule.html">NatRule</a></code>|<code><a href="class-DecryptionRule.html">DecryptionRule</a></code>|<code><a href="class-AppOverrideRule.html">AppOverrideRule</a></code>|<code><a href="class-CaptivePortalRule.html">CaptivePortalRule</a></code>|<code><a href="class-PbfRule.html">PbfRule</a></code> <var>$ruleToBeMoved</var></span>, <span><code><a href="class-SecurityRule.html">SecurityRule</a></code>|<code><a href="class-NatRule.html">NatRule</a></code>|<code><a href="class-DecryptionRule.html">DecryptionRule</a></code>|<code><a href="class-AppOverrideRule.html">AppOverrideRule</a></code>|<code><a href="class-CaptivePortalRule.html">CaptivePortalRule</a></code>|<code><a href="class-PbfRule.html">PbfRule</a></code> <var>$ruleRef</var></span>, <span>boolean <var>$rewritexml</var> = <span class="php-keyword1">true</span> </span> )</code>
+		<code>API_moveRuleAfter( <span><code><a href="class-SecurityRule.html">SecurityRule</a></code>|<code><a href="class-NatRule.html">NatRule</a></code>|<code><a href="class-DecryptionRule.html">DecryptionRule</a></code>|<code><a href="class-AppOverrideRule.html">AppOverrideRule</a></code>|<code><a href="class-CaptivePortalRule.html">CaptivePortalRule</a></code>|<code><a href="class-PbfRule.html">PbfRule</a></code> <var>$ruleToBeMoved</var></span>, <span><code><a href="class-SecurityRule.html">SecurityRule</a></code>|<code><a href="class-NatRule.html">NatRule</a></code>|<code><a href="class-DecryptionRule.html">DecryptionRule</a></code>|<code><a href="class-AppOverrideRule.html">AppOverrideRule</a></code>|<code><a href="class-CaptivePortalRule.html">CaptivePortalRule</a></code>|<code><a href="class-PbfRule.html">PbfRule</a></code> <var>$ruleRef</var></span>, <span>boolean <var>$rewritexml</var> = <span class="php-keyword1">true</span> </span> )</code>
 
 		<div class="description short">
 			
@@ -929,7 +945,7 @@ accurate indexing</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_removeAll">#</a>
-		<code><b>removeAll</b>( )</code>
+		<code>removeAll( )</code>
 
 		<div class="description short">
 			
@@ -958,7 +974,7 @@ accurate indexing</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_moveRuleBefore">#</a>
-		<code><b>moveRuleBefore</b>( <span><code><a href="class-SecurityRule.html">SecurityRule</a></code>|<code><a href="class-NatRule.html">NatRule</a></code>|<code><a href="class-DecryptionRule.html">DecryptionRule</a></code>|<code><a href="class-AppOverrideRule.html">AppOverrideRule</a></code>|<code><a href="class-CaptivePortalRule.html">CaptivePortalRule</a></code>|<code><a href="class-PbfRule.html">PbfRule</a></code> <var>$ruleToBeMoved</var></span>, <span><code><a href="class-SecurityRule.html">SecurityRule</a></code>|<code><a href="class-NatRule.html">NatRule</a></code>|<code><a href="class-DecryptionRule.html">DecryptionRule</a></code>|<code><a href="class-AppOverrideRule.html">AppOverrideRule</a></code>|<code><a href="class-CaptivePortalRule.html">CaptivePortalRule</a></code>|<code><a href="class-PbfRule.html">PbfRule</a></code> <var>$ruleRef</var></span>, <span>boolean <var>$rewriteXml</var> = <span class="php-keyword1">true</span> </span> )</code>
+		<code>moveRuleBefore( <span><code><a href="class-SecurityRule.html">SecurityRule</a></code>|<code><a href="class-NatRule.html">NatRule</a></code>|<code><a href="class-DecryptionRule.html">DecryptionRule</a></code>|<code><a href="class-AppOverrideRule.html">AppOverrideRule</a></code>|<code><a href="class-CaptivePortalRule.html">CaptivePortalRule</a></code>|<code><a href="class-PbfRule.html">PbfRule</a></code> <var>$ruleToBeMoved</var></span>, <span><code><a href="class-SecurityRule.html">SecurityRule</a></code>|<code><a href="class-NatRule.html">NatRule</a></code>|<code><a href="class-DecryptionRule.html">DecryptionRule</a></code>|<code><a href="class-AppOverrideRule.html">AppOverrideRule</a></code>|<code><a href="class-CaptivePortalRule.html">CaptivePortalRule</a></code>|<code><a href="class-PbfRule.html">PbfRule</a></code> <var>$ruleRef</var></span>, <span>boolean <var>$rewriteXml</var> = <span class="php-keyword1">true</span> </span> )</code>
 
 		<div class="description short">
 			
@@ -1000,7 +1016,7 @@ accurate indexing</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_API_moveRuleBefore">#</a>
-		<code><b>API_moveRuleBefore</b>( <span><code><a href="class-SecurityRule.html">SecurityRule</a></code>|<code><a href="class-NatRule.html">NatRule</a></code>|<code><a href="class-DecryptionRule.html">DecryptionRule</a></code>|<code><a href="class-AppOverrideRule.html">AppOverrideRule</a></code>|<code><a href="class-CaptivePortalRule.html">CaptivePortalRule</a></code>|<code><a href="class-PbfRule.html">PbfRule</a></code> <var>$ruleToBeMoved</var></span>, <span><code><a href="class-SecurityRule.html">SecurityRule</a></code>|<code><a href="class-NatRule.html">NatRule</a></code>|<code><a href="class-DecryptionRule.html">DecryptionRule</a></code>|<code><a href="class-AppOverrideRule.html">AppOverrideRule</a></code>|<code><a href="class-CaptivePortalRule.html">CaptivePortalRule</a></code>|<code><a href="class-PbfRule.html">PbfRule</a></code> <var>$ruleRef</var></span>, <span>boolean <var>$rewritexml</var> = <span class="php-keyword1">true</span> </span> )</code>
+		<code>API_moveRuleBefore( <span><code><a href="class-SecurityRule.html">SecurityRule</a></code>|<code><a href="class-NatRule.html">NatRule</a></code>|<code><a href="class-DecryptionRule.html">DecryptionRule</a></code>|<code><a href="class-AppOverrideRule.html">AppOverrideRule</a></code>|<code><a href="class-CaptivePortalRule.html">CaptivePortalRule</a></code>|<code><a href="class-PbfRule.html">PbfRule</a></code> <var>$ruleToBeMoved</var></span>, <span><code><a href="class-SecurityRule.html">SecurityRule</a></code>|<code><a href="class-NatRule.html">NatRule</a></code>|<code><a href="class-DecryptionRule.html">DecryptionRule</a></code>|<code><a href="class-AppOverrideRule.html">AppOverrideRule</a></code>|<code><a href="class-CaptivePortalRule.html">CaptivePortalRule</a></code>|<code><a href="class-PbfRule.html">PbfRule</a></code> <var>$ruleRef</var></span>, <span>boolean <var>$rewritexml</var> = <span class="php-keyword1">true</span> </span> )</code>
 
 		<div class="description short">
 			
@@ -1038,7 +1054,7 @@ accurate indexing</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_rules">#</a>
-		<code><b>rules</b>( <span>null|string|string[] <var>$withFilter</var> = <span class="php-keyword1">null</span> </span> )</code>
+		<code>rules( <span>null|string|string[] <var>$withFilter</var> = <span class="php-keyword1">null</span> </span> )</code>
 
 		<div class="description short">
 			
@@ -1080,7 +1096,7 @@ accurate indexing</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_resultingRuleSet">#</a>
-		<code><b>resultingRuleSet</b>( )</code>
+		<code>resultingRuleSet( )</code>
 
 		<div class="description short">
 			
@@ -1117,7 +1133,7 @@ accurate indexing</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_resultingPreRuleSet">#</a>
-		<code><b>resultingPreRuleSet</b>( )</code>
+		<code>resultingPreRuleSet( )</code>
 
 		<div class="description short">
 			
@@ -1154,7 +1170,7 @@ accurate indexing</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_resultingPostRuleSet">#</a>
-		<code><b>resultingPostRuleSet</b>( )</code>
+		<code>resultingPostRuleSet( )</code>
 
 		<div class="description short">
 			
@@ -1191,7 +1207,7 @@ accurate indexing</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_count">#</a>
-		<code><b>count</b>( )</code>
+		<code>count( )</code>
 
 		<div class="description short">
 			
@@ -1224,7 +1240,7 @@ accurate indexing</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_display">#</a>
-		<code><b>display</b>( )</code>
+		<code>display( )</code>
 
 		<div class="description short">
 			
@@ -1257,7 +1273,7 @@ accurate indexing</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_find">#</a>
-		<code><b>find</b>( <span>string <var>$name</var></span> )</code>
+		<code>find( <span>string <var>$name</var></span> )</code>
 
 		<div class="description short">
 			
@@ -1299,7 +1315,7 @@ accurate indexing</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_newSecurityRule">#</a>
-		<code><b>newSecurityRule</b>( <span>string <var>$name</var></span>, <span>boolean <var>$inPost</var> = <span class="php-keyword1">false</span></span> )</code>
+		<code>newSecurityRule( <span>string <var>$name</var></span>, <span>boolean <var>$inPost</var> = <span class="php-keyword1">false</span></span> )</code>
 
 		<div class="description short">
 			
@@ -1345,7 +1361,7 @@ list.</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_newCaptivePortalRule">#</a>
-		<code><b>newCaptivePortalRule</b>( <span>string <var>$name</var></span>, <span>boolean <var>$inPost</var> = <span class="php-keyword1">false</span></span> )</code>
+		<code>newCaptivePortalRule( <span>string <var>$name</var></span>, <span>boolean <var>$inPost</var> = <span class="php-keyword1">false</span></span> )</code>
 
 		<div class="description short">
 			
@@ -1380,6 +1396,52 @@ list.</p>
 		</div>
 		</div></td>
 	</tr>
+	<tr data-order="newAuthenticationRule" id="_newAuthenticationRule">
+
+		<td class="attributes"><code>
+			 public 
+			<code><a href="class-AuthenticationRule.html">AuthenticationRule</a></code>
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_newAuthenticationRule">#</a>
+		<code>newAuthenticationRule( <span>string <var>$name</var></span>, <span>boolean <var>$inPost</var> = <span class="php-keyword1">false</span></span> )</code>
+
+		<div class="description short">
+			
+<p>Creates a new AuthenticationRule in this store. It will be placed at the end
+of the list.</p>
+
+		</div>
+
+		<div class="description detailed hidden">
+			
+<p>Creates a new AuthenticationRule in this store. It will be placed at the end
+of the list.</p>
+
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$name</var></dt>
+					<dd><code>string</code><br>$name name of the new Rule</dd>
+					<dt><var>$inPost</var></dt>
+					<dd><code>boolean</code><br>$inPost create it in post or pre (if applicable)</dd>
+				</dl></div>
+
+				<h4>Returns</h4>
+				<div class="list">
+					<code><code><a href="class-AuthenticationRule.html">AuthenticationRule</a></code></code><br />
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
 	<tr data-order="newNatRule" id="_newNatRule">
 
 		<td class="attributes"><code>
@@ -1391,7 +1453,7 @@ list.</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_newNatRule">#</a>
-		<code><b>newNatRule</b>( <span>String <var>$name</var></span>, <span>boolean <var>$inPost</var> = <span class="php-keyword1">false</span></span> )</code>
+		<code>newNatRule( <span>String <var>$name</var></span>, <span>boolean <var>$inPost</var> = <span class="php-keyword1">false</span></span> )</code>
 
 		<div class="description short">
 			
@@ -1437,7 +1499,7 @@ list.</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_newPbfRule">#</a>
-		<code><b>newPbfRule</b>( <span>String <var>$name</var></span>, <span>boolean <var>$inPost</var> = <span class="php-keyword1">false</span></span> )</code>
+		<code>newPbfRule( <span>String <var>$name</var></span>, <span>boolean <var>$inPost</var> = <span class="php-keyword1">false</span></span> )</code>
 
 		<div class="description short">
 			
@@ -1483,7 +1545,7 @@ list.</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_newQoSRule">#</a>
-		<code><b>newQoSRule</b>( <span>String <var>$name</var></span>, <span>boolean <var>$inPost</var> = <span class="php-keyword1">false</span></span> )</code>
+		<code>newQoSRule( <span>String <var>$name</var></span>, <span>boolean <var>$inPost</var> = <span class="php-keyword1">false</span></span> )</code>
 
 		<div class="description short">
 			
@@ -1529,7 +1591,7 @@ list.</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_newDoSRule">#</a>
-		<code><b>newDoSRule</b>( <span>String <var>$name</var></span>, <span>boolean <var>$inPost</var> = <span class="php-keyword1">false</span></span> )</code>
+		<code>newDoSRule( <span>String <var>$name</var></span>, <span>boolean <var>$inPost</var> = <span class="php-keyword1">false</span></span> )</code>
 
 		<div class="description short">
 			
@@ -1575,7 +1637,7 @@ list.</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_newAppOverrideRule">#</a>
-		<code><b>newAppOverrideRule</b>( <span>String <var>$name</var></span>, <span>boolean <var>$inPostRulebase</var> = <span class="php-keyword1">false</span></span> )</code>
+		<code>newAppOverrideRule( <span>String <var>$name</var></span>, <span>boolean <var>$inPostRulebase</var> = <span class="php-keyword1">false</span></span> )</code>
 
 		<div class="description short">
 			
@@ -1621,7 +1683,7 @@ the list.</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_remove">#</a>
-		<code><b>remove</b>( <span>mixed <var>$rule</var></span>, <span>boolean <var>$deleteForever</var> = <span class="php-keyword1">false</span></span> )</code>
+		<code>remove( <span>mixed <var>$rule</var></span>, <span>boolean <var>$deleteForever</var> = <span class="php-keyword1">false</span></span> )</code>
 
 		<div class="description short">
 			
@@ -1668,7 +1730,7 @@ SecurityRule|NatRule|DecryptionRule|AppOverrideRule|CaptivePortalRule|PbfRule|Qo
 
 		<td class="name"><div>
 		<a class="anchor" href="#_API_remove">#</a>
-		<code><b>API_remove</b>( <span>mixed <var>$rule</var></span>, <span>boolean <var>$deleteForever</var> = <span class="php-keyword1">false</span></span> )</code>
+		<code>API_remove( <span>mixed <var>$rule</var></span>, <span>boolean <var>$deleteForever</var> = <span class="php-keyword1">false</span></span> )</code>
 
 		<div class="description short">
 			
@@ -1715,7 +1777,7 @@ SecurityRule|NatRule|DecryptionRule|AppOverrideRule|CaptivePortalRule|PbfRule|Qo
 
 		<td class="name"><div>
 		<a class="anchor" href="#_rewriteXML">#</a>
-		<code><b>rewriteXML</b>( )</code>
+		<code>rewriteXML( )</code>
 
 		<div class="description short">
 			
@@ -1750,7 +1812,7 @@ time. You should not need to call it by yourself in normal situations</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_regen_Indexes">#</a>
-		<code><b>regen_Indexes</b>( )</code>
+		<code>regen_Indexes( )</code>
 
 		<div class="description short">
 			
@@ -1779,7 +1841,7 @@ time. You should not need to call it by yourself in normal situations</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_name">#</a>
-		<code><b>name</b>( )</code>
+		<code>name( )</code>
 
 		<div class="description short">
 			
@@ -1812,7 +1874,7 @@ time. You should not need to call it by yourself in normal situations</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_getXPath">#</a>
-		<code><b>getXPath</b>( <span><code><a href="class-SecurityRule.html">SecurityRule</a></code>|<code><a href="class-NatRule.html">NatRule</a></code>|<code><a href="class-DecryptionRule.html">DecryptionRule</a></code>|<code><a href="class-AppOverrideRule.html">AppOverrideRule</a></code>|<code><a href="class-CaptivePortalRule.html">CaptivePortalRule</a></code>|<code><a href="class-PbfRule.html">PbfRule</a></code>|<code><a href="class-QoSRule.html">QoSRule</a></code>|<code><a href="class-DoSRule.html">DoSRule</a></code> <var>$contextRule</var></span> )</code>
+		<code>getXPath( <span><code><a href="class-SecurityRule.html">SecurityRule</a></code>|<code><a href="class-NatRule.html">NatRule</a></code>|<code><a href="class-DecryptionRule.html">DecryptionRule</a></code>|<code><a href="class-AppOverrideRule.html">AppOverrideRule</a></code>|<code><a href="class-CaptivePortalRule.html">CaptivePortalRule</a></code>|<code><a href="class-PbfRule.html">PbfRule</a></code>|<code><a href="class-QoSRule.html">QoSRule</a></code>|<code><a href="class-DoSRule.html">DoSRule</a></code> <var>$contextRule</var></span> )</code>
 
 		<div class="description short">
 			
@@ -1854,7 +1916,7 @@ time. You should not need to call it by yourself in normal situations</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_preRules">#</a>
-		<code><b>preRules</b>( )</code>
+		<code>preRules( )</code>
 
 		<div class="description short">
 			
@@ -1887,7 +1949,7 @@ time. You should not need to call it by yourself in normal situations</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_postRules">#</a>
-		<code><b>postRules</b>( )</code>
+		<code>postRules( )</code>
 
 		<div class="description short">
 			
@@ -1920,7 +1982,7 @@ time. You should not need to call it by yourself in normal situations</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_ruleIsPreRule">#</a>
-		<code><b>ruleIsPreRule</b>( <span><code><a href="class-Rule.html">Rule</a></code> <var>$rule</var></span> )</code>
+		<code>ruleIsPreRule( <span><code><a href="class-Rule.html">Rule</a></code> <var>$rule</var></span> )</code>
 
 		<div class="description short">
 			
@@ -1962,7 +2024,7 @@ time. You should not need to call it by yourself in normal situations</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_ruleIsPostRule">#</a>
-		<code><b>ruleIsPostRule</b>( <span>mixed <var>$rule</var></span> )</code>
+		<code>ruleIsPostRule( <span>mixed <var>$rule</var></span> )</code>
 
 		<div class="description short">
 			
@@ -2004,7 +2066,7 @@ time. You should not need to call it by yourself in normal situations</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_countPreRules">#</a>
-		<code><b>countPreRules</b>( )</code>
+		<code>countPreRules( )</code>
 
 		<div class="description short">
 			
@@ -2041,7 +2103,7 @@ time. You should not need to call it by yourself in normal situations</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_countPostRules">#</a>
-		<code><b>countPostRules</b>( )</code>
+		<code>countPostRules( )</code>
 
 		<div class="description short">
 			
@@ -2078,7 +2140,7 @@ time. You should not need to call it by yourself in normal situations</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_getRulePosition">#</a>
-		<code><b>getRulePosition</b>( <span>string|<code><a href="class-Rule.html">Rule</a></code>|<code><a href="class-SecurityRule.html">SecurityRule</a></code>|<code><a href="class-NatRule.html">NatRule</a></code>|<code><a href="class-DecryptionRule.html">DecryptionRule</a></code>|<code><a href="class-AppOverrideRule.html">AppOverrideRule</a></code>|<code><a href="class-CaptivePortalRule.html">CaptivePortalRule</a></code>|<code><a href="class-PbfRule.html">PbfRule</a></code>|<code><a href="class-QoSRule.html">QoSRule</a></code>|<code><a href="class-DoSRule.html">DoSRule</a></code> <var>$rule</var></span> )</code>
+		<code>getRulePosition( <span>string|<code><a href="class-Rule.html">Rule</a></code>|<code><a href="class-SecurityRule.html">SecurityRule</a></code>|<code><a href="class-NatRule.html">NatRule</a></code>|<code><a href="class-DecryptionRule.html">DecryptionRule</a></code>|<code><a href="class-AppOverrideRule.html">AppOverrideRule</a></code>|<code><a href="class-CaptivePortalRule.html">CaptivePortalRule</a></code>|<code><a href="class-PbfRule.html">PbfRule</a></code>|<code><a href="class-QoSRule.html">QoSRule</a></code>|<code><a href="class-DoSRule.html">DoSRule</a></code> <var>$rule</var></span> )</code>
 
 		<div class="description short">
 			
@@ -2116,7 +2178,7 @@ time. You should not need to call it by yourself in normal situations</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_getRuleOnTop">#</a>
-		<code><b>getRuleOnTop</b>( <span>null|boolean <var>$lookInPreRules</var> = <span class="php-keyword1">true</span></span> )</code>
+		<code>getRuleOnTop( <span>null|boolean <var>$lookInPreRules</var> = <span class="php-keyword1">true</span></span> )</code>
 
 		<div class="description short">
 			
@@ -2154,7 +2216,7 @@ time. You should not need to call it by yourself in normal situations</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_getRuleAtBottom">#</a>
-		<code><b>getRuleAtBottom</b>( <span>null|boolean <var>$lookInPreRules</var> = <span class="php-keyword1">true</span></span> )</code>
+		<code>getRuleAtBottom( <span>null|boolean <var>$lookInPreRules</var> = <span class="php-keyword1">true</span></span> )</code>
 
 		<div class="description short">
 			
@@ -2192,7 +2254,7 @@ time. You should not need to call it by yourself in normal situations</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_createXmlRoot">#</a>
-		<code><b>createXmlRoot</b>( )</code>
+		<code>createXmlRoot( )</code>
 
 		<div class="description short">
 			
@@ -2221,7 +2283,7 @@ time. You should not need to call it by yourself in normal situations</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_createPostXmlRoot">#</a>
-		<code><b>createPostXmlRoot</b>( )</code>
+		<code>createPostXmlRoot( )</code>
 
 		<div class="description short">
 			
@@ -2246,9 +2308,9 @@ time. You should not need to call it by yourself in normal situations</p>
 	<caption>Methods used from <a href="class-PathableName.html#methods">PathableName</a></caption>
 	<tr>
 		<td><code>
-			<a href="class-PathableName.html#__PANC_shortName"><b>_PANC_shortName()</b></a>, 
-			<a href="class-PathableName.html#_getLocationString"><b>getLocationString()</b></a>, 
-			<a href="class-PathableName.html#_toString"><b>toString()</b></a>
+			<a href="class-PathableName.html#__PANC_shortName">_PANC_shortNameo()</a>, 
+			<a href="class-PathableName.html#_getLocationString">getLocationStringo()</a>, 
+			<a href="class-PathableName.html#_toString">toStringo()</a>
 		</code></td>
 	</tr>
 	</table>
@@ -2256,10 +2318,11 @@ time. You should not need to call it by yourself in normal situations</p>
 	<caption>Methods used from <a href="class-XmlConvertible.html#methods">XmlConvertible</a></caption>
 	<tr>
 		<td><code>
-			<a href="class-XmlConvertible.html#_API_sync"><b>API_sync()</b></a>, 
-			<a href="class-XmlConvertible.html#_getChildXmlText_inline"><b>getChildXmlText_inline()</b></a>, 
-			<a href="class-XmlConvertible.html#_getXmlText"><b>getXmlText()</b></a>, 
-			<a href="class-XmlConvertible.html#_getXmlText_inline"><b>getXmlText_inline()</b></a>
+			<a href="class-XmlConvertible.html#_API_sync">API_synco()</a>, 
+			<a href="class-XmlConvertible.html#_getChildXmlText_inline">getChildXmlText_inlineo()</a>, 
+			<a href="class-XmlConvertible.html#_getXmlText">getXmlTexto()</a>, 
+			<a href="class-XmlConvertible.html#_getXmlText_inline">getXmlText_inlineo()</a>, 
+			<a href="class-XmlConvertible.html#_set_node_attribute">set_node_attributeo()</a>
 		</code></td>
 	</tr>
 	</table>

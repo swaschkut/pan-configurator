@@ -6,8 +6,8 @@
 
 	<title>Class App | PAN-PHP-FRAMEWORK</title>
 
-	<script type="text/javascript" src="resources/combined.js?772778653"></script>
-	<script type="text/javascript" src="elementlist.js?4105871058"></script>
+	<script type="text/javascript" src="resources/combined.js?1588816152"></script>
+	<script type="text/javascript" src="elementlist.js?4215409147"></script>
 	<link rel="stylesheet" type="text/css" media="all" href="resources/style.css?3505392360" />
 
 </head>
@@ -44,6 +44,7 @@
 				<li><a href="class-AppOverrideRule.html">AppOverrideRule</a></li>
 				<li><a href="class-AppRuleContainer.html">AppRuleContainer</a></li>
 				<li><a href="class-AppStore.html">AppStore</a></li>
+				<li><a href="class-AuthenticationRule.html">AuthenticationRule</a></li>
 				<li><a href="class-CaptivePortalRule.html">CaptivePortalRule</a></li>
 				<li><a href="class-cidr.html">cidr</a></li>
 				<li><a href="class-CsvParser.html">CsvParser</a></li>
@@ -53,13 +54,20 @@
 				<li><a href="class-DoSRule.html">DoSRule</a></li>
 				<li><a href="class-EthernetIfStore.html">EthernetIfStore</a></li>
 				<li><a href="class-EthernetInterface.html">EthernetInterface</a></li>
+				<li><a href="class-IkeCryptoProfil.html">IkeCryptoProfil</a></li>
+				<li><a href="class-IkeCryptoProfileStore.html">IkeCryptoProfileStore</a></li>
+				<li><a href="class-IKEGateway.html">IKEGateway</a></li>
+				<li><a href="class-IKEGatewayStore.html">IKEGatewayStore</a></li>
 				<li><a href="class-InterfaceContainer.html">InterfaceContainer</a></li>
 				<li><a href="class-IP4Map.html">IP4Map</a></li>
+				<li><a href="class-IPSecCryptoProfil.html">IPSecCryptoProfil</a></li>
+				<li><a href="class-IPSecCryptoProfileStore.html">IPSecCryptoProfileStore</a></li>
 				<li><a href="class-IPsecTunnel.html">IPsecTunnel</a></li>
 				<li><a href="class-IPsecTunnelStore.html">IPsecTunnelStore</a></li>
 				<li><a href="class-LoopbackIfStore.html">LoopbackIfStore</a></li>
 				<li><a href="class-LoopbackInterface.html">LoopbackInterface</a></li>
 				<li><a href="class-ManagedDevice.html">ManagedDevice</a></li>
+				<li><a href="class-ManagedDeviceStore.html">ManagedDeviceStore</a></li>
 				<li><a href="class-NatRule.html">NatRule</a></li>
 				<li><a href="class-NetworkPropertiesContainer.html">NetworkPropertiesContainer</a></li>
 				<li><a href="class-ObjRuleContainer.html">ObjRuleContainer</a></li>
@@ -79,17 +87,25 @@
 				<li><a href="class-ServiceDstPortMapping.html">ServiceDstPortMapping</a></li>
 				<li><a href="class-ServiceGroup.html">ServiceGroup</a></li>
 				<li><a href="class-ServiceRuleContainer.html">ServiceRuleContainer</a></li>
+				<li><a href="class-ServiceSrcPortMapping.html">ServiceSrcPortMapping</a></li>
 				<li><a href="class-ServiceStore.html">ServiceStore</a></li>
 				<li><a href="class-StaticRoute.html">StaticRoute</a></li>
 				<li><a href="class-Tag.html">Tag</a></li>
 				<li><a href="class-TagRuleContainer.html">TagRuleContainer</a></li>
 				<li><a href="class-TagStore.html">TagStore</a></li>
 				<li><a href="class-Template.html">Template</a></li>
+				<li><a href="class-TemplateStack.html">TemplateStack</a></li>
 				<li><a href="class-TmpInterface.html">TmpInterface</a></li>
 				<li><a href="class-TmpInterfaceStore.html">TmpInterfaceStore</a></li>
+				<li><a href="class-TunnelIfStore.html">TunnelIfStore</a></li>
+				<li><a href="class-TunnelInterface.html">TunnelInterface</a></li>
 				<li><a href="class-VirtualRouter.html">VirtualRouter</a></li>
 				<li><a href="class-VirtualRouterStore.html">VirtualRouterStore</a></li>
 				<li><a href="class-VirtualSystem.html">VirtualSystem</a></li>
+				<li><a href="class-VirtualWire.html">VirtualWire</a></li>
+				<li><a href="class-VirtualWireStore.html">VirtualWireStore</a></li>
+				<li><a href="class-VlanIfStore.html">VlanIfStore</a></li>
+				<li><a href="class-VlanInterface.html">VlanInterface</a></li>
 				<li><a href="class-Zone.html">Zone</a></li>
 				<li><a href="class-ZoneRuleContainer.html">ZoneRuleContainer</a></li>
 				<li><a href="class-ZoneStore.html">ZoneStore</a></li>
@@ -221,7 +237,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#___construct">#</a>
-		<code><b>__construct</b>( <span>mixed <var>$name</var></span>, <span>mixed <var>$owner</var></span> )</code>
+		<code>__construct( <span>mixed <var>$name</var></span>, <span>mixed <var>$owner</var></span> )</code>
 
 		<div class="description short">
 			
@@ -250,7 +266,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_isUsingSpecialProto">#</a>
-		<code><b>isUsingSpecialProto</b>( )</code>
+		<code>isUsingSpecialProto( )</code>
 
 		<div class="description short">
 			
@@ -279,7 +295,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_isContainer">#</a>
-		<code><b>isContainer</b>( )</code>
+		<code>isContainer( )</code>
 
 		<div class="description short">
 			
@@ -308,7 +324,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_containerApps">#</a>
-		<code><b>containerApps</b>( )</code>
+		<code>containerApps( )</code>
 
 		<div class="description short">
 			
@@ -337,7 +353,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_useDynamicPorts">#</a>
-		<code><b>useDynamicPorts</b>( )</code>
+		<code>useDynamicPorts( )</code>
 
 		<div class="description short">
 			
@@ -374,7 +390,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_matchPort">#</a>
-		<code><b>matchPort</b>( <span>mixed <var>$proto</var></span>, <span>mixed <var>$port</var></span> )</code>
+		<code>matchPort( <span>mixed <var>$proto</var></span>, <span>mixed <var>$port</var></span> )</code>
 
 		<div class="description short">
 			
@@ -403,7 +419,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_calculateDependencies">#</a>
-		<code><b>calculateDependencies</b>( )</code>
+		<code>calculateDependencies( )</code>
 
 		<div class="description short">
 			
@@ -440,7 +456,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_isCustom">#</a>
-		<code><b>isCustom</b>( )</code>
+		<code>isCustom( )</code>
 
 		<div class="description short">
 			
@@ -469,7 +485,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_CustomHasSignature">#</a>
-		<code><b>CustomHasSignature</b>( )</code>
+		<code>CustomHasSignature( )</code>
 
 		<div class="description short">
 			
@@ -494,27 +510,27 @@
 	<caption>Methods used from <a href="class-ReferencableObject.html#methods">ReferencableObject</a></caption>
 	<tr>
 		<td><code>
-			<a href="class-ReferencableObject.html#_API_addObjectWhereIamUsed"><b>API_addObjectWhereIamUsed()</b></a>, 
-			<a href="class-ReferencableObject.html#_ReferencesStoreValidation"><b>ReferencesStoreValidation()</b></a>, 
-			<a href="class-ReferencableObject.html#_ReferencesTypeValidation"><b>ReferencesTypeValidation()</b></a>, 
-			<a href="class-ReferencableObject.html#_addObjectWhereIamUsed"><b>addObjectWhereIamUsed()</b></a>, 
-			<a href="class-ReferencableObject.html#_addReference"><b>addReference()</b></a>, 
-			<a href="class-ReferencableObject.html#_broadcastMyNameChange"><b>broadcastMyNameChange()</b></a>, 
-			<a href="class-ReferencableObject.html#_countReferences"><b>countReferences()</b></a>, 
-			<a href="class-ReferencableObject.html#_display_references"><b>display_references()</b></a>, 
-			<a href="class-ReferencableObject.html#_findAssociatedRule_byType"><b>findAssociatedRule_byType()</b></a>, 
-			<a href="class-ReferencableObject.html#_findAssociatedSecurityRules"><b>findAssociatedSecurityRules()</b></a>, 
-			<a href="class-ReferencableObject.html#_findReferencesWithClass"><b>findReferencesWithClass()</b></a>, 
-			<a href="class-ReferencableObject.html#_generateRefHashComp"><b>generateRefHashComp()</b></a>, 
-			<a href="class-ReferencableObject.html#_getRefHashComp"><b>getRefHashComp()</b></a>, 
-			<a href="class-ReferencableObject.html#_getReferences"><b>getReferences()</b></a>, 
-			<a href="class-ReferencableObject.html#_getReferencesLocation"><b>getReferencesLocation()</b></a>, 
-			<a href="class-ReferencableObject.html#_getReferencesStore"><b>getReferencesStore()</b></a>, 
-			<a href="class-ReferencableObject.html#_getReferencesType"><b>getReferencesType()</b></a>, 
-			<a href="class-ReferencableObject.html#_name"><b>name()</b></a>, 
-			<a href="class-ReferencableObject.html#_removeReference"><b>removeReference()</b></a>, 
-			<a href="class-ReferencableObject.html#_replaceMeGlobally"><b>replaceMeGlobally()</b></a>, 
-			<a href="class-ReferencableObject.html#_setRefName"><b>setRefName()</b></a>
+			<a href="class-ReferencableObject.html#_API_addObjectWhereIamUsed">API_addObjectWhereIamUsedo()</a>, 
+			<a href="class-ReferencableObject.html#_ReferencesStoreValidation">ReferencesStoreValidationo()</a>, 
+			<a href="class-ReferencableObject.html#_ReferencesTypeValidation">ReferencesTypeValidationo()</a>, 
+			<a href="class-ReferencableObject.html#_addObjectWhereIamUsed">addObjectWhereIamUsedo()</a>, 
+			<a href="class-ReferencableObject.html#_addReference">addReferenceo()</a>, 
+			<a href="class-ReferencableObject.html#_broadcastMyNameChange">broadcastMyNameChangeo()</a>, 
+			<a href="class-ReferencableObject.html#_countReferences">countReferenceso()</a>, 
+			<a href="class-ReferencableObject.html#_display_references">display_referenceso()</a>, 
+			<a href="class-ReferencableObject.html#_findAssociatedRule_byType">findAssociatedRule_byTypeo()</a>, 
+			<a href="class-ReferencableObject.html#_findAssociatedSecurityRules">findAssociatedSecurityRuleso()</a>, 
+			<a href="class-ReferencableObject.html#_findReferencesWithClass">findReferencesWithClasso()</a>, 
+			<a href="class-ReferencableObject.html#_generateRefHashComp">generateRefHashCompo()</a>, 
+			<a href="class-ReferencableObject.html#_getRefHashComp">getRefHashCompo()</a>, 
+			<a href="class-ReferencableObject.html#_getReferences">getReferenceso()</a>, 
+			<a href="class-ReferencableObject.html#_getReferencesLocation">getReferencesLocationo()</a>, 
+			<a href="class-ReferencableObject.html#_getReferencesStore">getReferencesStoreo()</a>, 
+			<a href="class-ReferencableObject.html#_getReferencesType">getReferencesTypeo()</a>, 
+			<a href="class-ReferencableObject.html#_name">nameo()</a>, 
+			<a href="class-ReferencableObject.html#_removeReference">removeReferenceo()</a>, 
+			<a href="class-ReferencableObject.html#_replaceMeGlobally">replaceMeGloballyo()</a>, 
+			<a href="class-ReferencableObject.html#_setRefName">setRefNameo()</a>
 		</code></td>
 	</tr>
 	</table>
@@ -522,9 +538,9 @@
 	<caption>Methods used from <a href="class-PathableName.html#methods">PathableName</a></caption>
 	<tr>
 		<td><code>
-			<a href="class-PathableName.html#__PANC_shortName"><b>_PANC_shortName()</b></a>, 
-			<a href="class-PathableName.html#_getLocationString"><b>getLocationString()</b></a>, 
-			<a href="class-PathableName.html#_toString"><b>toString()</b></a>
+			<a href="class-PathableName.html#__PANC_shortName">_PANC_shortNameo()</a>, 
+			<a href="class-PathableName.html#_getLocationString">getLocationStringo()</a>, 
+			<a href="class-PathableName.html#_toString">toStringo()</a>
 		</code></td>
 	</tr>
 	</table>
@@ -628,6 +644,116 @@
 			</div>
 		</div></td>
 	</tr>
+	<tr data-order="icmp6" id="$icmp6">
+		<td class="attributes"><code>
+			public  
+			mixed
+		</code></td>
+
+		<td class="name">
+<var>$icmp6</var>		</td>
+		<td class="value"><code><span class="php-keyword1">null</span></code></td>
+		<td class="description"><div>
+			<a href="#$icmp6" class="anchor">#</a>
+
+			<div class="description short">
+				
+			</div>
+
+			<div class="description detailed hidden">
+				
+
+			</div>
+		</div></td>
+	</tr>
+	<tr data-order="tcp_secure" id="$tcp_secure">
+		<td class="attributes"><code>
+			public  
+			mixed
+		</code></td>
+
+		<td class="name">
+<var>$tcp_secure</var>		</td>
+		<td class="value"><code><span class="php-keyword1">null</span></code></td>
+		<td class="description"><div>
+			<a href="#$tcp_secure" class="anchor">#</a>
+
+			<div class="description short">
+				
+			</div>
+
+			<div class="description detailed hidden">
+				
+
+			</div>
+		</div></td>
+	</tr>
+	<tr data-order="udp_secure" id="$udp_secure">
+		<td class="attributes"><code>
+			public  
+			mixed
+		</code></td>
+
+		<td class="name">
+<var>$udp_secure</var>		</td>
+		<td class="value"><code><span class="php-keyword1">null</span></code></td>
+		<td class="description"><div>
+			<a href="#$udp_secure" class="anchor">#</a>
+
+			<div class="description short">
+				
+			</div>
+
+			<div class="description detailed hidden">
+				
+
+			</div>
+		</div></td>
+	</tr>
+	<tr data-order="icmp_secure" id="$icmp_secure">
+		<td class="attributes"><code>
+			public  
+			mixed
+		</code></td>
+
+		<td class="name">
+<var>$icmp_secure</var>		</td>
+		<td class="value"><code><span class="php-keyword1">null</span></code></td>
+		<td class="description"><div>
+			<a href="#$icmp_secure" class="anchor">#</a>
+
+			<div class="description short">
+				
+			</div>
+
+			<div class="description detailed hidden">
+				
+
+			</div>
+		</div></td>
+	</tr>
+	<tr data-order="icmp6_secure" id="$icmp6_secure">
+		<td class="attributes"><code>
+			public  
+			mixed
+		</code></td>
+
+		<td class="name">
+<var>$icmp6_secure</var>		</td>
+		<td class="value"><code><span class="php-keyword1">null</span></code></td>
+		<td class="description"><div>
+			<a href="#$icmp6_secure" class="anchor">#</a>
+
+			<div class="description short">
+				
+			</div>
+
+			<div class="description detailed hidden">
+				
+
+			</div>
+		</div></td>
+	</tr>
 	<tr data-order="icmpsub" id="$icmpsub">
 		<td class="attributes"><code>
 			public  
@@ -661,6 +787,50 @@
 		<td class="value"><code><span class="php-keyword1">null</span></code></td>
 		<td class="description"><div>
 			<a href="#$icmp6sub" class="anchor">#</a>
+
+			<div class="description short">
+				
+			</div>
+
+			<div class="description detailed hidden">
+				
+
+			</div>
+		</div></td>
+	</tr>
+	<tr data-order="icmpcode" id="$icmpcode">
+		<td class="attributes"><code>
+			public  
+			mixed
+		</code></td>
+
+		<td class="name">
+<var>$icmpcode</var>		</td>
+		<td class="value"><code><span class="php-keyword1">null</span></code></td>
+		<td class="description"><div>
+			<a href="#$icmpcode" class="anchor">#</a>
+
+			<div class="description short">
+				
+			</div>
+
+			<div class="description detailed hidden">
+				
+
+			</div>
+		</div></td>
+	</tr>
+	<tr data-order="icmp6code" id="$icmp6code">
+		<td class="attributes"><code>
+			public  
+			mixed
+		</code></td>
+
+		<td class="name">
+<var>$icmp6code</var>		</td>
+		<td class="value"><code><span class="php-keyword1">null</span></code></td>
+		<td class="description"><div>
+			<a href="#$icmp6code" class="anchor">#</a>
 
 			<div class="description short">
 				

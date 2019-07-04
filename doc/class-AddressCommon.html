@@ -6,8 +6,8 @@
 
 	<title>Trait AddressCommon | PAN-PHP-FRAMEWORK</title>
 
-	<script type="text/javascript" src="resources/combined.js?772778653"></script>
-	<script type="text/javascript" src="elementlist.js?4105871058"></script>
+	<script type="text/javascript" src="resources/combined.js?1588816152"></script>
+	<script type="text/javascript" src="elementlist.js?4215409147"></script>
 	<link rel="stylesheet" type="text/css" media="all" href="resources/style.css?3505392360" />
 
 </head>
@@ -44,6 +44,7 @@
 				<li><a href="class-AppOverrideRule.html">AppOverrideRule</a></li>
 				<li><a href="class-AppRuleContainer.html">AppRuleContainer</a></li>
 				<li><a href="class-AppStore.html">AppStore</a></li>
+				<li><a href="class-AuthenticationRule.html">AuthenticationRule</a></li>
 				<li><a href="class-CaptivePortalRule.html">CaptivePortalRule</a></li>
 				<li><a href="class-cidr.html">cidr</a></li>
 				<li><a href="class-CsvParser.html">CsvParser</a></li>
@@ -53,13 +54,20 @@
 				<li><a href="class-DoSRule.html">DoSRule</a></li>
 				<li><a href="class-EthernetIfStore.html">EthernetIfStore</a></li>
 				<li><a href="class-EthernetInterface.html">EthernetInterface</a></li>
+				<li><a href="class-IkeCryptoProfil.html">IkeCryptoProfil</a></li>
+				<li><a href="class-IkeCryptoProfileStore.html">IkeCryptoProfileStore</a></li>
+				<li><a href="class-IKEGateway.html">IKEGateway</a></li>
+				<li><a href="class-IKEGatewayStore.html">IKEGatewayStore</a></li>
 				<li><a href="class-InterfaceContainer.html">InterfaceContainer</a></li>
 				<li><a href="class-IP4Map.html">IP4Map</a></li>
+				<li><a href="class-IPSecCryptoProfil.html">IPSecCryptoProfil</a></li>
+				<li><a href="class-IPSecCryptoProfileStore.html">IPSecCryptoProfileStore</a></li>
 				<li><a href="class-IPsecTunnel.html">IPsecTunnel</a></li>
 				<li><a href="class-IPsecTunnelStore.html">IPsecTunnelStore</a></li>
 				<li><a href="class-LoopbackIfStore.html">LoopbackIfStore</a></li>
 				<li><a href="class-LoopbackInterface.html">LoopbackInterface</a></li>
 				<li><a href="class-ManagedDevice.html">ManagedDevice</a></li>
+				<li><a href="class-ManagedDeviceStore.html">ManagedDeviceStore</a></li>
 				<li><a href="class-NatRule.html">NatRule</a></li>
 				<li><a href="class-NetworkPropertiesContainer.html">NetworkPropertiesContainer</a></li>
 				<li><a href="class-ObjRuleContainer.html">ObjRuleContainer</a></li>
@@ -79,17 +87,25 @@
 				<li><a href="class-ServiceDstPortMapping.html">ServiceDstPortMapping</a></li>
 				<li><a href="class-ServiceGroup.html">ServiceGroup</a></li>
 				<li><a href="class-ServiceRuleContainer.html">ServiceRuleContainer</a></li>
+				<li><a href="class-ServiceSrcPortMapping.html">ServiceSrcPortMapping</a></li>
 				<li><a href="class-ServiceStore.html">ServiceStore</a></li>
 				<li><a href="class-StaticRoute.html">StaticRoute</a></li>
 				<li><a href="class-Tag.html">Tag</a></li>
 				<li><a href="class-TagRuleContainer.html">TagRuleContainer</a></li>
 				<li><a href="class-TagStore.html">TagStore</a></li>
 				<li><a href="class-Template.html">Template</a></li>
+				<li><a href="class-TemplateStack.html">TemplateStack</a></li>
 				<li><a href="class-TmpInterface.html">TmpInterface</a></li>
 				<li><a href="class-TmpInterfaceStore.html">TmpInterfaceStore</a></li>
+				<li><a href="class-TunnelIfStore.html">TunnelIfStore</a></li>
+				<li><a href="class-TunnelInterface.html">TunnelInterface</a></li>
 				<li><a href="class-VirtualRouter.html">VirtualRouter</a></li>
 				<li><a href="class-VirtualRouterStore.html">VirtualRouterStore</a></li>
 				<li><a href="class-VirtualSystem.html">VirtualSystem</a></li>
+				<li><a href="class-VirtualWire.html">VirtualWire</a></li>
+				<li><a href="class-VirtualWireStore.html">VirtualWireStore</a></li>
+				<li><a href="class-VlanIfStore.html">VlanIfStore</a></li>
+				<li><a href="class-VlanInterface.html">VlanInterface</a></li>
 				<li><a href="class-Zone.html">Zone</a></li>
 				<li><a href="class-ZoneRuleContainer.html">ZoneRuleContainer</a></li>
 				<li><a href="class-ZoneStore.html">ZoneStore</a></li>
@@ -229,7 +245,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_isAddress">#</a>
-		<code><b>isAddress</b>( )</code>
+		<code>isAddress( )</code>
 
 		<div class="description short">
 			
@@ -258,7 +274,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_isGroup">#</a>
-		<code><b>isGroup</b>( )</code>
+		<code>isGroup( )</code>
 
 		<div class="description short">
 			
@@ -287,7 +303,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_isTmpAddr">#</a>
-		<code><b>isTmpAddr</b>( )</code>
+		<code>isTmpAddr( )</code>
 
 		<div class="description short">
 			
@@ -316,7 +332,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_removeReference">#</a>
-		<code><b>removeReference</b>( <span>mixed <var>$ref</var></span> )</code>
+		<code>removeReference( <span>mixed <var>$ref</var></span> )</code>
 
 		<div class="description short">
 			
@@ -345,7 +361,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_addObjectWhereIamUsed">#</a>
-		<code><b>addObjectWhereIamUsed</b>( <span><code><a href="class-Address.html">Address</a></code>|<code><a href="class-AddressGroup.html">AddressGroup</a></code> <var>$objectToAdd</var></span>, <span>boolean <var>$displayOutput</var> = <span class="php-keyword1">false</span></span>, <span>boolean <var>$outputPadding</var> = <span class="php-quote">''</span></span>, <span>string|integer <var>$skipIfConflict</var> = <span class="php-keyword1">false</span></span>, <span>boolean <var>$skipNatRules</var> = <span class="php-keyword1">false</span></span> )</code>
+		<code>addObjectWhereIamUsed( <span><code><a href="class-Address.html">Address</a></code>|<code><a href="class-AddressGroup.html">AddressGroup</a></code> <var>$objectToAdd</var></span>, <span>boolean <var>$displayOutput</var> = <span class="php-keyword1">false</span></span>, <span>boolean <var>$outputPadding</var> = <span class="php-quote">''</span></span>, <span>string|integer <var>$skipIfConflict</var> = <span class="php-keyword1">false</span></span>, <span>boolean <var>$skipNatRules</var> = <span class="php-keyword1">false</span></span> )</code>
 
 		<div class="description short">
 			
@@ -387,7 +403,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_API_addObjectWhereIamUsed">#</a>
-		<code><b>API_addObjectWhereIamUsed</b>( <span><code><a href="class-Address.html">Address</a></code>|<code><a href="class-AddressGroup.html">AddressGroup</a></code> <var>$objectToAdd</var></span>, <span>boolean <var>$displayOutput</var> = <span class="php-keyword1">false</span></span>, <span>boolean <var>$outputPadding</var> = <span class="php-quote">''</span></span>, <span>string|integer <var>$skipIfConflict</var> = <span class="php-keyword1">false</span></span>, <span>boolean <var>$skipNatRules</var> = <span class="php-keyword1">false</span></span> )</code>
+		<code>API_addObjectWhereIamUsed( <span><code><a href="class-Address.html">Address</a></code>|<code><a href="class-AddressGroup.html">AddressGroup</a></code> <var>$objectToAdd</var></span>, <span>boolean <var>$displayOutput</var> = <span class="php-keyword1">false</span></span>, <span>boolean <var>$outputPadding</var> = <span class="php-quote">''</span></span>, <span>string|integer <var>$skipIfConflict</var> = <span class="php-keyword1">false</span></span>, <span>boolean <var>$skipNatRules</var> = <span class="php-keyword1">false</span></span> )</code>
 
 		<div class="description short">
 			
@@ -429,7 +445,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_removeWhereIamUsed">#</a>
-		<code><b>removeWhereIamUsed</b>( <span>boolean <var>$displayOutput</var> = <span class="php-keyword1">false</span></span>, <span>string <var>$outputPadding</var> = <span class="php-quote">''</span></span>, <span>string|integer <var>$actionIfLastInRule</var> = <span class="php-quote">'delete'</span> </span> )</code>
+		<code>removeWhereIamUsed( <span>boolean <var>$displayOutput</var> = <span class="php-keyword1">false</span></span>, <span>string <var>$outputPadding</var> = <span class="php-quote">''</span></span>, <span>string|integer <var>$actionIfLastInRule</var> = <span class="php-quote">'delete'</span> </span> )</code>
 
 		<div class="description short">
 			
@@ -467,7 +483,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_API_removeWhereIamUsed">#</a>
-		<code><b>API_removeWhereIamUsed</b>( <span>boolean <var>$displayOutput</var> = <span class="php-keyword1">false</span></span>, <span>string <var>$outputPadding</var> = <span class="php-quote">''</span></span>, <span>string|integer <var>$actionIfLastInRule</var> = <span class="php-quote">'delete'</span> </span> )</code>
+		<code>API_removeWhereIamUsed( <span>boolean <var>$displayOutput</var> = <span class="php-keyword1">false</span></span>, <span>string <var>$outputPadding</var> = <span class="php-quote">''</span></span>, <span>string|integer <var>$actionIfLastInRule</var> = <span class="php-quote">'delete'</span> </span> )</code>
 
 		<div class="description short">
 			
@@ -505,7 +521,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_API_replaceWhereIamUsed">#</a>
-		<code><b>API_replaceWhereIamUsed</b>( <span>boolean <var>$withObject</var></span>, <span><code><a href="class-Service.html">Service</a></code>|<code><a href="class-ServiceGroup.html">ServiceGroup</a></code> <var>$displayOutput</var> = <span class="php-keyword1">false</span></span>, <span>string|integer <var>$outputPadding</var> = <span class="php-quote">''</span></span> )</code>
+		<code>API_replaceWhereIamUsed( <span>boolean <var>$withObject</var></span>, <span><code><a href="class-Service.html">Service</a></code>|<code><a href="class-ServiceGroup.html">ServiceGroup</a></code> <var>$displayOutput</var> = <span class="php-keyword1">false</span></span>, <span>string|integer <var>$outputPadding</var> = <span class="php-quote">''</span></span> )</code>
 
 		<div class="description short">
 			
@@ -543,7 +559,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_replaceWhereIamUsed">#</a>
-		<code><b>replaceWhereIamUsed</b>( <span>boolean <var>$withObject</var></span>, <span><code><a href="class-Service.html">Service</a></code>|<code><a href="class-ServiceGroup.html">ServiceGroup</a></code> <var>$displayOutput</var> = <span class="php-keyword1">false</span></span>, <span>string|integer <var>$outputPadding</var> = <span class="php-quote">''</span></span> )</code>
+		<code>replaceWhereIamUsed( <span>boolean <var>$withObject</var></span>, <span><code><a href="class-Service.html">Service</a></code>|<code><a href="class-ServiceGroup.html">ServiceGroup</a></code> <var>$displayOutput</var> = <span class="php-keyword1">false</span></span>, <span>string|integer <var>$outputPadding</var> = <span class="php-quote">''</span></span> )</code>
 
 		<div class="description short">
 			
@@ -581,7 +597,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#___replaceWhereIamUsed">#</a>
-		<code><b>__replaceWhereIamUsed</b>( <span>boolean <var>$apiMode</var></span>, <span>boolean <var>$withObject</var></span>, <span><code><a href="class-Address.html">Address</a></code>|<code><a href="class-AddressGroup.html">AddressGroup</a></code> <var>$displayOutput</var> = <span class="php-keyword1">false</span></span>, <span>string|integer <var>$outputPadding</var> = <span class="php-quote">''</span></span> )</code>
+		<code>__replaceWhereIamUsed( <span>boolean <var>$apiMode</var></span>, <span>boolean <var>$withObject</var></span>, <span><code><a href="class-Address.html">Address</a></code>|<code><a href="class-AddressGroup.html">AddressGroup</a></code> <var>$displayOutput</var> = <span class="php-keyword1">false</span></span>, <span>string|integer <var>$outputPadding</var> = <span class="php-quote">''</span></span> )</code>
 
 		<div class="description short">
 			
@@ -621,7 +637,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_hasDescendants">#</a>
-		<code><b>hasDescendants</b>( )</code>
+		<code>hasDescendants( )</code>
 
 		<div class="description short">
 			
@@ -656,25 +672,25 @@ lower levels</p>
 	<caption>Methods used from <a href="class-ReferencableObject.html#methods">ReferencableObject</a></caption>
 	<tr>
 		<td><code>
-			<a href="class-ReferencableObject.html#_ReferencesStoreValidation"><b>ReferencesStoreValidation()</b></a>, 
-			<a href="class-ReferencableObject.html#_ReferencesTypeValidation"><b>ReferencesTypeValidation()</b></a>, 
-			<a href="class-ReferencableObject.html#_addReference"><b>addReference()</b></a>, 
-			<a href="class-ReferencableObject.html#_broadcastMyNameChange"><b>broadcastMyNameChange()</b></a>, 
-			<a href="class-ReferencableObject.html#_countReferences"><b>countReferences()</b></a>, 
-			<a href="class-ReferencableObject.html#_display_references"><b>display_references()</b></a>, 
-			<a href="class-ReferencableObject.html#_findAssociatedRule_byType"><b>findAssociatedRule_byType()</b></a>, 
-			<a href="class-ReferencableObject.html#_findAssociatedSecurityRules"><b>findAssociatedSecurityRules()</b></a>, 
-			<a href="class-ReferencableObject.html#_findReferencesWithClass"><b>findReferencesWithClass()</b></a>, 
-			<a href="class-ReferencableObject.html#_generateRefHashComp"><b>generateRefHashComp()</b></a>, 
-			<a href="class-ReferencableObject.html#_getRefHashComp"><b>getRefHashComp()</b></a>, 
-			<a href="class-ReferencableObject.html#_getReferences"><b>getReferences()</b></a>, 
-			<a href="class-ReferencableObject.html#_getReferencesLocation"><b>getReferencesLocation()</b></a>, 
-			<a href="class-ReferencableObject.html#_getReferencesStore"><b>getReferencesStore()</b></a>, 
-			<a href="class-ReferencableObject.html#_getReferencesType"><b>getReferencesType()</b></a>, 
-			<a href="class-ReferencableObject.html#_name"><b>name()</b></a>, 
-			<a href="class-ReferencableObject.html#_replaceMeGlobally"><b>replaceMeGlobally()</b></a>, 
-			<a href="class-ReferencableObject.html#_setRefName"><b>setRefName()</b></a>, 
-			<a href="class-ReferencableObject.html#_removeReference"><b>super_removeReference()</b></a>(as super_removeReference())
+			<a href="class-ReferencableObject.html#_ReferencesStoreValidation">ReferencesStoreValidationo()</a>, 
+			<a href="class-ReferencableObject.html#_ReferencesTypeValidation">ReferencesTypeValidationo()</a>, 
+			<a href="class-ReferencableObject.html#_addReference">addReferenceo()</a>, 
+			<a href="class-ReferencableObject.html#_broadcastMyNameChange">broadcastMyNameChangeo()</a>, 
+			<a href="class-ReferencableObject.html#_countReferences">countReferenceso()</a>, 
+			<a href="class-ReferencableObject.html#_display_references">display_referenceso()</a>, 
+			<a href="class-ReferencableObject.html#_findAssociatedRule_byType">findAssociatedRule_byTypeo()</a>, 
+			<a href="class-ReferencableObject.html#_findAssociatedSecurityRules">findAssociatedSecurityRuleso()</a>, 
+			<a href="class-ReferencableObject.html#_findReferencesWithClass">findReferencesWithClasso()</a>, 
+			<a href="class-ReferencableObject.html#_generateRefHashComp">generateRefHashCompo()</a>, 
+			<a href="class-ReferencableObject.html#_getRefHashComp">getRefHashCompo()</a>, 
+			<a href="class-ReferencableObject.html#_getReferences">getReferenceso()</a>, 
+			<a href="class-ReferencableObject.html#_getReferencesLocation">getReferencesLocationo()</a>, 
+			<a href="class-ReferencableObject.html#_getReferencesStore">getReferencesStoreo()</a>, 
+			<a href="class-ReferencableObject.html#_getReferencesType">getReferencesTypeo()</a>, 
+			<a href="class-ReferencableObject.html#_name">nameo()</a>, 
+			<a href="class-ReferencableObject.html#_replaceMeGlobally">replaceMeGloballyo()</a>, 
+			<a href="class-ReferencableObject.html#_setRefName">setRefNameo()</a>, 
+			<a href="class-ReferencableObject.html#_removeReference">super_removeReferenceo()</a>(as super_removeReference())
 		</code></td>
 	</tr>
 	</table>

@@ -6,8 +6,8 @@
 
 	<title>Class AddressStore | PAN-PHP-FRAMEWORK</title>
 
-	<script type="text/javascript" src="resources/combined.js?772778653"></script>
-	<script type="text/javascript" src="elementlist.js?4105871058"></script>
+	<script type="text/javascript" src="resources/combined.js?1588816152"></script>
+	<script type="text/javascript" src="elementlist.js?4215409147"></script>
 	<link rel="stylesheet" type="text/css" media="all" href="resources/style.css?3505392360" />
 
 </head>
@@ -44,6 +44,7 @@
 				<li><a href="class-AppOverrideRule.html">AppOverrideRule</a></li>
 				<li><a href="class-AppRuleContainer.html">AppRuleContainer</a></li>
 				<li><a href="class-AppStore.html">AppStore</a></li>
+				<li><a href="class-AuthenticationRule.html">AuthenticationRule</a></li>
 				<li><a href="class-CaptivePortalRule.html">CaptivePortalRule</a></li>
 				<li><a href="class-cidr.html">cidr</a></li>
 				<li><a href="class-CsvParser.html">CsvParser</a></li>
@@ -53,13 +54,20 @@
 				<li><a href="class-DoSRule.html">DoSRule</a></li>
 				<li><a href="class-EthernetIfStore.html">EthernetIfStore</a></li>
 				<li><a href="class-EthernetInterface.html">EthernetInterface</a></li>
+				<li><a href="class-IkeCryptoProfil.html">IkeCryptoProfil</a></li>
+				<li><a href="class-IkeCryptoProfileStore.html">IkeCryptoProfileStore</a></li>
+				<li><a href="class-IKEGateway.html">IKEGateway</a></li>
+				<li><a href="class-IKEGatewayStore.html">IKEGatewayStore</a></li>
 				<li><a href="class-InterfaceContainer.html">InterfaceContainer</a></li>
 				<li><a href="class-IP4Map.html">IP4Map</a></li>
+				<li><a href="class-IPSecCryptoProfil.html">IPSecCryptoProfil</a></li>
+				<li><a href="class-IPSecCryptoProfileStore.html">IPSecCryptoProfileStore</a></li>
 				<li><a href="class-IPsecTunnel.html">IPsecTunnel</a></li>
 				<li><a href="class-IPsecTunnelStore.html">IPsecTunnelStore</a></li>
 				<li><a href="class-LoopbackIfStore.html">LoopbackIfStore</a></li>
 				<li><a href="class-LoopbackInterface.html">LoopbackInterface</a></li>
 				<li><a href="class-ManagedDevice.html">ManagedDevice</a></li>
+				<li><a href="class-ManagedDeviceStore.html">ManagedDeviceStore</a></li>
 				<li><a href="class-NatRule.html">NatRule</a></li>
 				<li><a href="class-NetworkPropertiesContainer.html">NetworkPropertiesContainer</a></li>
 				<li><a href="class-ObjRuleContainer.html">ObjRuleContainer</a></li>
@@ -79,17 +87,25 @@
 				<li><a href="class-ServiceDstPortMapping.html">ServiceDstPortMapping</a></li>
 				<li><a href="class-ServiceGroup.html">ServiceGroup</a></li>
 				<li><a href="class-ServiceRuleContainer.html">ServiceRuleContainer</a></li>
+				<li><a href="class-ServiceSrcPortMapping.html">ServiceSrcPortMapping</a></li>
 				<li><a href="class-ServiceStore.html">ServiceStore</a></li>
 				<li><a href="class-StaticRoute.html">StaticRoute</a></li>
 				<li><a href="class-Tag.html">Tag</a></li>
 				<li><a href="class-TagRuleContainer.html">TagRuleContainer</a></li>
 				<li><a href="class-TagStore.html">TagStore</a></li>
 				<li><a href="class-Template.html">Template</a></li>
+				<li><a href="class-TemplateStack.html">TemplateStack</a></li>
 				<li><a href="class-TmpInterface.html">TmpInterface</a></li>
 				<li><a href="class-TmpInterfaceStore.html">TmpInterfaceStore</a></li>
+				<li><a href="class-TunnelIfStore.html">TunnelIfStore</a></li>
+				<li><a href="class-TunnelInterface.html">TunnelInterface</a></li>
 				<li><a href="class-VirtualRouter.html">VirtualRouter</a></li>
 				<li><a href="class-VirtualRouterStore.html">VirtualRouterStore</a></li>
 				<li><a href="class-VirtualSystem.html">VirtualSystem</a></li>
+				<li><a href="class-VirtualWire.html">VirtualWire</a></li>
+				<li><a href="class-VirtualWireStore.html">VirtualWireStore</a></li>
+				<li><a href="class-VlanIfStore.html">VlanIfStore</a></li>
+				<li><a href="class-VlanInterface.html">VlanInterface</a></li>
 				<li><a href="class-Zone.html">Zone</a></li>
 				<li><a href="class-ZoneRuleContainer.html">ZoneRuleContainer</a></li>
 				<li><a href="class-ZoneStore.html">ZoneStore</a></li>
@@ -224,7 +240,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#___construct">#</a>
-		<code><b>__construct</b>( <span><code><a href="class-VirtualSystem.html">VirtualSystem</a></code>|<code><a href="class-DeviceGroup.html">DeviceGroup</a></code>|<code><a href="class-PanoramaConf.html">PanoramaConf</a></code>|<code><a href="class-PANConf.html">PANConf</a></code>|null <var>$owner</var></span> )</code>
+		<code>__construct( <span><code><a href="class-VirtualSystem.html">VirtualSystem</a></code>|<code><a href="class-DeviceGroup.html">DeviceGroup</a></code>|<code><a href="class-PanoramaConf.html">PanoramaConf</a></code>|<code><a href="class-PANConf.html">PANConf</a></code>|null <var>$owner</var></span> )</code>
 
 		<div class="description short">
 			
@@ -258,7 +274,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_getAddressStoreXPath">#</a>
-		<code><b>getAddressStoreXPath</b>( )</code>
+		<code>getAddressStoreXPath( )</code>
 
 		<div class="description short">
 			
@@ -287,7 +303,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_getAddressGroupStoreXPath">#</a>
-		<code><b>getAddressGroupStoreXPath</b>( )</code>
+		<code>getAddressGroupStoreXPath( )</code>
 
 		<div class="description short">
 			
@@ -316,7 +332,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_load_addresses_from_domxml">#</a>
-		<code><b>load_addresses_from_domxml</b>( <span><code><a href="class-DOMElement.html">DOMElement</a></code> <var>$xml</var></span> )</code>
+		<code>load_addresses_from_domxml( <span><code><a href="class-DOMElement.html">DOMElement</a></code> <var>$xml</var></span> )</code>
 
 		<div class="description short">
 			
@@ -354,7 +370,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_all">#</a>
-		<code><b>all</b>( <span>mixed <var>$withFilter</var> = <span class="php-keyword1">null</span></span>, <span>boolean <var>$sortByDependencies</var> = <span class="php-keyword1">false</span></span> )</code>
+		<code>all( <span>mixed <var>$withFilter</var> = <span class="php-keyword1">null</span></span>, <span>boolean <var>$sortByDependencies</var> = <span class="php-keyword1">false</span></span> )</code>
 
 		<div class="description short">
 			
@@ -400,7 +416,7 @@ store</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_load_addressgroups_from_domxml">#</a>
-		<code><b>load_addressgroups_from_domxml</b>( <span>mixed <var>$xml</var></span> )</code>
+		<code>load_addressgroups_from_domxml( <span>mixed <var>$xml</var></span> )</code>
 
 		<div class="description short">
 			
@@ -429,7 +445,7 @@ store</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_inStore">#</a>
-		<code><b>inStore</b>( <span><code><a href="class-Address.html">Address</a></code>|<code><a href="class-AddressGroup.html">AddressGroup</a></code> <var>$object</var></span> )</code>
+		<code>inStore( <span><code><a href="class-Address.html">Address</a></code>|<code><a href="class-AddressGroup.html">AddressGroup</a></code> <var>$object</var></span> )</code>
 
 		<div class="description short">
 			
@@ -471,7 +487,7 @@ store</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_count">#</a>
-		<code><b>count</b>( )</code>
+		<code>count( )</code>
 
 		<div class="description short">
 			
@@ -504,7 +520,7 @@ store</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_countAddressGroups">#</a>
-		<code><b>countAddressGroups</b>( )</code>
+		<code>countAddressGroups( )</code>
 
 		<div class="description short">
 			
@@ -533,7 +549,7 @@ store</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_countAddresses">#</a>
-		<code><b>countAddresses</b>( )</code>
+		<code>countAddresses( )</code>
 
 		<div class="description short">
 			
@@ -562,7 +578,7 @@ store</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_countTmpAddresses">#</a>
-		<code><b>countTmpAddresses</b>( )</code>
+		<code>countTmpAddresses( )</code>
 
 		<div class="description short">
 			
@@ -591,7 +607,7 @@ store</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_find">#</a>
-		<code><b>find</b>( <span>string <var>$objectName</var></span>, <span><code><a href="class-ReferencableObject.html">ReferencableObject</a></code> <var>$ref</var> = <span class="php-keyword1">null</span></span>, <span>boolean <var>$nested</var> = <span class="php-keyword1">true</span></span> )</code>
+		<code>find( <span>string <var>$objectName</var></span>, <span><code><a href="class-ReferencableObject.html">ReferencableObject</a></code> <var>$ref</var> = <span class="php-keyword1">null</span></span>, <span>boolean <var>$nested</var> = <span class="php-keyword1">true</span></span> )</code>
 
 		<div class="description short">
 			
@@ -637,7 +653,7 @@ store</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_findOrCreate">#</a>
-		<code><b>findOrCreate</b>( <span>mixed <var>$fn</var></span>, <span>mixed <var>$ref</var> = <span class="php-keyword1">null</span></span>, <span>mixed <var>$nested</var> = <span class="php-keyword1">true</span></span> )</code>
+		<code>findOrCreate( <span>mixed <var>$fn</var></span>, <span>mixed <var>$ref</var> = <span class="php-keyword1">null</span></span>, <span>mixed <var>$nested</var> = <span class="php-keyword1">true</span></span> )</code>
 
 		<div class="description short">
 			
@@ -666,7 +682,7 @@ store</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_findTmpAddress">#</a>
-		<code><b>findTmpAddress</b>( <span>string <var>$name</var></span>, <span><code><a href="class-ReferencableObject.html">ReferencableObject</a></code> <var>$ref</var> = <span class="php-keyword1">null</span></span>, <span>boolean <var>$nested</var> = <span class="php-keyword1">true</span></span> )</code>
+		<code>findTmpAddress( <span>string <var>$name</var></span>, <span><code><a href="class-ReferencableObject.html">ReferencableObject</a></code> <var>$ref</var> = <span class="php-keyword1">null</span></span>, <span>boolean <var>$nested</var> = <span class="php-keyword1">true</span></span> )</code>
 
 		<div class="description short">
 			
@@ -708,7 +724,7 @@ store</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_displayTmpAddresss">#</a>
-		<code><b>displayTmpAddresss</b>( )</code>
+		<code>displayTmpAddresss( )</code>
 
 		<div class="description short">
 			
@@ -737,7 +753,7 @@ store</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_toString_inline">#</a>
-		<code><b>toString_inline</b>( )</code>
+		<code>toString_inline( )</code>
 
 		<div class="description short">
 			
@@ -766,7 +782,7 @@ store</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_API_add">#</a>
-		<code><b>API_add</b>( <span><code><a href="class-Address.html">Address</a></code>|<code><a href="class-AddressGroup.html">AddressGroup</a></code> <var>$s</var></span> )</code>
+		<code>API_add( <span><code><a href="class-Address.html">Address</a></code>|<code><a href="class-AddressGroup.html">AddressGroup</a></code> <var>$s</var></span> )</code>
 
 		<div class="description short">
 			
@@ -804,7 +820,7 @@ store</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_add">#</a>
-		<code><b>add</b>( <span><code><a href="class-Address.html">Address</a></code>|<code><a href="class-AddressGroup.html">AddressGroup</a></code> <var>$s</var></span> )</code>
+		<code>add( <span><code><a href="class-Address.html">Address</a></code>|<code><a href="class-AddressGroup.html">AddressGroup</a></code> <var>$s</var></span> )</code>
 
 		<div class="description short">
 			
@@ -847,7 +863,7 @@ name.<br />
 
 		<td class="name"><div>
 		<a class="anchor" href="#_API_remove">#</a>
-		<code><b>API_remove</b>( <span><code><a href="class-Address.html">Address</a></code>|<code><a href="class-AddressGroup.html">AddressGroup</a></code> <var>$s</var></span>, <span>boolean <var>$cleanInMemory</var> = <span class="php-keyword1">false</span></span> )</code>
+		<code>API_remove( <span><code><a href="class-Address.html">Address</a></code>|<code><a href="class-AddressGroup.html">AddressGroup</a></code> <var>$s</var></span>, <span>boolean <var>$cleanInMemory</var> = <span class="php-keyword1">false</span></span> )</code>
 
 		<div class="description short">
 			
@@ -887,7 +903,7 @@ name.<br />
 
 		<td class="name"><div>
 		<a class="anchor" href="#_remove">#</a>
-		<code><b>remove</b>( <span><code><a href="class-Address.html">Address</a></code>|<code><a href="class-AddressGroup.html">AddressGroup</a></code> <var>$s</var></span>, <span>boolean <var>$cleanInMemory</var> = <span class="php-keyword1">false</span></span> )</code>
+		<code>remove( <span><code><a href="class-Address.html">Address</a></code>|<code><a href="class-AddressGroup.html">AddressGroup</a></code> <var>$s</var></span>, <span>boolean <var>$cleanInMemory</var> = <span class="php-keyword1">false</span></span> )</code>
 
 		<div class="description short">
 			
@@ -927,7 +943,7 @@ name.<br />
 
 		<td class="name"><div>
 		<a class="anchor" href="#_rewriteAddressStoreXML">#</a>
-		<code><b>rewriteAddressStoreXML</b>( )</code>
+		<code>rewriteAddressStoreXML( )</code>
 
 		<div class="description short">
 			
@@ -956,7 +972,7 @@ name.<br />
 
 		<td class="name"><div>
 		<a class="anchor" href="#_rewriteAddressGroupStoreXML">#</a>
-		<code><b>rewriteAddressGroupStoreXML</b>( )</code>
+		<code>rewriteAddressGroupStoreXML( )</code>
 
 		<div class="description short">
 			
@@ -985,7 +1001,7 @@ name.<br />
 
 		<td class="name"><div>
 		<a class="anchor" href="#_newAddress">#</a>
-		<code><b>newAddress</b>( <span>mixed <var>$name</var></span>, <span>mixed <var>$type</var></span>, <span>mixed <var>$value</var></span>, <span>string <var>$description</var> = <span class="php-quote">''</span></span> )</code>
+		<code>newAddress( <span>mixed <var>$name</var></span>, <span>mixed <var>$type</var></span>, <span>mixed <var>$value</var></span>, <span>string <var>$description</var> = <span class="php-quote">''</span></span> )</code>
 
 		<div class="description short">
 			
@@ -1033,7 +1049,7 @@ name.<br />
 
 		<td class="name"><div>
 		<a class="anchor" href="#_API_newAddress">#</a>
-		<code><b>API_newAddress</b>( <span>mixed <var>$name</var></span>, <span>mixed <var>$type</var></span>, <span>mixed <var>$value</var></span>, <span>string <var>$description</var> = <span class="php-quote">''</span></span> )</code>
+		<code>API_newAddress( <span>mixed <var>$name</var></span>, <span>mixed <var>$type</var></span>, <span>mixed <var>$value</var></span>, <span>string <var>$description</var> = <span class="php-quote">''</span></span> )</code>
 
 		<div class="description short">
 			
@@ -1081,7 +1097,7 @@ name.<br />
 
 		<td class="name"><div>
 		<a class="anchor" href="#_newAddressGroup">#</a>
-		<code><b>newAddressGroup</b>( <span>string <var>$name</var></span> )</code>
+		<code>newAddressGroup( <span>string <var>$name</var></span> )</code>
 
 		<div class="description short">
 			
@@ -1125,7 +1141,7 @@ with that name already exists</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_API_newAddressGroup">#</a>
-		<code><b>API_newAddressGroup</b>( <span>mixed <var>$name</var></span> )</code>
+		<code>API_newAddressGroup( <span>mixed <var>$name</var></span> )</code>
 
 		<div class="description short">
 			
@@ -1169,7 +1185,7 @@ with that name already exists</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_addressGroups">#</a>
-		<code><b>addressGroups</b>( <span>mixed <var>$sortByDependencies</var> = <span class="php-keyword1">false</span></span> )</code>
+		<code>addressGroups( <span>mixed <var>$sortByDependencies</var> = <span class="php-keyword1">false</span></span> )</code>
 
 		<div class="description short">
 			
@@ -1210,7 +1226,7 @@ with that name already exists</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_addressObjects">#</a>
-		<code><b>addressObjects</b>( )</code>
+		<code>addressObjects( )</code>
 
 		<div class="description short">
 			
@@ -1249,7 +1265,7 @@ with that name already exists</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_nestedPointOfView">#</a>
-		<code><b>nestedPointOfView</b>( )</code>
+		<code>nestedPointOfView( )</code>
 
 		<div class="description short">
 			
@@ -1282,7 +1298,7 @@ with that name already exists</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_createTmp">#</a>
-		<code><b>createTmp</b>( <span>string <var>$name</var></span>, <span><code><a href="class-ReferencableObject.html">ReferencableObject</a></code> <var>$ref</var> = <span class="php-keyword1">null</span></span> )</code>
+		<code>createTmp( <span>string <var>$name</var></span>, <span><code><a href="class-ReferencableObject.html">ReferencableObject</a></code> <var>$ref</var> = <span class="php-keyword1">null</span></span> )</code>
 
 		<div class="description short">
 			
@@ -1330,7 +1346,7 @@ don't exist in the conf.</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_referencedObjectRenamed">#</a>
-		<code><b>referencedObjectRenamed</b>( <span><code><a href="class-Address.html">Address</a></code>|<code><a href="class-AddressGroup.html">AddressGroup</a></code> <var>$h</var></span>, <span>string <var>$oldName</var></span> )</code>
+		<code>referencedObjectRenamed( <span><code><a href="class-Address.html">Address</a></code>|<code><a href="class-AddressGroup.html">AddressGroup</a></code> <var>$h</var></span>, <span>string <var>$oldName</var></span> )</code>
 
 		<div class="description short">
 			
@@ -1374,7 +1390,7 @@ don't exist in the conf.</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_countUnused">#</a>
-		<code><b>countUnused</b>( )</code>
+		<code>countUnused( )</code>
 
 		<div class="description short">
 			
@@ -1403,7 +1419,7 @@ don't exist in the conf.</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_countUnusedAddresses">#</a>
-		<code><b>countUnusedAddresses</b>( )</code>
+		<code>countUnusedAddresses( )</code>
 
 		<div class="description short">
 			
@@ -1432,7 +1448,7 @@ don't exist in the conf.</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_countUnusedAddressGroups">#</a>
-		<code><b>countUnusedAddressGroups</b>( )</code>
+		<code>countUnusedAddressGroups( )</code>
 
 		<div class="description short">
 			
@@ -1457,9 +1473,9 @@ don't exist in the conf.</p>
 	<caption>Methods used from <a href="class-PathableName.html#methods">PathableName</a></caption>
 	<tr>
 		<td><code>
-			<a href="class-PathableName.html#__PANC_shortName"><b>_PANC_shortName()</b></a>, 
-			<a href="class-PathableName.html#_getLocationString"><b>getLocationString()</b></a>, 
-			<a href="class-PathableName.html#_toString"><b>toString()</b></a>
+			<a href="class-PathableName.html#__PANC_shortName">_PANC_shortNameo()</a>, 
+			<a href="class-PathableName.html#_getLocationString">getLocationStringo()</a>, 
+			<a href="class-PathableName.html#_toString">toStringo()</a>
 		</code></td>
 	</tr>
 	</table>
