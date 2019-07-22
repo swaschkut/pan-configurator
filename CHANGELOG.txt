@@ -15,6 +15,7 @@ GENERAL:
 * class-EthernetInterface/-StaticRouter/-VirtualRouter/ utils interface - add support for IPv6 Addresses
 * class-ServiceStore | introduce function findbyProtocolDstSrcPort
 * rename to PAN-PHP-FRAMEWORK
+* class-IPsecCryptoProfil - new function setlifesize / cloneIPsecCryptoProfile
 
 UTILS:
 service-merger: extend location=any - especially for Panorama DG to merge all DG objects with one single script run - also possible with argument allowmergingwithupperlevel

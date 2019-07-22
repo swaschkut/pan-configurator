@@ -70,10 +70,10 @@ class IPSecCryptoProfileStore extends ObjStore
     public function addProfil( $CryptoProfile )
     {
         if( !is_object($CryptoProfile) )
-            derr('this function only accepts IKEGateway class objects');
+            derr('this function only accepts IPsecCryptoProfile class objects');
 
         if( $CryptoProfile->owner !== null )
-            derr('Trying to add a gateway that has a owner already !');
+            derr('Trying to add a IPsecCryptoProfile that has a owner already !');
 
 
         $ser = spl_object_hash($CryptoProfile);

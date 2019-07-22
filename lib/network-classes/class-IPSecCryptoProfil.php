@@ -297,9 +297,51 @@ class IPSecCryptoProfil
         return true;
     }
 
+    public function setlifesize( $sizetype, $size )
+    {
+        #if( $this->encryption == $encryption )
+        #return true;
+
+        if( $sizetype == 'kb' )
+            $this->lifesize_kb = $size;
+        elseif( $sizetype == 'mb' )
+            $this->lifesize_mb = $size;
+        elseif( $sizetype == 'gb' )
+            $this->lifesize_gb = $size;
+        elseif( $sizetype == 'tb' )
+            $this->lifesize_tb = $size;
+
+        $tmp_gateway = DH::findFirstElementOrCreate('lifesize', $this->xmlroot);
+        $tmp_gateway = DH::findFirstElementOrCreate($sizetype, $tmp_gateway);
+        DH::setDomNodeText( $tmp_gateway, $size);
+
+        return true;
+    }
+
     public function isIPsecCryptoProfilType()
     {
         return true;
+    }
+
+    public function cloneIPsecCryptoProfile( $newName )
+    {
+        $newProfile = $this->owner->newIPsecCryptoProfil( $newName );
+        $newProfile->setencryption( $this->encryption );
+        $newProfile->setauthentication( $this->authentication, "esp" );
+        $newProfile->setDHgroup( $this->dhgroup );
+
+
+        $newProfile->lifetime_seconds = $this->lifetime_seconds;
+        $newProfile->lifetime_minutes = $this->lifetime_minutes;
+        $newProfile->lifetime_hours = $this->lifetime_hours;
+        $newProfile->lifetime_days = $this->lifetime_hours;
+
+        $newProfile->lifesize_kb = $this->lifesize_kb;
+        $newProfile->lifesize_mb = $this->lifesize_mb;
+        $newProfile->lifesize_gb = $this->lifesize_gb;
+        $newProfile->lifesize_tb = $this->lifesize_tb;
+
+        return $newProfile;
     }
 
     static public $templatexml = '<entry name="**temporarynamechangeme**">
