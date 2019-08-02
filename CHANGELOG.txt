@@ -16,6 +16,7 @@ GENERAL:
 * class-ServiceStore | introduce function findbyProtocolDstSrcPort
 * rename to PAN-PHP-FRAMEWORK
 * class-IPsecCryptoProfil - new function setlifesize / cloneIPsecCryptoProfile
+* update predefined.xml to 8177-5588
 
 UTILS:
 service-merger: extend location=any - especially for Panorama DG to merge all DG objects with one single script run - also possible with argument allowmergingwithupperlevel

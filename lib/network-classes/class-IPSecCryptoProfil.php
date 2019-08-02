@@ -36,6 +36,8 @@ class IPSecCryptoProfil
 
     //TODO: 20180403 these two variables are multi member, extend to array
     public $authentication = 'notfound';
+    public $encryption = 'notfound';
+
 
     const md5 = 'md5';
     const sha1 = 'sha1';
@@ -51,8 +53,6 @@ class IPSecCryptoProfil
         self::sha512 => 'sha512'
     );
 
-
-    public $encryption = 'notfound';
 
     const des = 'des';
     const tripledes = '3des';
