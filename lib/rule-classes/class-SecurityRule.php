@@ -512,7 +512,10 @@ class SecurityRule extends RuleWithUserID
 	{
 		$this->secproftype = 'profiles';
 		$this->secprofgroup = null;
-		$this->secprofProfiles['virus'] = $newAVprof;
+        if( $newAVprof == "null" )
+            unset( $this->secprofProfiles['virus'] );
+        else
+            $this->secprofProfiles['virus'] = $newAVprof;
 
 		$this->rewriteSecProfXML();
 
@@ -523,7 +526,10 @@ class SecurityRule extends RuleWithUserID
 	{
 		$this->secproftype = 'profiles';
 		$this->secprofgroup = null;
-		$this->secprofProfiles['vulnerability'] = $newAVprof;
+        if( $newAVprof == "null" )
+            unset( $this->secprofProfiles['vulnerability'] );
+        else
+            $this->secprofProfiles['vulnerability'] = $newAVprof;
 
 		$this->rewriteSecProfXML();
 
@@ -534,7 +540,10 @@ class SecurityRule extends RuleWithUserID
 	{
 		$this->secproftype = 'profiles';
 		$this->secprofgroup = null;
-		$this->secprofProfiles['url-filtering'] = $newAVprof;
+        if( $newAVprof == "null" )
+            unset( $this->secprofProfiles['url-filtering'] );
+        else
+            $this->secprofProfiles['url-filtering'] = $newAVprof;
 
 		$this->rewriteSecProfXML();
 
@@ -545,7 +554,10 @@ class SecurityRule extends RuleWithUserID
 	{
 		$this->secproftype = 'profiles';
 		$this->secprofgroup = null;
-		$this->secprofProfiles['data-filtering'] = $newAVprof;
+        if( $newAVprof == "null" )
+            unset( $this->secprofProfiles['data-filtering'] );
+        else
+            $this->secprofProfiles['data-filtering'] = $newAVprof;
 
 		$this->rewriteSecProfXML();
 
@@ -556,7 +568,11 @@ class SecurityRule extends RuleWithUserID
 	{
 		$this->secproftype = 'profiles';
 		$this->secprofgroup = null;
-		$this->secprofProfiles['file-blocking'] = $newAVprof;
+
+        if( $newAVprof == "null" )
+            unset( $this->secprofProfiles['file-blocking'] );
+        else
+            $this->secprofProfiles['file-blocking'] = $newAVprof;
 
 		$this->rewriteSecProfXML();
 
@@ -567,7 +583,10 @@ class SecurityRule extends RuleWithUserID
 	{
 		$this->secproftype = 'profiles';
 		$this->secprofgroup = null;
-		$this->secprofProfiles['spyware'] = $newAVprof;
+        if( $newAVprof == "null" )
+            unset( $this->secprofProfiles['spyware'] );
+        else
+		    $this->secprofProfiles['spyware'] = $newAVprof;
 
 		$this->rewriteSecProfXML();
 
@@ -578,7 +597,10 @@ class SecurityRule extends RuleWithUserID
     {
         $this->secproftype = 'profiles';
         $this->secprofgroup = null;
-        $this->secprofProfiles['wildfire-analysis'] = $newAVprof;
+        if( $newAVprof == "null" )
+            unset( $this->secprofProfiles['wildfire-analysis'] );
+        else
+            $this->secprofProfiles['wildfire-analysis'] = $newAVprof;
 
         $this->rewriteSecProfXML();
 
