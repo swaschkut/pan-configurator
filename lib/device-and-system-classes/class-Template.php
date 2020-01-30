@@ -49,7 +49,7 @@ class Template
         if( $this->name === FALSE )
             derr("template name not found\n", $xml);
 
-        $tmp = DH::findFirstElementOrDie('config', $xml);
+        $tmp = DH::findFirstElementOrCreate('config', $xml);
 
         $this->deviceConfiguration->load_from_domxml($tmp);
 
