@@ -1325,7 +1325,27 @@ class PanAPIConnector
 
         $configRoot = DH::findFirstElement('config', $configRoot);
         if( $configRoot === FALSE )
-            derr("<config> was not found", $r);
+        {
+            //Todo: this is for a problem in PAN-OS until it is fixed in 8.1.16, 9.0.10 and 9.1.4
+            $configRoot = DH::findFirstElement('result', $r);
+            if( $configRoot === FALSE )
+                derr("<result> was not found", $r);
+
+            $configRoot = DH::findFirstElement('response', $configRoot);
+            if( $configRoot === FALSE )
+                derr("<result> was not found", $r);
+            $configRoot = DH::findFirstElement('result', $configRoot);
+            if( $configRoot === FALSE )
+                derr("<result> was not found", $r);
+
+            $configRoot = DH::findFirstElement('config', $configRoot);
+            if( $configRoot === FALSE )
+            {
+                derr("<config> was not found", $r);
+            }
+
+            //derr("<config> was not found", $r);
+        }
 
         DH::makeElementAsRoot($configRoot, $r);
 
