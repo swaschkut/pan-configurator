@@ -350,7 +350,10 @@ foreach( $location_array as $tmp_location )
                     if( $dg->addressStore->find($object->name(), null, FALSE) !== null )
                     {
                         $tmp_obj = $dg->addressStore->find($object->name(), null, FALSE);
-                        print "\n- object '" . $object->name() . "' [value '{$object->value()}'] skipped because of same object name [with value '{$tmp_obj->value()}'] available at lower level DG: " . $dg->name() . "\n";
+                        if( $tmp_obj->isAddress() )
+                            print "\n- object '" . $object->name() . "' [value '{$object->value()}'] skipped because of same object name [with value '{$tmp_obj->value()}'] available at lower level DG: " . $dg->name() . "\n";
+                        else
+                            print "\n- object '" . $object->name() . "' [value '{$object->value()}'] skipped because of same object name [ but as ADDRESSGROUP ] available at lower level DG: " . $dg->name() . "\n";
                         $skipThisOne = TRUE;
                         break;
                     }
